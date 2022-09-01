@@ -20,6 +20,7 @@ if (environment.production) {
 
 bootstrapApplication(AppComponent, {
   providers: [
+    importProvidersFrom(HttpClientModule),
     provideRouter(APP_ROUTES, 
       withPreloading(PreloadAllModules),
       withDebugTracing(),
@@ -27,7 +28,6 @@ bootstrapApplication(AppComponent, {
     provideStore(reducer),
     provideEffects([]),
     provideStoreDevtools(),
-    importProvidersFrom(HttpClientModule),
     importProvidersFrom(TicketsModule),
     provideAnimations(),
     importProvidersFrom(LayoutModule),
