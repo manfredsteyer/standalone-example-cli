@@ -6,7 +6,7 @@ import { RouterLink, RouterLinkActive, RouterLinkWithHref, RouterOutlet } from "
   selector: 'flight-booking',
   imports: [
     RouterOutlet,
-    RouterLinkWithHref
+    RouterLinkWithHref,
   ],
   templateUrl: './flight-booking.component.html'
 })

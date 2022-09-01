@@ -14,12 +14,13 @@ export const APP_ROUTES: Routes = [
     {
         path: 'flight-booking',
         loadChildren: () =>
-            import('./booking/flight-booking.routes').then(m => m.FLIGHT_BOOKING_ROUTES)
+            import('./booking').then(m => m.FLIGHT_BOOKING_ROUTES)
     },
     {
         path: 'next-flight',
         loadComponent: () => 
-            import('./next-flight/next-flight.component').then(m => m.NextFlightComponent)
+            import('./next-flight/next-flight.component')
+                .then(m => m.NextFlightComponent)
     },
     {
         path: 'about',
