@@ -1,4 +1,4 @@
-import { CommonModule } from "@angular/common";
+import { AsyncPipe, CommonModule, JsonPipe, NgForOf, NgIf } from "@angular/common";
 import { Component, Inject, OnInit } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { CityValidator } from "@demo/shared";
@@ -13,7 +13,12 @@ import { delayFlight } from "../+state/actions";
 @Component({
   standalone: true,
   imports: [
-    CommonModule, 
+    // CommonModule, 
+    NgIf,
+    NgForOf,
+    AsyncPipe,
+    JsonPipe,
+
     FormsModule, 
     FlightCardComponent,
     CityValidator,

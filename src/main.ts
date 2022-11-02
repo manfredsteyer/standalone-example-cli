@@ -10,7 +10,6 @@ import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { reducer } from './app/+state';
 import { AppComponent } from './app/app.component';
 import { APP_ROUTES } from './app/app.routes';
-import { FlightService } from './app/data/flight.service';
 import { TicketsModule } from './app/tickets/tickets.module';
 
 import { environment } from './environments/environment';
@@ -19,20 +18,23 @@ if (environment.production) {
   enableProdMode();
 }
 
-// providedIn: 'root'
-
 bootstrapApplication(AppComponent, {
   providers: [
+    // 15: provideHttpClient()
     importProvidersFrom(HttpClientModule),
+
     provideRouter(APP_ROUTES, 
       withPreloading(PreloadAllModules),
       withDebugTracing(),
     ),
+
     provideStore(reducer),
     provideEffects([]),
     provideStoreDevtools(),
-    importProvidersFrom(TicketsModule),
+
     provideAnimations(),
+
+    importProvidersFrom(TicketsModule),
     importProvidersFrom(LayoutModule),
   ]
 });
