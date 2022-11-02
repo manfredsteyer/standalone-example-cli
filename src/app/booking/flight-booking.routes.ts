@@ -1,3 +1,4 @@
+import { provideHttpClient, withInterceptors, withRequestsMadeViaParent } from "@angular/common/http";
 import { Routes } from "@angular/router";
 import { provideEffects } from "@ngrx/effects";
 import { provideState } from "@ngrx/store";
@@ -7,13 +8,19 @@ import { FlightBookingComponent } from "./flight-booking.component";
 import { FlightEditComponent } from "./flight-edit/flight-edit.component";
 import { FlightSearchComponent } from "./flight-search/flight-search.component";
 import { PassengerSearchComponent } from "./passenger-search/passenger-search.component";
+import { bookingInterceptor } from "./utils/booking.interceptor";
 
 export const FLIGHT_BOOKING_ROUTES: Routes = [{
     path: '',
     component: FlightBookingComponent,
     providers: [
         provideState(bookingFeature),
-        provideEffects([BookingEffects])
+        provideEffects([BookingEffects]),
+
+        provideHttpClient(
+            withRequestsMadeViaParent(),
+            withInterceptors([bookingInterceptor])
+        ),
     ],
     children: [
         {
