@@ -13,6 +13,7 @@ import { provideEffects } from '@ngrx/effects';
 import { provideState, provideStore } from '@ngrx/store';
 import { BookingEffects } from '../+state/effects';
 import { bookingFeature } from '../+state/reducers';
+import { FlightCardComponent } from '../flight-card/flight-card.component';
 
 import { FlightSearchComponent } from './flight-search.component';
 
@@ -27,6 +28,8 @@ class FlightCardMock {
   @Input() selected: boolean | undefined;
   @Output() selectedChange = new EventEmitter<boolean>();
   @Input() showEditButton = true;
+
+  constructor() { }
 }
 
 describe('FlightSearchComponent', () => {
@@ -49,16 +52,14 @@ describe('FlightSearchComponent', () => {
       imports: [ FlightSearchComponent ]
     })
     .overrideComponent(FlightSearchComponent, {
-      set: {
+      remove: {
         imports: [
-          NgIf,
-          NgForOf,
-          AsyncPipe,
-          JsonPipe,
-      
-          FormsModule, 
+          FlightCardComponent,
+        ]
+      },
+      add: {
+        imports: [
           FlightCardMock,
-          CityValidator,
         ]
       }
     })
