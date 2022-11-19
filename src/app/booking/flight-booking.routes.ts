@@ -8,6 +8,7 @@ import { FlightBookingComponent } from "./flight-booking.component";
 import { FlightEditComponent } from "./flight-edit/flight-edit.component";
 import { FlightSearchComponent } from "./flight-search/flight-search.component";
 import { PassengerSearchComponent } from "./passenger-search/passenger-search.component";
+import { provideBooking } from "./provider";
 import { bookingInterceptor } from "./utils/booking.interceptor";
 
 export const FLIGHT_BOOKING_ROUTES: Routes = [{

@@ -1,14 +1,33 @@
+import { AsyncPipe, JsonPipe, NgForOf, NgIf } from '@angular/common';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting, HttpTestingController } from '@angular/common/http/testing';
 import { provideLocationMocks } from '@angular/common/testing';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { FormsModule } from '@angular/forms';
+import { By } from '@angular/platform-browser';
 import { provideRouter } from '@angular/router';
+import { Flight } from '@demo/data';
+import { CityValidator } from '@demo/shared';
 import { provideEffects } from '@ngrx/effects';
 import { provideState, provideStore } from '@ngrx/store';
 import { BookingEffects } from '../+state/effects';
 import { bookingFeature } from '../+state/reducers';
 
 import { FlightSearchComponent } from './flight-search.component';
+
+// Shallow Testing
+@Component({
+  standalone: true,
+  selector: 'flight-card',
+  template: `<!-- empty template -->`
+})
+class FlightCardMock {
+  @Input() item: Flight | undefined;;
+  @Input() selected: boolean | undefined;
+  @Output() selectedChange = new EventEmitter<boolean>();
+  @Input() showEditButton = true;
+}
 
 describe('FlightSearchComponent', () => {
   let component: FlightSearchComponent;
@@ -29,6 +48,20 @@ describe('FlightSearchComponent', () => {
       ],
       imports: [ FlightSearchComponent ]
     })
+    .overrideComponent(FlightSearchComponent, {
+      set: {
+        imports: [
+          NgIf,
+          NgForOf,
+          AsyncPipe,
+          JsonPipe,
+      
+          FormsModule, 
+          FlightCardMock,
+          CityValidator,
+        ]
+      }
+    })
     .compileComponents();
 
     fixture = TestBed.createComponent(FlightSearchComponent);
@@ -36,7 +69,7 @@ describe('FlightSearchComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should search for flights', () => {
+  it('should display a flight-card for each found flight', () => {
     component.from = 'Paris';
     component.to = 'London';
     component.search();
@@ -44,13 +77,12 @@ describe('FlightSearchComponent', () => {
     const ctrl = TestBed.inject(HttpTestingController);
 
     const req = ctrl.expectOne('https://demo.angulararchitects.io/api/flight?from=Paris&to=London');
-    req.flush([{}, {}, {}]);
+    req.flush([{}, {}, {}, {}, {}]);
 
-    component.flights$.subscribe(flights => {
-      expect(flights.length).toBe(3);
-    });
+    fixture.detectChanges();
 
-    ctrl.verify();
+    const cards = fixture.debugElement.queryAll(By.css('flight-card'));
+    expect(cards.length).toBe(5);
   });
 
 });
