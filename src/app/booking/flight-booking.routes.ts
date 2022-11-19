@@ -14,9 +14,11 @@ export const FLIGHT_BOOKING_ROUTES: Routes = [{
     path: '',
     component: FlightBookingComponent,
     providers: [
+        // NGRX
         provideState(bookingFeature),
         provideEffects([BookingEffects]),
 
+        // Http
         provideHttpClient(
             withRequestsMadeViaParent(),
             withInterceptors([bookingInterceptor])
