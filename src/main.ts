@@ -1,6 +1,6 @@
 import { LayoutModule } from '@angular/cdk/layout';
-import { HttpClientModule, HTTP_INTERCEPTORS, provideHttpClient, withInterceptors, withLegacyInterceptors } from '@angular/common/http';
-import { enableProdMode, importProvidersFrom, inject } from '@angular/core';
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptors, withInterceptorsFromDi } from '@angular/common/http';
+import { importProvidersFrom } from '@angular/core';
 import { bootstrapApplication } from '@angular/platform-browser';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { PreloadAllModules, provideRouter, RouterModule, withDebugTracing, withPreloading, withRouterConfig } from '@angular/router';
@@ -14,19 +14,14 @@ import { authInterceptor } from './app/shared/auth.interceptor';
 import { LegacyInterceptor } from './app/shared/legacy.interceptor';
 import { TicketsModule } from './app/tickets/tickets.module';
 
-import { environment } from './environments/environment';
-
-if (environment.production) {
-  enableProdMode();
-}
-
 bootstrapApplication(AppComponent, {
   providers: [
     
     provideHttpClient(
       withInterceptors([authInterceptor]),
-      withLegacyInterceptors(),
+      withInterceptorsFromDi(),
     ),
+    
     {
       provide: HTTP_INTERCEPTORS,
       useClass: LegacyInterceptor,

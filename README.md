@@ -1,6 +1,6 @@
-# Cli14next12
+# StandaloneCli
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 14.0.0-next.12.
+This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 15.0.0.
 
 ## Development server
 
