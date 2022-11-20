@@ -14,7 +14,8 @@ export const APP_ROUTES: Routes = [
     {
         path: 'flight-booking',
         loadChildren: () =>
-            import('./booking').then(m => m.FLIGHT_BOOKING_ROUTES)
+            import('./booking/flight-booking.routes')
+                .then(m => m.FLIGHT_BOOKING_ROUTES)
     },
     {
         path: 'next-flight',
@@ -25,6 +26,7 @@ export const APP_ROUTES: Routes = [
     {
         path: 'about',
         loadComponent: () => 
-            import('./about/about.component').then(m => m.AboutComponent)
+            import('./about/about.component')
+                .then(m => m.AboutComponent)
     },
 ];

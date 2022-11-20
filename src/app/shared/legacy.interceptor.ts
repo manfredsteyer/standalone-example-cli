@@ -5,8 +5,9 @@ import { Observable, tap } from 'rxjs';
 @Injectable()
 export class LegacyInterceptor implements HttpInterceptor {
     intercept(req: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-        console.log('request', req.method, req.url);
-        console.log('LegacyInterceptor')
+
+        console.log('LegacyInterceptor (root scope)');
+
         if (req.url.startsWith('https://demo.angulararchitects.io/api/')) {
             // Setting a dummy token for demonstration
             const headers = req.headers.set('Authorization', 'Bearer Legacy-1234567');

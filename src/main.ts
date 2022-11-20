@@ -30,7 +30,7 @@ bootstrapApplication(AppComponent, {
     
     provideRouter(APP_ROUTES, 
       withPreloading(PreloadAllModules),
-      withDebugTracing(),
+      // withDebugTracing(),
     ),
 
     provideStore(reducer),

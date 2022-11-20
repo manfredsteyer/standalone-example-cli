@@ -20,3 +20,5 @@ export class AboutComponent {
     ref.instance.title = `Lazy Sub Component !!`;
   }
 }
+
+export default AboutComponent;

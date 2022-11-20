@@ -19,3 +19,5 @@ export class NextFlightComponent implements OnInit {
   }
 
 }
+
+export default NextFlightComponent;
