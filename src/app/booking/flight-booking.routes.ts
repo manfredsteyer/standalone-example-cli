@@ -20,8 +20,8 @@ export const FLIGHT_BOOKING_ROUTES: Routes = [{
 
         // Http
         provideHttpClient(
+            withInterceptors([bookingInterceptor]),
             withRequestsMadeViaParent(),
-            withInterceptors([bookingInterceptor])
         ),
     ],
     children: [
