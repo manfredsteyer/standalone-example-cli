@@ -1,9 +1,8 @@
-
 export interface Flight {
-  id: number;   
+  id: number;
   from: string;
   to: string;
-  date: string; 
+  date: string;
   delayed: boolean;
 }
 
@@ -12,5 +11,5 @@ export const initFlight: Flight = {
   from: '',
   to: '',
   date: '',
-  delayed: false
+  delayed: false,
 };

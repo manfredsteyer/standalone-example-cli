@@ -1,6 +1,6 @@
 <h2 class="title">Flight Search</h2>
 
-<form #form="ngForm">
+<form #form="ngForm" (ngSubmit)="search()">
 
   <div class="form-group">
     <label>From:</label>
@@ -24,7 +24,7 @@
   </div>
 
   <div class="form-group" *ngIf="flights$ | async as flights">
-    <button (click)="search()" [disabled]="!from || !to" class="btn btn-default">
+    <button type="submit" [disabled]="!from || !to" class="btn btn-default">
       Search
     </button>
 
