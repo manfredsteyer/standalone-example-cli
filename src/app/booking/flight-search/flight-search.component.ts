@@ -1,5 +1,5 @@
 import { AsyncPipe, CommonModule, JsonPipe, NgForOf, NgIf } from "@angular/common";
-import { Component, Inject, OnInit } from "@angular/core";
+import { Component, inject, Inject, OnInit } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { CityValidator } from "@demo/shared";
 import { FlightCardComponent } from "../flight-card/flight-card.component";
@@ -9,6 +9,7 @@ import { selectFlights } from "../+state/selectors";
 import { take } from "rxjs";
 import { loadFlights } from "../+state/actions";
 import { delayFlight } from "../+state/actions";
+import { ActivatedRoute } from "@angular/router";
 
 @Component({
   standalone: true,
@@ -28,6 +29,9 @@ import { delayFlight } from "../+state/actions";
 })
 export class FlightSearchComponent implements OnInit {
 
+  private store = inject<Store<BookingSlice>>(Store); 
+  private route = inject(ActivatedRoute);
+
   from = 'Hamburg'; // in Germany
   to = 'Graz'; // in Austria
   urgent = false;
@@ -39,8 +43,17 @@ export class FlightSearchComponent implements OnInit {
     5: true
   };
 
-  constructor(
-    @Inject(Store) private store: Store<BookingSlice>) {
+  constructor() {
+    this.route.paramMap.subscribe(p => {
+      const from = p.get('from');
+      const to = p.get('to');
+
+      if (from && to) {
+        this.from = from;
+        this.to = to;
+        this.search();
+      }
+    });
   }
 
   ngOnInit(): void {
