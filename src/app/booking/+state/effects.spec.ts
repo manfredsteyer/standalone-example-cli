@@ -8,6 +8,7 @@ import { Subject } from 'rxjs';
 import { Action } from '@ngrx/store';
 import { loadFlights } from './actions';
 import { BookingEffects } from './effects';
+import { Flight } from '@demo/data';
 
 describe('BookingEffects', () => {
   let actions$ = new Subject<Action>();
@@ -26,9 +27,10 @@ describe('BookingEffects', () => {
 
   it('load flights', () => {
     const effects = TestBed.inject(BookingEffects);
+    let flights: Flight[] = [];
 
     effects.loadFlights$.subscribe(action => {
-      expect(action.flights.length).toBe(2);
+      flights = action.flights;
     });
 
     actions$.next(loadFlights({ from: 'Paris', to: 'London' }));
@@ -36,6 +38,8 @@ describe('BookingEffects', () => {
     const ctrl = TestBed.inject(HttpTestingController);
     const req = ctrl.expectOne('https://demo.angulararchitects.io/api/flight?from=Paris&to=London');
     req.flush([{}, {}]);
+
+    expect(flights.length).toBe(2);
   });
 
  

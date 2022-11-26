@@ -47,7 +47,7 @@ describe('FlightSearchComponent (at router level)', () => {
   });
 
   it('routes to flight-card', fakeAsync(() => {
-  
+
     const link = fixture.debugElement.query(By.css('a[class*=btn-default ]'))
     link.nativeElement.click();
     
@@ -56,7 +56,7 @@ describe('FlightSearchComponent (at router level)', () => {
 
     const location = TestBed.inject(Location);
     expect(location.path()).toBe('/flight-edit/1;showDetails=false')
-  
+
   }));
 
 });

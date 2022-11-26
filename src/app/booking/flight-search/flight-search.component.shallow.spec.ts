@@ -52,16 +52,8 @@ describe('FlightSearchComponent', () => {
       imports: [ FlightSearchComponent ]
     })
     .overrideComponent(FlightSearchComponent, {
-      remove: {
-        imports: [
-          FlightCardComponent,
-        ]
-      },
-      add: {
-        imports: [
-          FlightCardMock,
-        ]
-      }
+      remove: { imports: [ FlightCardComponent ] },
+      add: { imports: [ FlightCardMock ] }
     })
     .compileComponents();
 
@@ -78,12 +70,12 @@ describe('FlightSearchComponent', () => {
     const ctrl = TestBed.inject(HttpTestingController);
 
     const req = ctrl.expectOne('https://demo.angulararchitects.io/api/flight?from=Paris&to=London');
-    req.flush([{}, {}, {}, {}, {}]);
+    req.flush([{}, {}, {}]);
 
     fixture.detectChanges();
 
     const cards = fixture.debugElement.queryAll(By.css('flight-card'));
-    expect(cards.length).toBe(5);
+    expect(cards.length).toBe(3);
   });
 
 });
