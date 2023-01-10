@@ -5,14 +5,14 @@ import { LogLevel } from "./log-level";
 
 export abstract class LoggerConfig {
     abstract level: LogLevel;
-    abstract bubbleUp: boolean;
+    abstract chaining: boolean;
     abstract formatter: Type<LogFormatter>;
     abstract appenders: Type<LogAppender>[];
 }
 
 export const defaultConfig: LoggerConfig = {
     level: LogLevel.DEBUG,
-    bubbleUp: false,
+    chaining: false,
     formatter: DefaultLogFormatter,
     appenders: [DefaultLogAppender]
 }

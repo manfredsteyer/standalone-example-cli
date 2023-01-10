@@ -35,7 +35,7 @@ export const FLIGHT_BOOKING_ROUTES: Routes = [
       provideLogger(
         {
           level: LogLevel.DEBUG,
-          bubbleUp: true,
+          chaining: true,
           appenders: [DefaultLogAppender],
         },
         withColor({
