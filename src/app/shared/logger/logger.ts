@@ -6,40 +6,47 @@ import { LoggerConfig } from './logger-config';
 
 @Injectable()
 export class LoggerService {
+  private appenders = inject(LOG_APPENDERS);
+  private formatter = inject(LogFormatter);
+  private config = inject(LoggerConfig);
 
-    private appenders = inject(LOG_APPENDERS);
-    private formatter = inject(LogFormatter);
-    private config = inject(LoggerConfig);
+  private parentLogger = inject(LoggerService, {
+    optional: true,
+    skipSelf: true,
+  });
 
-    readonly categories: Record<string, LogAppender> = {};
+  readonly categories: Record<string, LogAppender> = {};
 
-    log(level: LogLevel, category: string, msg: string): void {
-        if (level < this.config.level) {
-            return;
-        }
-        const formatted = this.formatter.format(level, category, msg);
+  log(level: LogLevel, category: string, msg: string): void {
+    if (level < this.config.level) {
+      return;
+    }
+    const formatted = this.formatter.format(level, category, msg);
 
-        const catAppender = this.categories[category];
+    const catAppender = this.categories[category];
 
-        if (catAppender) {
-            catAppender.append(level, category, formatted);
-        }
-
-        for (const a of this.appenders) {
-            a.append(level, category, formatted);
-        }
+    if (catAppender) {
+      catAppender.append(level, category, formatted);
     }
 
-    error(category: string, msg: string): void {
-        this.log(LogLevel.ERROR, category, msg);
+    for (const a of this.appenders) {
+      a.append(level, category, formatted);
     }
 
-    info(category: string, msg: string): void {
-        this.log(LogLevel.INFO, category, msg);
+    if (this.parentLogger) {
+        this.parentLogger.log(level, category, msg);
     }
+  }
 
-    debug(category: string, msg: string): void {
-        this.log(LogLevel.DEBUG, category,msg);
-    }
+  error(category: string, msg: string): void {
+    this.log(LogLevel.ERROR, category, msg);
+  }
 
+  info(category: string, msg: string): void {
+    this.log(LogLevel.INFO, category, msg);
+  }
+
+  debug(category: string, msg: string): void {
+    this.log(LogLevel.DEBUG, category, msg);
+  }
 }
