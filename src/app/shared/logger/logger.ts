@@ -1,21 +1,30 @@
 import { inject, Injectable } from '@angular/core';
-import { LOG_APPENDERS } from './log-appender';
+import { LogAppender, LOG_APPENDERS } from './log-appender';
 import { LogFormatter } from './log-formatter';
 import { LogLevel } from './log-level';
 import { LoggerConfig } from './logger-config';
 
-@Injectable({providedIn: 'root'})
+@Injectable()
 export class LoggerService {
 
     private appenders = inject(LOG_APPENDERS);
     private formatter = inject(LogFormatter);
     private config = inject(LoggerConfig);
 
+    readonly categories: Record<string, LogAppender> = {};
+
     log(level: LogLevel, category: string, msg: string): void {
         if (level < this.config.level) {
             return;
         }
         const formatted = this.formatter.format(level, category, msg);
+
+        const catAppender = this.categories[category];
+
+        if (catAppender) {
+            catAppender.append(level, category, formatted);
+        }
+
         for (const a of this.appenders) {
             a.append(level, category, formatted);
         }

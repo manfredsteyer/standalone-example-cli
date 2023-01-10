@@ -7,7 +7,7 @@ export abstract class LogAppender {
 }
 
 export class DefaultLogAppender implements LogAppender {
-    colorService = inject(ColorService, { optional: true });  
+    colorService = inject(ColorService, { optional: true, self: true });  
     
     append(level: LogLevel, category: string, msg: string): void {
         if (this.colorService) {
