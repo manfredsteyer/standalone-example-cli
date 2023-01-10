@@ -1,4 +1,5 @@
-import { Component } from "@angular/core";
+import { Component, inject } from "@angular/core";
+import { LoggerService } from "../shared/logger/logger";
 
 @Component({
   standalone: true,
@@ -6,4 +7,11 @@ import { Component } from "@angular/core";
   templateUrl: './home.component.html'
 })
 export class HomeComponent {
+  logger = inject(LoggerService);
+
+  constructor() {
+    this.logger.debug('home', 'My Debug Message');    
+    this.logger.info('home', 'My Info Message');    
+    this.logger.error('home', 'My Error Message');   
+  }
 }
