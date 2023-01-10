@@ -1,6 +1,6 @@
 import { ModuleWithProviders, NgModule } from '@angular/core';
 import { defaultConfig } from './logger-config';
-import { provideLogger } from './providers';
+import { provideLogger } from './provider';
 
 // NgModule for legacy code
 @NgModule({

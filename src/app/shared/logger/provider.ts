@@ -4,7 +4,7 @@ import { LOG_APPENDERS } from "./log-appender";
 import { LogFormatter } from "./log-formatter";
 import { defaultConfig, LoggerConfig } from "./logger-config";
 
-export function provideLogger(config: Partial<LoggerConfig>, ...features: LoggerFeature[]): EnvironmentProviders {
+export function provideLogger(config?: Partial<LoggerConfig>, ...features: LoggerFeature[]): EnvironmentProviders {
     
     const merged = { ...defaultConfig, ...config};
 

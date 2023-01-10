@@ -15,7 +15,8 @@ import { authInterceptor } from './app/shared/auth.interceptor';
 import { LegacyInterceptor } from './app/shared/legacy.interceptor';
 import { withColor } from './app/shared/logger/features';
 import { LogLevel } from './app/shared/logger/log-level';
-import { provideLogger } from './app/shared/logger/providers';
+import { provideLogger } from './app/shared/logger/provider';
+import { provideDiagnostics } from './app/shared/provide-diagnostics';
 import { TicketsModule } from './app/tickets/tickets.module';
 
 bootstrapApplication(AppComponent, {
@@ -37,11 +38,13 @@ bootstrapApplication(AppComponent, {
       // withDebugTracing(),
     ),
 
-    provideLogger(loggerConfig,
-      withColor({
-        debug: 3,
-      })
-    ),
+    // provideLogger(loggerConfig,
+    //   withColor({
+    //     debug: 3,
+    //   })
+    // ),
+
+    provideDiagnostics(),
 
     
     provideStore(reducer),
