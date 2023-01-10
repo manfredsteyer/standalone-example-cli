@@ -1,7 +1,7 @@
 import { EnvironmentProviders, ENVIRONMENT_INITIALIZER, inject, InjectionToken, makeEnvironmentProviders, Type } from "@angular/core";
 import { LoggerFeature } from "./features";
 import { LogAppender, LOG_APPENDERS } from "./log-appender";
-import { LogFormatter } from "./log-formatter";
+import { LogFormatter, LOG_FORMATTER } from "./log-formatter";
 import { LoggerService } from "./logger";
 import { defaultConfig, LoggerConfig } from "./logger-config";
 
@@ -21,8 +21,11 @@ export function provideLogger(config: Partial<LoggerConfig>, ...features: Logger
             provide: LoggerConfig,
             useValue: merged
         },
-        {
-            provide: LogFormatter,
+        (typeof merged.formatter === 'function' ) ? {
+            provide: LOG_FORMATTER,
+            useValue: merged.formatter
+        } : {
+            provide: LOG_FORMATTER,
             useClass: merged.formatter
         },
         merged.appenders.map(a => ({

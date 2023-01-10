@@ -25,7 +25,7 @@ export class LoggerModule {
         return {
             ngModule: LoggerModule,
             providers: [
-                provideCategory(category, appender);
+                provideCategory(category, appender)
             ]
         };
     }

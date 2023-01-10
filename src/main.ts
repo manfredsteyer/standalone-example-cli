@@ -1,9 +1,21 @@
 import { LayoutModule } from '@angular/cdk/layout';
-import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptors, withInterceptorsFromDi } from '@angular/common/http';
+import {
+  HTTP_INTERCEPTORS,
+  provideHttpClient,
+  withInterceptors,
+  withInterceptorsFromDi,
+} from '@angular/common/http';
 import { importProvidersFrom } from '@angular/core';
 import { bootstrapApplication } from '@angular/platform-browser';
 import { provideAnimations } from '@angular/platform-browser/animations';
-import { PreloadAllModules, provideRouter, RouterModule, withDebugTracing, withPreloading, withRouterConfig } from '@angular/router';
+import {
+  PreloadAllModules,
+  provideRouter,
+  RouterModule,
+  withDebugTracing,
+  withPreloading,
+  withRouterConfig,
+} from '@angular/router';
 import { provideEffects } from '@ngrx/effects';
 import { provideStore } from '@ngrx/store';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
@@ -21,24 +33,29 @@ import { TicketsModule } from './app/tickets/tickets.module';
 
 bootstrapApplication(AppComponent, {
   providers: [
-    
     provideHttpClient(
       withInterceptors([authInterceptor]),
-      withInterceptorsFromDi(),
+      withInterceptorsFromDi()
     ),
-    
+
     {
       provide: HTTP_INTERCEPTORS,
       useClass: LegacyInterceptor,
       multi: true,
     },
-    
-    provideRouter(APP_ROUTES, 
-      withPreloading(PreloadAllModules),
+
+    provideRouter(
+      APP_ROUTES,
+      withPreloading(PreloadAllModules)
       // withDebugTracing(),
     ),
 
-    provideLogger(loggerConfig,
+    provideLogger(
+      {
+        level: LogLevel.DEBUG,
+        appenders: [DefaultLogAppender],
+        formatter: (level, cat, msg) => [level, cat, msg].join(';'),
+      },
       withColor({
         debug: 3,
       })
@@ -46,7 +63,6 @@ bootstrapApplication(AppComponent, {
 
     // provideCategory('home', DefaultLogAppender),
 
-    
     provideStore(reducer),
     provideEffects([]),
     provideStoreDevtools(),
@@ -54,23 +70,8 @@ bootstrapApplication(AppComponent, {
 
     importProvidersFrom(TicketsModule),
     importProvidersFrom(LayoutModule),
-  ]
+  ],
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // {
 //   provide: INJECTOR_INITIALIZER,
