@@ -10,8 +10,12 @@ import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { reducer } from './app/+state';
 import { AppComponent } from './app/app.component';
 import { APP_ROUTES } from './app/app.routes';
+import { loggerConfig } from './app/logger.config';
 import { authInterceptor } from './app/shared/auth.interceptor';
 import { LegacyInterceptor } from './app/shared/legacy.interceptor';
+import { withColor } from './app/shared/logger/features';
+import { LogLevel } from './app/shared/logger/log-level';
+import { provideLogger } from './app/shared/logger/providers';
 import { TicketsModule } from './app/tickets/tickets.module';
 
 bootstrapApplication(AppComponent, {
@@ -33,6 +37,13 @@ bootstrapApplication(AppComponent, {
       // withDebugTracing(),
     ),
 
+    provideLogger(loggerConfig,
+      withColor({
+        debug: 3,
+      })
+    ),
+
+    
     provideStore(reducer),
     provideEffects([]),
     provideStoreDevtools(),
