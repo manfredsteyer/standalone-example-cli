@@ -2,7 +2,12 @@ import { Provider } from "@angular/core";
 import { ColorConfig, defaultColorConfig } from "./color-config";
 import { ColorService, DefaultColorService } from "./color.service";
 
-export type LoggerFeatureKind = 'COLOR' | 'OTHER-FEATURE';
+export enum LoggerFeatureKind {
+    COLOR,
+    OTHER_FEATURE,
+    ADDITIONAL_FEATURE
+}
+
 
 export interface LoggerFeature {
     kind: LoggerFeatureKind;
@@ -14,7 +19,7 @@ export function withColor(config?: Partial<ColorConfig>): LoggerFeature {
     const internal = { ...defaultColorConfig, ...config };
     
     return {
-        kind: 'COLOR',
+        kind: LoggerFeatureKind.COLOR,
         providers: [
             {
                 provide: ColorConfig,
