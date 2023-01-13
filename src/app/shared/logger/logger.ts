@@ -42,7 +42,7 @@ export class LoggerService {
       a.append(level, category, formatted);
     }
 
-    if (this.parentLogger) {
+    if (this.config.chaining && this.parentLogger) {
         this.parentLogger.log(level, category, msg);
     }
   }
