@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { LogAppender, LOG_APPENDERS } from './log-appender';
-import { LogFormatter, LOG_FORMATTER } from './log-formatter';
+import { LOG_FORMATTER } from './log-formatter';
 import { LogLevel } from './log-level';
 import { LoggerConfig } from './logger-config';
 
@@ -17,21 +17,12 @@ export class LoggerService {
 
   readonly categories: Record<string, LogAppender> = {};
 
-  private format(level: LogLevel, category: string, msg: string): string {
-    if (typeof this.formatter === 'function') {
-        return this.formatter(level, category, msg);
-    }
-    else {
-        return this.formatter.format(level, category, msg);
-    }
-  }
-
   log(level: LogLevel, category: string, msg: string): void {
     if (level < this.config.level) {
       return;
     }
 
-    const formatted = this.format(level, category, msg);
+    const formatted = this.formatter(level, category, msg);
     const catAppender = this.categories[category];
 
     if (catAppender) {

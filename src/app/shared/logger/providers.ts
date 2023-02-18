@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { LoggerFeature, LoggerFeatureKind } from './features';
 import { LogAppender, LOG_APPENDERS } from './log-appender';
-import { LogFormatter, LOG_FORMATTER } from './log-formatter';
+import { LOG_FORMATTER } from './log-formatter';
 import { LoggerService } from './logger';
 import { defaultConfig, LoggerConfig } from './logger-config';
 
@@ -31,15 +31,10 @@ export function provideLogger(
       provide: LoggerConfig,
       useValue: merged,
     },
-    typeof merged.formatter === 'function'
-      ? {
-          provide: LOG_FORMATTER,
-          useValue: merged.formatter,
-        }
-      : {
-          provide: LOG_FORMATTER,
-          useClass: merged.formatter,
-        },
+    {
+      provide: LOG_FORMATTER,
+      useValue: merged.formatter,
+    },
     merged.appenders.map((a) => ({
       provide: LOG_APPENDERS,
       useClass: a,
