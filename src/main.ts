@@ -46,19 +46,13 @@ bootstrapApplication(AppComponent, {
 
     provideRouter(
       APP_ROUTES,
-      withPreloading(PreloadAllModules)
+      withPreloading(PreloadAllModules),
       // withDebugTracing(),
     ),
 
     provideLogger(
-      {
-        level: LogLevel.DEBUG,
-        appenders: [DefaultLogAppender],
-        formatter: (level, cat, msg) => [level, cat, msg].join(';'),
-      },
-      withColor({
-        debug: 3,
-      })
+      loggerConfig,
+      withColor(),
     ),
 
     // provideCategory('home', DefaultLogAppender),
