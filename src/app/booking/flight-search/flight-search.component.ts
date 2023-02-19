@@ -8,25 +8,6 @@ import { signal } from "src/app/signals";
 import { Flight, FlightService } from "@demo/data";
 import { addMinutes } from "src/app/date-utils";
 
-type ComponentState = {
-  from: string;
-  to: string;
-  urgent: boolean;
-  flights: Flight[];
-  basket: Record<number, boolean>;
-};
-
-const initState: ComponentState = {
-  from: 'Hamburg',
-  to: 'Graz',
-  urgent: false,
-  flights: [], 
-  basket: {
-    3: true,
-    5: true
-  }
-}
-
 @Component({
   standalone: true,
   imports: [
@@ -46,7 +27,11 @@ export class FlightSearchComponent implements OnInit {
   private flightService = inject(FlightService);
   private route = inject(ActivatedRoute);
 
-  state = signal(initState);
+  from = signal('Hamburg');
+  to = signal('Graz');
+  flights = signal<Flight[]>([]);
+  basket = signal<Record<number, boolean>>({ 1: true });
+  urgent = signal(false);
 
   constructor() {
 
@@ -55,13 +40,8 @@ export class FlightSearchComponent implements OnInit {
       const to = p.get('to');
 
       if (from && to) {
-       
-        this.state.update(v => ({
-          ...v,
-          from,
-          to,
-        }));
-
+        this.from.set(from);
+        this.to.set(to);
         this.search();
       }
     });
@@ -70,40 +50,21 @@ export class FlightSearchComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  // Helper function for data binding
-  update(key: string, event: any): void {
-    this.state.update(v => ({
-      ...v,
-      [key]: event.target.value
-    }));
-  }
-
-  // Helper function for data binding
-  updateCheckbox(key: string, event: any): void {
-    this.state.update(v => ({
-      ...v,
-      [key]: event.target.checked
-    }));
-  }
-
   async search(): Promise<void> {
-    if (!this.state().from || !this.state().to) return;
+    if (!this.from() || !this.to()) return;
 
     const flights = await this.flightService.findAsPromise(
-      this.state().from, 
-      this.state().to,
-      this.state().urgent);
+      this.from(), 
+      this.to(),
+      this.urgent());
 
-    this.state.mutate(s => {
-      s.flights = flights;
-    });
-
+    this.flights.set(flights);
   }
 
   // Just delay the first flight
   delay(): void {
-    this.state.mutate(s => {
-      const flight = s.flights[0];
+    this.flights.mutate(f => {
+      const flight = f[0];
       flight.date = addMinutes(flight.date, 15);
     });
   }
