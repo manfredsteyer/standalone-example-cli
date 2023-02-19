@@ -6,7 +6,7 @@ import { LogLevel } from "./log-level";
 export abstract class LoggerConfig {
     abstract level: LogLevel;
     abstract chaining: boolean;
-    abstract formatter: LogFormatFn;
+    abstract formatter:     LogFormatFn;
     abstract appenders: Type<LogAppender>[];
 }
 

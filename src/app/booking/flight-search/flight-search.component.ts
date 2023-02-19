@@ -12,18 +12,6 @@ import { delayFlight } from "../+state/actions";
 import { ActivatedRoute } from "@angular/router";
 
 @Component({
-  standalone: true,
-  imports: [
-    // CommonModule, 
-    NgIf,
-    NgForOf,
-    AsyncPipe,
-    JsonPipe,
-
-    FormsModule, 
-    FlightCardComponent,
-    CityValidator,
-  ],
   selector: 'flight-search',
   templateUrl: './flight-search.component.html'
 })

@@ -4,11 +4,6 @@ import { Component, inject } from "@angular/core";
 import { Passenger} from '../../data/passenger';
 
 @Component({
-  standalone: true,
-  imports: [
-    JsonPipe,
-    NgFor,
-  ],
   selector: 'app-passenger-search',
   templateUrl: './passenger-search.component.html',
 })

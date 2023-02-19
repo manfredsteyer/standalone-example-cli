@@ -1,7 +1,6 @@
 import { Component, ViewChild, ViewContainerRef } from "@angular/core";
 
 @Component({
-  standalone: true,
   selector: 'app-about',
   template: `
     <h2 class="title">About</h2>

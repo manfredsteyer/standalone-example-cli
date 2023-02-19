@@ -1,6 +1,6 @@
 import { ModuleWithProviders, NgModule, Type } from '@angular/core';
 import { LogAppender } from './log-appender';
-import { defaultConfig } from './logger-config';
+import { defaultConfig, LoggerConfig } from './logger-config';
 import { provideCategory, provideLogger } from './providers';
 
 // NgModule for legacy code
@@ -12,7 +12,7 @@ import { provideCategory, provideLogger } from './providers';
 })
 export class LoggerModule { 
 
-    static forRoot(config = defaultConfig): ModuleWithProviders<LoggerModule> {
+    static forRoot(config: Partial<LoggerConfig> = defaultConfig): ModuleWithProviders<LoggerModule> {
         return {
             ngModule: LoggerModule,
             providers: [

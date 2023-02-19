@@ -2,7 +2,6 @@ import { Component, inject } from "@angular/core";
 import { LoggerService } from "../shared/logger/logger";
 
 @Component({
-  standalone: true,
   selector: 'app-home',
   templateUrl: './home.component.html'
 })

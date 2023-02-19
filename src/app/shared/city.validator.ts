@@ -2,7 +2,6 @@ import { Directive } from '@angular/core';
 import { Validator, AbstractControl, NG_VALIDATORS, ValidationErrors } from '@angular/forms';
 
 @Directive({
-    standalone: true,
     selector: 'input[appCity]',
     providers: [
         {
