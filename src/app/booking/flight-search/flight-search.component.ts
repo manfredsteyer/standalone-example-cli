@@ -1,25 +1,21 @@
-import { AsyncPipe, CommonModule, JsonPipe, NgForOf, NgIf } from "@angular/common";
-import { Component, inject, Inject, OnInit } from "@angular/core";
+import { AsyncPipe, JsonPipe, NgForOf, NgIf } from "@angular/common";
+import { Component, inject, OnInit } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { CityValidator } from "@demo/shared";
 import { FlightCardComponent } from "../flight-card/flight-card.component";
-import { Store } from "@ngrx/store";
-import { BookingSlice } from "../+state/reducers";
-import { selectFlights } from "../+state/selectors";
-import { take } from "rxjs";
-import { loadFlights } from "../+state/actions";
-import { delayFlight } from "../+state/actions";
 import { ActivatedRoute } from "@angular/router";
+import { signal } from "src/app/signals";
+import { Flight, FlightService } from "@demo/data";
+import { effect } from "src/app/signals/effect";
+import { addMinutes } from "src/app/date-utils";
 
 @Component({
   standalone: true,
   imports: [
-    // CommonModule, 
     NgIf,
     NgForOf,
     AsyncPipe,
     JsonPipe,
-
     FormsModule, 
     FlightCardComponent,
     CityValidator,
@@ -29,19 +25,19 @@ import { ActivatedRoute } from "@angular/router";
 })
 export class FlightSearchComponent implements OnInit {
 
-  private store = inject<Store<BookingSlice>>(Store); 
+  private flightService = inject(FlightService);
   private route = inject(ActivatedRoute);
 
-  from = 'Hamburg'; // in Germany
-  to = 'Graz'; // in Austria
-  urgent = false;
-  
-  flights$ = this.store.select(selectFlights);
-
-  basket: { [id: number]: boolean } = {
-    3: true,
-    5: true
-  };
+  state = signal({
+    from: 'Hamburg',
+    to: 'Graz',
+    urgent: false,
+    flights: [] as Flight[], 
+    basket: {
+      3: true,
+      5: true
+    } as Record<string, boolean> 
+  });
 
   constructor() {
     this.route.paramMap.subscribe(p => {
@@ -49,8 +45,13 @@ export class FlightSearchComponent implements OnInit {
       const to = p.get('to');
 
       if (from && to) {
-        this.from = from;
-        this.to = to;
+       
+        this.state.update(v => ({
+          ...v,
+          from,
+          to,
+        }));
+
         this.search();
       }
     });
@@ -59,21 +60,41 @@ export class FlightSearchComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  search(): void {
-    if (!this.from || !this.to) return;
-
-    this.store.dispatch(loadFlights({
-      from: this.from, 
-      to: this.to 
+  update(key: string, event: any): void {
+    this.state.update(v => ({
+      ...v,
+      [key]: event.target.value
     }));
   }
 
-  delay(): void {
-    this.flights$.pipe(take(1)).subscribe(flights => {
-      const id = flights[0].id;
-      this.store.dispatch(delayFlight({id}));
+  updateCheckbox(key: string, event: any): void {
+    this.state.update(v => ({
+      ...v,
+      [key]: event.target.checked
+    }));
+  }
+
+  search(): void {
+    if (!this.state().from || !this.state().to) return;
+
+    const flights = this.flightService.findAsSignal(
+      this.state().from, 
+      this.state().to,
+      this.state().urgent);
+
+    effect(() => {
+      this.state.mutate(s => {
+        s.flights = flights()
+      });
     });
   }
 
+  // Just delay the first flight
+  delay(): void {
+    this.state.mutate(s => {
+      const flight = s.flights[0];
+      flight.date = addMinutes(flight.date, 15);
+    });
+  }
 }
 
