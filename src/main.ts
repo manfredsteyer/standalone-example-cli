@@ -26,8 +26,11 @@ import { loggerConfig } from './app/logger.config';
 import { authInterceptor } from './app/shared/auth.interceptor';
 import { LegacyInterceptor } from './app/shared/legacy.interceptor';
 import { withColor } from './app/shared/logger/features';
-import { DefaultLogAppender } from './app/shared/logger/log-appender';
+import { DefaultLogAppender, LOG_APPENDERS } from './app/shared/logger/log-appender';
+import { defaultLogFormatFn, LOG_FORMATTER } from './app/shared/logger/log-formatter';
 import { LogLevel } from './app/shared/logger/log-level';
+import { LoggerService } from './app/shared/logger/logger';
+import { LoggerConfig } from './app/shared/logger/logger-config';
 import { provideCategory, provideLogger } from './app/shared/logger/providers';
 import { TicketsModule } from './app/tickets/tickets.module';
 
@@ -50,19 +53,6 @@ bootstrapApplication(AppComponent, {
       // withDebugTracing(),
     ),
 
-    provideLogger(
-      {
-        level: LogLevel.DEBUG,
-        appenders: [DefaultLogAppender],
-        formatter: (level, cat, msg) => [level, cat, msg].join(';'),
-      },
-      withColor({
-        debug: 3,
-      })
-    ),
-
-    // provideCategory('home', DefaultLogAppender),
-
     provideStore(reducer),
     provideEffects([]),
     provideStoreDevtools(),
@@ -70,11 +60,24 @@ bootstrapApplication(AppComponent, {
 
     importProvidersFrom(TicketsModule),
     importProvidersFrom(LayoutModule),
+
+    LoggerService,
+    {
+      provide: LoggerConfig,
+      useValue: {
+        level: LogLevel.DEBUG
+      },
+    },
+    {
+      provide: LOG_FORMATTER,
+      useValue: defaultLogFormatFn
+    },
+    {
+      provide: LOG_APPENDERS,
+      useClass: DefaultLogAppender,
+      multi: true,
+    },
+
   ],
 });
 
-// {
-//   provide: INJECTOR_INITIALIZER,
-//   multi: true,
-//   useValue: () => inject(InitService).init()
-// }
