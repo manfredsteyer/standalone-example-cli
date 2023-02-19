@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { firstValueFrom, Observable } from 'rxjs';
 import { Signal } from '../signals';
 import { fromObservable } from '../utils';
 import { Flight } from './flight';
@@ -9,7 +9,6 @@ import { Flight } from './flight';
   providedIn: 'root'
 })
 export class FlightService {
-  flights: Flight[] = [];
   baseUrl = `https://demo.angulararchitects.io/api`;
 
   constructor(private http: HttpClient) {}
@@ -31,6 +30,14 @@ export class FlightService {
     const flights$ = this.http.get<Flight[]>(url, { params, headers });
 
     return flights$;
+  }
+
+  async findAsPromise(
+    from: string,
+    to: string,
+    urgent: boolean = false
+  ): Promise<Flight[]> {
+    return await firstValueFrom(this.find(from, to, urgent));
   }
 
   findAsSignal(

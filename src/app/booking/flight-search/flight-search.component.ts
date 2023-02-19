@@ -8,6 +8,7 @@ import { signal } from "src/app/signals";
 import { Flight, FlightService } from "@demo/data";
 import { effect } from "src/app/signals/effect";
 import { addMinutes } from "src/app/date-utils";
+import { FlightSearchFacade } from "./flight-search.facade";
 
 @Component({
   standalone: true,
@@ -25,7 +26,7 @@ import { addMinutes } from "src/app/date-utils";
 })
 export class FlightSearchComponent implements OnInit {
 
-  private flightService = inject(FlightService);
+  private facade = inject(FlightSearchFacade);
   private route = inject(ActivatedRoute);
 
   state = signal({
@@ -40,6 +41,13 @@ export class FlightSearchComponent implements OnInit {
   });
 
   constructor() {
+
+    effect(() => {
+      this.state.mutate(s => {
+        s.flights = this.facade.flights()
+      });
+    });
+
     this.route.paramMap.subscribe(p => {
       const from = p.get('from');
       const to = p.get('to');
@@ -77,16 +85,11 @@ export class FlightSearchComponent implements OnInit {
   search(): void {
     if (!this.state().from || !this.state().to) return;
 
-    const flights = this.flightService.findAsSignal(
+    this.facade.load(
       this.state().from, 
       this.state().to,
       this.state().urgent);
 
-    effect(() => {
-      this.state.mutate(s => {
-        s.flights = flights()
-      });
-    });
   }
 
   // Just delay the first flight
