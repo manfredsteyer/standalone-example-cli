@@ -9,7 +9,6 @@ import { Flight } from './flight';
   providedIn: 'root'
 })
 export class FlightService {
-  flights: Flight[] = [];
   baseUrl = `https://demo.angulararchitects.io/api`;
 
   constructor(private http: HttpClient) {}
