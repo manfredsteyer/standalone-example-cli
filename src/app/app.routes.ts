@@ -18,8 +18,8 @@ export const APP_ROUTES: Routes = [
         path: 'flight-booking',
         canActivate: [() => inject(AuthService).isAuthenticated()],
         loadChildren: () =>
-            import('./booking/flight-booking.module')
-                    .then(m => m.FlightBookingModule)
+            import('./booking/flight-booking.routes')
+                .then(m => m.FLIGHT_BOOKING_ROUTES)
     },
     {
         path: 'about',
