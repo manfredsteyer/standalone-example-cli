@@ -9,6 +9,7 @@ import { Flight, FlightService } from "@demo/data";
 import { effect } from "src/app/signals/effect";
 import { addMinutes } from "src/app/date-utils";
 import { Store } from "@ngrx/store";
+import { BookingSlice } from "../+state/reducers";
 
 type ComponentState = {
   from: string;
@@ -45,6 +46,7 @@ const initState: ComponentState = {
 })
 export class FlightSearchComponent implements OnInit {
 
+  private store = inject<Store<BookingSlice>>(Store); 
   private route = inject(ActivatedRoute);
 
   state = signal(initState);
