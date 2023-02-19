@@ -5,17 +5,17 @@ import { CityValidator } from "@demo/shared";
 import { FlightCardComponent } from "../flight-card/flight-card.component";
 import { ActivatedRoute } from "@angular/router";
 import { signal } from "src/app/signals";
-import { Flight, FlightService } from "@demo/data";
 import { effect } from "src/app/signals/effect";
 import { addMinutes } from "src/app/date-utils";
+import { fromStore } from "src/app/utils";
+import { selectFlights } from "../+state/selectors";
 import { Store } from "@ngrx/store";
-import { BookingSlice } from "../+state/reducers";
+import { loadFlights } from "../+state/actions";
 
 type ComponentState = {
   from: string;
   to: string;
   urgent: boolean;
-  flights: Flight[];
   basket: Record<number, boolean>;
 };
 
@@ -23,7 +23,6 @@ const initState: ComponentState = {
   from: 'Hamburg',
   to: 'Graz',
   urgent: false,
-  flights: [], 
   basket: {
     3: true,
     5: true
@@ -46,9 +45,10 @@ const initState: ComponentState = {
 })
 export class FlightSearchComponent implements OnInit {
 
-  private store = inject<Store<BookingSlice>>(Store); 
   private route = inject(ActivatedRoute);
 
+  store = inject(Store);
+  flights = fromStore(selectFlights)
   state = signal(initState);
 
   constructor() {
@@ -92,24 +92,12 @@ export class FlightSearchComponent implements OnInit {
   search(): void {
     if (!this.state().from || !this.state().to) return;
 
-    const flights = this.flightService.findAsSignal(
-      this.state().from, 
-      this.state().to,
-      this.state().urgent);
-
-    effect(() => {
-      this.state.mutate(s => {
-        s.flights = flights()
-      });
-    });
+    this.store.dispatch(loadFlights(this.state().from, this.state().to));
   }
 
   // Just delay the first flight
   delay(): void {
-    this.state.mutate(s => {
-      const flight = s.flights[0];
-      flight.date = addMinutes(flight.date, 15);
-    });
+    
   }
 }
 
