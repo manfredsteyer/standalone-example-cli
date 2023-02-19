@@ -11,10 +11,7 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 import {
   PreloadAllModules,
   provideRouter,
-  RouterModule,
-  withDebugTracing,
   withPreloading,
-  withRouterConfig,
 } from '@angular/router';
 import { provideEffects } from '@ngrx/effects';
 import { provideStore } from '@ngrx/store';
@@ -26,9 +23,7 @@ import { loggerConfig } from './app/logger.config';
 import { authInterceptor } from './app/shared/auth.interceptor';
 import { LegacyInterceptor } from './app/shared/legacy.interceptor';
 import { withColor } from './app/shared/logger/features';
-import { DefaultLogAppender } from './app/shared/logger/log-appender';
-import { LogLevel } from './app/shared/logger/log-level';
-import { provideCategory, provideLogger } from './app/shared/logger/providers';
+import { provideLogger } from './app/shared/logger/providers';
 import { TicketsModule } from './app/tickets/tickets.module';
 
 bootstrapApplication(AppComponent, {
