@@ -9,6 +9,25 @@ import { Flight, FlightService } from "@demo/data";
 import { effect } from "src/app/signals/effect";
 import { addMinutes } from "src/app/date-utils";
 
+type ComponentState = {
+  from: string;
+  to: string;
+  urgent: boolean;
+  flights: Flight[];
+  basket: Record<number, boolean>;
+};
+
+const initState: ComponentState = {
+  from: 'Hamburg',
+  to: 'Graz',
+  urgent: false,
+  flights: [], 
+  basket: {
+    3: true,
+    5: true
+  }
+}
+
 @Component({
   standalone: true,
   imports: [
@@ -28,18 +47,10 @@ export class FlightSearchComponent implements OnInit {
   private flightService = inject(FlightService);
   private route = inject(ActivatedRoute);
 
-  state = signal({
-    from: 'Hamburg',
-    to: 'Graz',
-    urgent: false,
-    flights: [] as Flight[], 
-    basket: {
-      3: true,
-      5: true
-    } as Record<string, boolean> 
-  });
+  state = signal(initState);
 
   constructor() {
+
     this.route.paramMap.subscribe(p => {
       const from = p.get('from');
       const to = p.get('to');
@@ -60,6 +71,7 @@ export class FlightSearchComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  // Helper function for data binding
   update(key: string, event: any): void {
     this.state.update(v => ({
       ...v,
@@ -67,6 +79,7 @@ export class FlightSearchComponent implements OnInit {
     }));
   }
 
+  // Helper function for data binding
   updateCheckbox(key: string, event: any): void {
     this.state.update(v => ({
       ...v,
