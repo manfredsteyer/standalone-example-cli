@@ -8,6 +8,7 @@ import { signal } from "src/app/signals";
 import { Flight, FlightService } from "@demo/data";
 import { effect } from "src/app/signals/effect";
 import { addMinutes } from "src/app/date-utils";
+import { Store } from "@ngrx/store";
 
 type ComponentState = {
   from: string;
@@ -44,7 +45,6 @@ const initState: ComponentState = {
 })
 export class FlightSearchComponent implements OnInit {
 
-  private flightService = inject(FlightService);
   private route = inject(ActivatedRoute);
 
   state = signal(initState);
