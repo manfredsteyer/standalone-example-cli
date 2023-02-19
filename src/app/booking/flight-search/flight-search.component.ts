@@ -6,7 +6,6 @@ import { FlightCardComponent } from "../flight-card/flight-card.component";
 import { ActivatedRoute } from "@angular/router";
 import { signal } from "src/app/signals";
 import { Flight, FlightService } from "@demo/data";
-import { effect } from "src/app/signals/effect";
 import { addMinutes } from "src/app/date-utils";
 
 type ComponentState = {
@@ -87,19 +86,18 @@ export class FlightSearchComponent implements OnInit {
     }));
   }
 
-  search(): void {
+  async search(): Promise<void> {
     if (!this.state().from || !this.state().to) return;
 
-    const flights = this.flightService.findAsSignal(
+    const flights = await this.flightService.findAsPromise(
       this.state().from, 
       this.state().to,
       this.state().urgent);
 
-    effect(() => {
-      this.state.mutate(s => {
-        s.flights = flights()
-      });
+    this.state.mutate(s => {
+      s.flights = flights;
     });
+
   }
 
   // Just delay the first flight

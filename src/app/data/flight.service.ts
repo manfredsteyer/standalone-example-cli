@@ -1,17 +1,25 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { firstValueFrom, Observable } from 'rxjs';
 import { Signal } from '../signals';
 import { fromObservable } from '../utils';
 import { Flight } from './flight';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class FlightService {
   baseUrl = `https://demo.angulararchitects.io/api`;
 
   constructor(private http: HttpClient) {}
+
+  async findAsPromise(
+    from: string,
+    to: string,
+    urgent: boolean = false
+  ): Promise<Flight[]> {
+    return firstValueFrom(this.find(from, to, urgent));
+  }
 
   find(
     from: string,
@@ -50,5 +58,4 @@ export class FlightService {
 
     return fromObservable(flights$, []);
   }
- 
 }
