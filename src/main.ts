@@ -25,7 +25,7 @@ import { withColor } from './app/shared/logger/features';
 import { DefaultLogAppender } from './app/shared/logger/log-appender';
 import { LogLevel } from './app/shared/logger/log-level';
 import { provideLogger } from './app/shared/logger/providers';
-import { TicketsModule } from './app/tickets/tickets.module';
+import { TicketsModule } from './app/my-tickets/tickets.module';
 
 bootstrapApplication(AppComponent, {
   providers: [
