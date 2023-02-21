@@ -33,7 +33,7 @@ export class FlightSearchComponent implements OnInit {
     from: 'Hamburg',
     to: 'Graz',
     urgent: false,
-    flights: [] as Flight[], 
+    flights: this.facade.flights, // Signal in a Signal?
     basket: {
       3: true,
       5: true
@@ -41,12 +41,6 @@ export class FlightSearchComponent implements OnInit {
   });
 
   constructor() {
-
-    effect(() => {
-      this.state.mutate(s => {
-        s.flights = this.facade.flights()
-      });
-    });
 
     this.route.paramMap.subscribe(p => {
       const from = p.get('from');
@@ -95,7 +89,7 @@ export class FlightSearchComponent implements OnInit {
   // Just delay the first flight
   delay(): void {
     this.state.mutate(s => {
-      const flight = s.flights[0];
+      const flight = s.flights()[0];
       flight.date = addMinutes(flight.date, 15);
     });
   }

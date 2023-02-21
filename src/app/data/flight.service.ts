@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { firstValueFrom, Observable } from 'rxjs';
+import { firstValueFrom, Observable, of } from 'rxjs';
 import { Signal } from '../signals';
 import { fromObservable } from '../utils';
 import { Flight } from './flight';
@@ -29,7 +29,12 @@ export class FlightService {
     const headers = new HttpHeaders().set('Accept', 'application/json');
     const flights$ = this.http.get<Flight[]>(url, { params, headers });
 
-    return flights$;
+    // return flights$;
+    return of([
+      { id: 1, from: 'A', to: 'B', date: new Date().toISOString(), delayed: false},
+      { id: 2, from: 'C', to: 'D', date: new Date().toISOString(), delayed: false},
+
+    ]);
   }
 
   async findAsPromise(
