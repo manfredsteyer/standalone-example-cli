@@ -1,8 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { Flight, FlightService } from '@demo/data';
 import { addMinutes } from 'src/app/date-utils';
-import { effect } from 'src/app/signals/effect';
-import { signal } from '../../signals';
+import { Signal, signal } from '../../signals';
 
 type ComponentState = {
   from: string;
@@ -27,24 +26,28 @@ const initState: ComponentState = {
 export class FlightSearchFacade {
   private flightService = inject(FlightService);
 
-  state = signal(initState);
+  #state = signal(initState);
+  readonly state = this.#state as Signal<ComponentState>; // Not writeable anymore
 
-  load(): void {
-    const flights = this.flightService.findAsSignal(
-      this.state().from,
-      this.state().to,
-      this.state().urgent
+  async load(): Promise<void> {
+    const flights = await this.flightService.findAsPromise(
+      this.#state().from,
+      this.#state().to,
+      this.#state().urgent
     );
 
-    effect(() => {
-      this.state.mutate((s) => {
-        s.flights = flights();
+      this.#state.mutate((s) => {
+        s.flights = flights;
       });
-    });
+  }
+
+  patch(state: Partial<ComponentState>): void {
+    // Validate incoming state here
+    this.#state.update(s => ({ ...s, ...state }));
   }
 
   delay(): void {
-    this.state.mutate((s) => {
+    this.#state.mutate((s) => {
       const flight = s.flights[0];
       flight.date = addMinutes(flight.date, 15);
     });

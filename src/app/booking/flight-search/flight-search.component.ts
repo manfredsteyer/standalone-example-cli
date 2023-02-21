@@ -35,11 +35,10 @@ export class FlightSearchComponent implements OnInit {
 
       if (from && to) {
        
-        this.state.update(v => ({
-          ...v,
+        this.facade.patch({
           from,
           to,
-        }));
+        });
 
         this.search();
       }
@@ -51,18 +50,16 @@ export class FlightSearchComponent implements OnInit {
 
   // Helper function for data binding
   update(key: string, event: any): void {
-    this.state.update(v => ({
-      ...v,
+    this.facade.patch({
       [key]: event.target.value
-    }));
+    });
   }
 
   // Helper function for data binding
   updateCheckbox(key: string, event: any): void {
-    this.state.update(v => ({
-      ...v,
+    this.facade.patch({
       [key]: event.target.checked
-    }));
+    });
   }
 
   search(): void {
