@@ -29,12 +29,8 @@ export class FlightService {
     const headers = new HttpHeaders().set('Accept', 'application/json');
     const flights$ = this.http.get<Flight[]>(url, { params, headers });
 
-    // return flights$;
-    return of([
-      { id: 1, from: 'A', to: 'B', date: new Date().toISOString(), delayed: false},
-      { id: 2, from: 'C', to: 'D', date: new Date().toISOString(), delayed: false},
-
-    ]);
+    return flights$;
+  
   }
 
   async findAsPromise(
