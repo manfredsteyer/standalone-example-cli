@@ -4,8 +4,10 @@ import { Component, inject } from "@angular/core";
 import { Passenger} from '../../data/passenger';
 
 @Component({
-  selector: 'app-passenger-search',
-  templateUrl: './passenger-search.component.html',
+    selector: 'app-passenger-search',
+    templateUrl: './passenger-search.component.html',
+    standalone: true,
+    imports: [NgFor]
 })
 export class PassengerSearchComponent {
   private http = inject(HttpClient);

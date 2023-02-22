@@ -1,4 +1,4 @@
-import { AsyncPipe, CommonModule, JsonPipe, NgForOf, NgIf } from "@angular/common";
+import { AsyncPipe, CommonModule, JsonPipe, NgForOf, NgIf, NgFor } from "@angular/common";
 import { Component, inject, Inject, OnInit } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { CityValidator } from "@demo/shared";
@@ -10,10 +10,13 @@ import { take } from "rxjs";
 import { loadFlights } from "../+state/actions";
 import { delayFlight } from "../+state/actions";
 import { ActivatedRoute } from "@angular/router";
+import { CityValidator as CityValidator_1 } from "../../shared/city.validator";
 
 @Component({
-  selector: 'flight-search',
-  templateUrl: './flight-search.component.html'
+    selector: 'flight-search',
+    templateUrl: './flight-search.component.html',
+    standalone: true,
+    imports: [FormsModule, CityValidator, NgIf, NgFor, FlightCardComponent, AsyncPipe, JsonPipe]
 })
 export class FlightSearchComponent implements OnInit {
 
