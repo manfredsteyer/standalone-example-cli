@@ -1,11 +1,12 @@
 import { Component, ViewChild, ViewContainerRef } from "@angular/core";
 
 @Component({
-  selector: 'app-about',
-  template: `
+    selector: 'app-about',
+    template: `
     <h2 class="title">About</h2>
     <ng-container #container></ng-container>
-  `
+  `,
+    standalone: true
 })
 export class AboutComponent {
   title = 'Standalone Demo';
