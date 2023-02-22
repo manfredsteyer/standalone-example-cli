@@ -68,9 +68,3 @@ bootstrapApplication(AppComponent, {
     importProvidersFrom(LayoutModule),
   ],
 });
-
-// {
-//   provide: INJECTOR_INITIALIZER,
-//   multi: true,
-//   useValue: () => inject(InitService).init()
-// }
