@@ -12,18 +12,9 @@ import { LOG_FORMATTER } from './log-formatter';
 import { LoggerService } from './logger';
 import { defaultConfig, LoggerConfig } from './logger-config';
 
-export function provideLogger(
-  config: Partial<LoggerConfig>,
-  ...features: LoggerFeature[]
-): EnvironmentProviders {
+export function provideLogger(config: Partial<LoggerConfig>): EnvironmentProviders {
+  
   const merged = { ...defaultConfig, ...config };
-
-  const colorFeatures =
-    features?.filter((f) => f.kind === LoggerFeatureKind.COLOR)?.length ?? 0;
-
-  if (colorFeatures > 1) {
-    throw new Error('Only one color feature allowed for logger!');
-  }
 
   return makeEnvironmentProviders([
     LoggerService,
@@ -40,7 +31,6 @@ export function provideLogger(
       useClass: a,
       multi: true,
     })),
-    features?.map((f) => f.providers),
   ]);
 }
 
