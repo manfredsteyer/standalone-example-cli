@@ -97,6 +97,26 @@ class SettableSignalImpl<T> implements Producer {
   }
 }
 
+// export interface ArraySignal<T> extends SettableSignal<SettableSignal<T>[]> {
+//   length(): number;
+//   at(index: number): T;
+// }
+
+// export class ArraySignalImpl<T> extends SettableSignalImpl<SettableSignalImpl<T>[]> {
+  
+//   constructor(private value: T[], private equal: ValueEqualityFn<T[]>) {
+//     super(value, equal);
+//   }
+
+//   length(): number {
+//     return super.signal().length;
+//   }
+
+//   at(index: number): T {
+//     return super.signal()[index].signal();
+//   }
+// }
+
 /**
  * Create a `Signal` that can be set or updated directly.
  *
@@ -115,3 +135,18 @@ export function signal<T>(
   //@ts-ignore // I added this tsignore as it wasn't compiling
   return res;
 }
+
+// export function array<T>(
+//   initialValue: T[],
+//   equal: ValueEqualityFn<T> = defaultEquals
+// ): ArraySignal<T> {
+//   const sig = new ArraySignalImpl(initialValue, equal);
+
+//   const res = markSignal(sig.signal.bind(sig), {
+//     set: sig.set.bind(sig),
+//     update: sig.update.bind(sig),
+//     mutate: sig.mutate.bind(sig),
+//   });
+//   //@ts-ignore // I added this tsignore as it wasn't compiling
+//   return res;
+// }
