@@ -4,9 +4,10 @@ import { FormsModule } from "@angular/forms";
 import { CityValidator } from "@demo/shared";
 import { FlightCardComponent } from "../flight-card/flight-card.component";
 import { ActivatedRoute } from "@angular/router";
-import { signal } from "src/app/signals";
+import { computed, signal } from "src/app/signals";
 import { Flight, FlightService } from "@demo/data";
 import { addMinutes } from "src/app/date-utils";
+import { effect } from "src/app/signals/effect";
 
 @Component({
   standalone: true,
@@ -33,6 +34,8 @@ export class FlightSearchComponent implements OnInit {
   basket = signal<Record<number, boolean>>({ 1: true });
   urgent = signal(false);
 
+  flightRoute = computed(() => this.from() + ' to ' + this.to());
+
   constructor() {
 
     this.route.paramMap.subscribe(p => {
@@ -45,6 +48,20 @@ export class FlightSearchComponent implements OnInit {
         this.search();
       }
     });
+
+    setTimeout(() => {
+      this.from.set('London');
+      this.to.set('Paris');
+    }, 2000);
+
+    effect(() => {
+      console.log('route:', this.flightRoute())
+    });
+
+    effect(() => {
+      console.log('result:', this.flights())
+    });
+
   }
 
   ngOnInit(): void {

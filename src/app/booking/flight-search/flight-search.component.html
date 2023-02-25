@@ -33,7 +33,8 @@
     </button>
 
     <div *ngIf="flights().length > 0">
-      {{flights.length}} flights found!
+      
+        {{flights().length}} flights from <b>{{flightRoute()}}</b> found!
     </div>
 
   </div>
