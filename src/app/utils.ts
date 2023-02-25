@@ -35,9 +35,7 @@ export function injectStore() {
 
 type DeepSignal<Type> = {
   [Property in keyof Type]: 
-    Type[Property] extends Array<object> ? 
-      SettableSignal<DeepArraySignal<DeepSignal<Type[Property][0]>>>  
-    : Type[Property] extends object ? 
+    Type[Property] extends object ? 
       SettableSignal<DeepSignal<Type[Property]>>  
     : SettableSignal<Type[Property]>;
 } | null;
@@ -45,11 +43,6 @@ type DeepSignal<Type> = {
 export function nest<T>(value: T): SettableSignal<DeepSignal<T>> {
   if (value === null) {
     return signal(null)
-  }
-  else if (Array.isArray(value)) {
-    const signals = value.map(v => nest(v));
-    const wrapped = new DeepArraySignal(signals) as DeepSignal<T>;
-    return signal(wrapped);
   }
   else if (typeof value === 'object') {
     const deep = {} as DeepSignal<T>;
@@ -68,29 +61,3 @@ export function nest<T>(value: T): SettableSignal<DeepSignal<T>> {
 export function flatten<T>(value: DeepSignal<T>): T {
   return value as T;
 }
-
-class DeepArraySignal<T> {
-  constructor(private signals: SettableSignal<T>[]) {
-  }
-
-  set(signals: SettableSignal<T>[]): void {
-    this.signals = signals;
-  }
-
-  update(updateFn: (value: SettableSignal<T>[]) => SettableSignal<T>[]): void {
-    this.signals = updateFn(this.signals);
-  }
-
-  mutate(mutatorFn: (value: SettableSignal<T>[]) => void): void {
-    mutatorFn(this.signals);
-  }
-
-  length(): number {
-    return this.signals.length;
-  }
-
-  at(index: number): T {
-    return this.signals[index]();
-  }
-}
-
