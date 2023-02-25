@@ -4,7 +4,7 @@
 
   <div class="form-group">
     <label>From:</label>
-    <input [value]="from()" (change)="from.set($any($event).target.value)" appCity name="from" class="form-control">
+    <input [value]="from()" (keydown)="from.set($any($event).target.value)" appCity name="from" class="form-control">
   </div>
 
   <div class="alert alert-warning" *ngIf="form?.controls?.['from']?.hasError('appCity')">
@@ -13,31 +13,13 @@
 
   <div class="form-group">
     <label>To:</label>
-    <input [value]="to()" (change)="to.set($any($event).target.value)" class="form-control">
-  </div>
-  <div class="form-group">
-    <label>
-      <input [value]="urgent()" (change)="urgent.set($any($event).target.checked)" name="urgent" type="checkbox">
-      Urgent (When it's urgent it fails -- like in real life ;-))
-
-    </label>
+    <input [value]="to()" (keydown)="to.set($any($event).target.value)" class="form-control">
   </div>
 
-  <div class="form-group">
-    <button (click)="search()" [disabled]="!from() || !to()" class="btn btn-default">
-      Search
-    </button>
-
-    <button *ngIf="flights().length > 0" class="btn btn-default" (click)="delay()">
-      Delay 1st Flight
-    </button>
-
-    <div *ngIf="flights().length > 0">
-      
-        {{flights().length}} flights from <b>{{flightRoute()}}</b> found!
-    </div>
-
+  <div *ngIf="loading()">
+    <i>Loading...</i>
   </div>
+
 </form>
 
 <div class="row">
