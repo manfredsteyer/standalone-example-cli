@@ -27,7 +27,7 @@ const initState: ComponentState = {
       id: 1,
       from: 'G',
       to: 'H',
-      date: 'now',
+      date: '2022-02-02',
       delayed: false
     }
   ],
@@ -58,12 +58,13 @@ export class FlightSearchComponent implements OnInit {
   state = signal(initState);
 
   nested = nest(initState);
+  flat = flatten(this.nested());
+
+  flatten = flatten;
 
   constructor() {
-
-    // const x = flatten(this.nested().flights());
-
-    debugger;
+    const date = this.nested().flights().at(0).date();
+    console.log('date', date);
 
     this.route.paramMap.subscribe((p) => {
       const from = p.get('from');
