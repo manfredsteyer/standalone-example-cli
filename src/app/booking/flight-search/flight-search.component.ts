@@ -63,6 +63,7 @@ export class FlightSearchComponent implements OnInit {
   flatten = flatten;
 
   constructor() {
+    
     const date = this.nested().flights().at(0).date();
     console.log('date', date);
 
