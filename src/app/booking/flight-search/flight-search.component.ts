@@ -1,14 +1,14 @@
-import { AsyncPipe, JsonPipe, NgForOf, NgIf } from "@angular/common";
-import { Component, inject, OnInit } from "@angular/core";
-import { FormsModule } from "@angular/forms";
-import { CityValidator } from "@demo/shared";
-import { FlightCardComponent } from "../flight-card/flight-card.component";
-import { ActivatedRoute } from "@angular/router";
-import { computed, signal } from "src/app/signals";
-import { FlightService } from "@demo/data";
-import { effect } from "src/app/signals/effect";
-import { fromSignal, fromObservable } from "src/app/interop";
-import { combineLatest, debounceTime, switchMap, tap } from "rxjs";
+import { AsyncPipe, JsonPipe, NgForOf, NgIf } from '@angular/common';
+import { Component, inject, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { CityValidator } from '@demo/shared';
+import { FlightCardComponent } from '../flight-card/flight-card.component';
+import { ActivatedRoute } from '@angular/router';
+import { computed, signal } from 'src/app/signals';
+import { FlightService } from '@demo/data';
+import { effect } from 'src/app/signals/effect';
+import { fromSignal, fromObservable } from 'src/app/interop';
+import { combineLatest, debounceTime, switchMap, tap } from 'rxjs';
 
 @Component({
   standalone: true,
@@ -17,15 +17,14 @@ import { combineLatest, debounceTime, switchMap, tap } from "rxjs";
     NgForOf,
     AsyncPipe,
     JsonPipe,
-    FormsModule, 
+    FormsModule,
     FlightCardComponent,
     CityValidator,
   ],
   selector: 'flight-search',
-  templateUrl: './flight-search.component.html'
+  templateUrl: './flight-search.component.html',
 })
 export class FlightSearchComponent implements OnInit {
-
   private flightService = inject(FlightService);
   private route = inject(ActivatedRoute);
 
@@ -41,19 +40,17 @@ export class FlightSearchComponent implements OnInit {
   from$ = fromSignal(this.from);
   to$ = fromSignal(this.to);
 
-  flights$ = combineLatest({from: this.from$, to: this.to$})
-    .pipe(
-      debounceTime(300),
-      tap(() => this.loading.set(true)),
-      switchMap(combi => this.flightService.find(combi.from, combi.to)),
-      tap(() => this.loading.set(false)),
-    );
+  flights$ = combineLatest({ from: this.from$, to: this.to$ }).pipe(
+    debounceTime(300),
+    tap(() => this.loading.set(true)),
+    switchMap((combi) => this.flightService.find(combi.from, combi.to)),
+    tap(() => this.loading.set(false))
+  );
 
   flights = fromObservable(this.flights$, []);
 
   constructor() {
-
-    this.route.paramMap.subscribe(p => {
+    this.route.paramMap.subscribe((p) => {
       const from = p.get('from');
       const to = p.get('to');
 
@@ -64,17 +61,13 @@ export class FlightSearchComponent implements OnInit {
     });
 
     effect(() => {
-      console.log('route:', this.flightRoute())
+      console.log('route:', this.flightRoute());
     });
 
     effect(() => {
-      console.log('result:', this.flights())
+      console.log('result:', this.flights());
     });
-
   }
 
-  ngOnInit(): void {
-  }
-
+  ngOnInit(): void {}
 }
-
