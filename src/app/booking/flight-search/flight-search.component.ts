@@ -63,11 +63,6 @@ export class FlightSearchComponent implements OnInit {
       }
     });
 
-    setTimeout(() => {
-      this.from.set('London');
-      this.to.set('Paris');
-    }, 2000);
-
     effect(() => {
       console.log('route:', this.flightRoute())
     });
