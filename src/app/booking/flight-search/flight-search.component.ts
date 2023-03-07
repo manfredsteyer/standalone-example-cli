@@ -84,6 +84,18 @@ export class FlightSearchComponent implements OnInit {
       const flight = f[0];
       flight.date = addMinutes(flight.date, 15);
     });
+
+    this.flights.update(f => {
+      const flight = f[0];
+      const date = addMinutes(flight.date, 15);
+      const updated = {...flight, date};
+
+      return [
+        updated,
+        ...f.slice(1)
+      ];
+    });
+
   }
 }
 
