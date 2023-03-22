@@ -1,6 +1,6 @@
 import { Component, inject } from "@angular/core";
-import { RouterLink, RouterLinkActive, RouterOutlet } from "@angular/router";
-import { LoggerService } from "../shared/logger/logger";
+import { RouterLink, RouterOutlet } from "@angular/router";
+import { LoggerService } from "../../shared/util-logger";
 
 @Component({
   standalone: true,

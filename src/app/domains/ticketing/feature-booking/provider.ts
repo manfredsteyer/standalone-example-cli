@@ -2,9 +2,8 @@ import { provideHttpClient, withInterceptors, withRequestsMadeViaParent } from "
 import { EnvironmentProviders, makeEnvironmentProviders, Provider } from "@angular/core";
 import { provideEffects } from "@ngrx/effects";
 import { provideState } from "@ngrx/store";
-import { combineEnvironmentProviders } from "../shared/combine-environment-providers";
-import { BookingEffects } from "./+state/effects";
-import { bookingFeature } from "./+state/reducers";
+import { combineEnvironmentProviders } from "../../shared/util-common/combine-environment-providers";
+import { BookingEffects, bookingFeature } from "../data";
 import { bookingInterceptor } from "./utils/booking.interceptor";
 
 export function provideBooking(): EnvironmentProviders {

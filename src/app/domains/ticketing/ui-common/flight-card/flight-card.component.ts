@@ -1,8 +1,8 @@
 import { CommonModule } from "@angular/common";
 import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { RouterModule } from "@angular/router";
-import { CityPipe } from "@demo/shared";
-import { Flight, initFlight } from "@demo/data";
+import { CityPipe } from "src/app/domains/shared/util-common";
+import { Flight, initFlight } from "../../data";
 
 @Component({
   standalone: true,

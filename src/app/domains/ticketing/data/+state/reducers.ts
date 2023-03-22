@@ -1,5 +1,5 @@
-import { Flight } from "@demo/data";
 import { createFeature, createReducer, on } from "@ngrx/store";
+import { Flight } from "../flight";
 import { delayFlight, loadFlightsSuccess } from "./actions";
 
 export const BOOKING_FEATURE_KEY = 'booking';

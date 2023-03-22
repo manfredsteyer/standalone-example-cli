@@ -13,7 +13,7 @@ import { provideEffects } from '@ngrx/effects';
 import { provideState, provideStore } from '@ngrx/store';
 import { BookingEffects } from '../+state/effects';
 import { bookingFeature } from '../+state/reducers';
-import { FlightCardComponent } from '../flight-card/flight-card.component';
+import { FlightCardComponent } from '../../ui-common/flight-card/flight-card.component';
 
 import { FlightSearchComponent } from './flight-search.component';
 

@@ -1,8 +1,5 @@
-import { DefaultLogAppender } from "./shared/logger/log-appender";
-import { LogLevel } from "./shared/logger/log-level";
-import { LoggerConfig } from "./shared/logger/logger-config";
-import { CustomAppender } from "./shared/custom-appender";
-import { defaultLogFormatFn } from "./shared/logger/log-formatter";
+import { CustomAppender } from "./domains/shared/util-common/custom-appender";
+import { DefaultLogAppender, defaultLogFormatFn, LoggerConfig, LogLevel } from "./domains/shared/util-logger";
 
 export const loggerConfig: Partial<LoggerConfig> = {
     level: LogLevel.DEBUG,

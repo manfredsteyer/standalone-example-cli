@@ -1,5 +1,5 @@
-import { Flight } from "@demo/data";
 import { createAction, props } from "@ngrx/store";
+import { Flight } from "../flight";
 
 export const loadFlights = createAction(
     "[booking] loadFlights",

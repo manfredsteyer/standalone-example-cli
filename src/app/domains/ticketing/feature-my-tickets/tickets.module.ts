@@ -1,9 +1,9 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FlightCardComponent } from '../booking/flight-card/flight-card.component';
 import { MyTicketsComponent } from './my-tickets.component';
 import { RouterModule } from '@angular/router';
 import { TicketService } from './ticket.service';
+import { FlightCardComponent } from '../ui-common/flight-card';
 
 // This is for demonstrating the interaction between
 // code that uses NgModules and code that doesn't.

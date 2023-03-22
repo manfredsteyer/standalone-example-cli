@@ -19,13 +19,10 @@ import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { reducer } from './app/+state';
 import { AppComponent } from './app/app.component';
 import { APP_ROUTES } from './app/app.routes';
-import { authInterceptor } from './app/shared/auth.interceptor';
-import { LegacyInterceptor } from './app/shared/legacy.interceptor';
-import { withColor } from './app/shared/logger/features';
-import { DefaultLogAppender } from './app/shared/logger/log-appender';
-import { LogLevel } from './app/shared/logger/log-level';
-import { provideLogger } from './app/shared/logger/providers';
-import { TicketsModule } from './app/my-tickets/tickets.module';
+import { authInterceptor } from './app/domains/shared/util-auth';
+import { LegacyInterceptor } from './app/domains/shared/util-common/legacy.interceptor';
+import { DefaultLogAppender, LogLevel, provideLogger, withColor } from './app/domains/shared/util-logger';
+import { TicketsModule } from './app/domains/ticketing/feature-my-tickets';
 
 bootstrapApplication(AppComponent, {
   providers: [

@@ -1,15 +1,12 @@
-import { AsyncPipe, CommonModule, JsonPipe, NgForOf, NgIf } from "@angular/common";
-import { Component, inject, Inject, OnInit } from "@angular/core";
+import { AsyncPipe, JsonPipe, NgForOf, NgIf } from "@angular/common";
+import { Component, inject, OnInit } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { CityValidator } from "@demo/shared";
-import { FlightCardComponent } from "../flight-card/flight-card.component";
 import { Store } from "@ngrx/store";
-import { BookingSlice } from "../+state/reducers";
-import { selectFlights } from "../+state/selectors";
 import { take } from "rxjs";
-import { loadFlights } from "../+state/actions";
-import { delayFlight } from "../+state/actions";
 import { ActivatedRoute } from "@angular/router";
+import { BookingSlice, delayFlight, loadFlights, selectFlights } from "../../data";
+import { CityValidator } from "src/app/domains/shared/util-common";
+import { FlightCardComponent } from "../../ui-common/flight-card";
 
 @Component({
   standalone: true,

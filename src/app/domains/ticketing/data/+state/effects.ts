@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
-import { FlightService } from "@demo/data";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { map, switchMap } from "rxjs";
+import { FlightService } from "../flight.service";
 import { loadFlights, loadFlightsSuccess } from "./actions";
 
 @Injectable({

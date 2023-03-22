@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { TicketsModule } from '../my-tickets/tickets.module';
+import { TicketsModule } from '../feature-my-tickets';
 
 @Component({
   selector: 'app-next-flight',
