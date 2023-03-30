@@ -57,7 +57,7 @@ bootstrapApplication(AppComponent, {
     // provideCategory('home', DefaultLogAppender),
 
     provideStore(reducer),
-    provideEffects([]),
+    provideEffects(),
     provideStoreDevtools(),
     provideAnimations(),
 

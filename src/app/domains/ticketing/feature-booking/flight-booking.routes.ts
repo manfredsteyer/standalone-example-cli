@@ -25,7 +25,7 @@ export const FLIGHT_BOOKING_ROUTES: Routes = [
     providers: [
       // NGRX
       provideState(bookingFeature),
-      provideEffects([BookingEffects]),
+      provideEffects(BookingEffects),
 
       // provideCategory('booking', DefaultLogAppender),
       provideLogger(
