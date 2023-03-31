@@ -4,7 +4,7 @@ import { LoggerService } from "../../shared/util-logger";
 
 @Component({
   standalone: true,
-  selector: 'flight-booking',
+  selector: 'app-flight-booking',
   imports: [
     RouterOutlet,
     RouterLink,
@@ -17,5 +17,5 @@ export class FlightBookingComponent {
   constructor() {
     this.logger.info('booking', 'Hello from Booking');
   }
-  
+
 }

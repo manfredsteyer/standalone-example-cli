@@ -1,4 +1,4 @@
-import { Component, ViewChild, ViewContainerRef } from "@angular/core";
+import {Component, OnInit, ViewChild, ViewContainerRef} from "@angular/core";
 
 @Component({
   standalone: true,
@@ -8,7 +8,7 @@ import { Component, ViewChild, ViewContainerRef } from "@angular/core";
     <ng-container #container></ng-container>
   `
 })
-export class AboutComponent {
+export class AboutComponent implements OnInit{
   title = 'Standalone Demo';
 
   @ViewChild('container', {read: ViewContainerRef})

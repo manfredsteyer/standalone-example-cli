@@ -1,38 +1,38 @@
-import { AsyncPipe, JsonPipe, NgForOf, NgIf } from "@angular/common";
-import { Component, inject, OnInit } from "@angular/core";
-import { FormsModule } from "@angular/forms";
-import { Store } from "@ngrx/store";
-import { take } from "rxjs";
-import { ActivatedRoute } from "@angular/router";
-import { BookingSlice, delayFlight, loadFlights, selectFlights } from "../../data";
-import { CityValidator } from "src/app/domains/shared/util-common";
-import { FlightCardComponent } from "../../ui-common/flight-card";
+import {AsyncPipe, JsonPipe, NgForOf, NgIf} from "@angular/common";
+import {Component, inject} from "@angular/core";
+import {FormsModule} from "@angular/forms";
+import {Store} from "@ngrx/store";
+import {take} from "rxjs";
+import {ActivatedRoute} from "@angular/router";
+import {BookingSlice, delayFlight, loadFlights, selectFlights} from "../../data";
+import {CityValidator} from "src/app/domains/shared/util-common";
+import {FlightCardComponent} from "../../ui-common/flight-card";
 
 @Component({
   standalone: true,
   imports: [
-    // CommonModule, 
+    // CommonModule,
     NgIf,
     NgForOf,
     AsyncPipe,
     JsonPipe,
 
-    FormsModule, 
+    FormsModule,
     FlightCardComponent,
     CityValidator,
   ],
-  selector: 'flight-search',
+  selector: 'app-flight-search',
   templateUrl: './flight-search.component.html'
 })
-export class FlightSearchComponent implements OnInit {
+export class FlightSearchComponent  {
 
-  private store = inject<Store<BookingSlice>>(Store); 
+  private store = inject<Store<BookingSlice>>(Store);
   private route = inject(ActivatedRoute);
 
   from = 'Hamburg'; // in Germany
   to = 'Graz'; // in Austria
   urgent = false;
-  
+
   flights$ = this.store.select(selectFlights);
 
   basket: { [id: number]: boolean } = {
@@ -53,15 +53,12 @@ export class FlightSearchComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {
-  }
-
   search(): void {
     if (!this.from || !this.to) return;
 
     this.store.dispatch(loadFlights({
-      from: this.from, 
-      to: this.to 
+      from: this.from,
+      to: this.to
     }));
   }
 

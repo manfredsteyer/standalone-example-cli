@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { TicketsModule } from '../feature-my-tickets';
+import {Component} from '@angular/core';
+import {TicketsModule} from '../feature-my-tickets';
 
 @Component({
   selector: 'app-next-flight',
@@ -11,13 +11,7 @@ import { TicketsModule } from '../feature-my-tickets';
     TicketsModule
   ]
 })
-export class NextFlightComponent implements OnInit {
-
-  constructor() { }
-
-  ngOnInit(): void {
-  }
-
+export class NextFlightComponent  {
 }
 
 export default NextFlightComponent;

@@ -9,11 +9,11 @@ export class TicketService {
         { id: 4712, from: 'Graz', to: 'Paderborn', delayed: false, date: new Date().toISOString()}
     ];
 
-    constructor() { 
+    constructor() {
         console.debug('creating ticket service');
     }
 
-    get(limit: number = -1) {
+    get(limit = -1) {
         if (limit === -1) {
             return this.tickets;
         }

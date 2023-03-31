@@ -1,17 +1,17 @@
-import { provideHttpClient } from '@angular/common/http';
-import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { TestBed } from '@angular/core/testing';
+import {provideHttpClient} from '@angular/common/http';
+import {HttpTestingController, provideHttpClientTesting} from '@angular/common/http/testing';
+import {TestBed} from '@angular/core/testing';
 
-import { provideMockActions } from '@ngrx/effects/testing';
+import {provideMockActions} from '@ngrx/effects/testing';
 
-import { Subject } from 'rxjs';
-import { Action } from '@ngrx/store';
-import { loadFlights } from './actions';
-import { BookingEffects } from './effects';
-import { Flight } from '@demo/data';
+import {Subject} from 'rxjs';
+import {Action} from '@ngrx/store';
+import {loadFlights} from './actions';
+import {BookingEffects} from './effects';
+import {Flight} from '@demo/data';
 
 describe('BookingEffects', () => {
-  let actions$ = new Subject<Action>();
+  const actions$ = new Subject<Action>();
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -34,7 +34,7 @@ describe('BookingEffects', () => {
     });
 
     actions$.next(loadFlights({ from: 'Paris', to: 'London' }));
-    
+
     const ctrl = TestBed.inject(HttpTestingController);
     const req = ctrl.expectOne('https://demo.angulararchitects.io/api/flight?from=Paris&to=London');
     req.flush([{}, {}]);
@@ -42,5 +42,5 @@ describe('BookingEffects', () => {
     expect(flights.length).toBe(2);
   });
 
- 
+
 });

@@ -6,12 +6,12 @@ import { Flight, initFlight } from "../../data";
 
 @Component({
   standalone: true,
-  selector: 'flight-card',
+  selector: 'app-flight-card',
   imports: [CommonModule, RouterModule, CityPipe],
   templateUrl: './flight-card.component.html',
 })
 export class FlightCardComponent {
-  
+
   @Input() item: Flight = initFlight;
   @Input() selected: boolean | undefined;
   @Output() selectedChange = new EventEmitter<boolean>();

@@ -1,5 +1,5 @@
-import { Injectable, InjectionToken } from "@angular/core";
-import { LogLevel } from "./log-level";
+import {InjectionToken} from "@angular/core";
+import {LogLevel} from "./log-level";
 
 export const LOG_FORMATTER = new InjectionToken<LogFormatFn>('LOG_FORMATTER');
 

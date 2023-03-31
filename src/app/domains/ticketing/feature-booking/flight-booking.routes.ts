@@ -1,21 +1,16 @@
-import {
-  provideHttpClient,
-  withInterceptors,
-  withRequestsMadeViaParent,
-} from '@angular/common/http';
-import { inject } from '@angular/core';
-import { Routes } from '@angular/router';
-import { provideEffects } from '@ngrx/effects';
-import { provideState } from '@ngrx/store';
-import { AuthService } from '../../shared/util-auth';
-import { DefaultLogAppender, LogLevel, provideLogger, withColor } from '../../shared/util-logger';
-import { BookingEffects, bookingFeature } from '../data';
-import { FlightBookingComponent } from './flight-booking.component';
-import { FlightEditComponent } from './flight-edit/flight-edit.component';
-import { FlightSearchComponent } from './flight-search/flight-search.component';
-import { PassengerSearchComponent } from './passenger-search/passenger-search.component';
-import { provideBooking } from './provider';
-import { bookingInterceptor } from './utils/booking.interceptor';
+import {provideHttpClient, withInterceptors, withRequestsMadeViaParent,} from '@angular/common/http';
+import {inject} from '@angular/core';
+import {Routes} from '@angular/router';
+import {provideEffects} from '@ngrx/effects';
+import {provideState} from '@ngrx/store';
+import {AuthService} from '../../shared/util-auth';
+import {DefaultLogAppender, LogLevel, provideLogger, withColor} from '../../shared/util-logger';
+import {BookingEffects, bookingFeature} from '../data';
+import {FlightBookingComponent} from './flight-booking.component';
+import {FlightEditComponent} from './flight-edit/flight-edit.component';
+import {FlightSearchComponent} from './flight-search/flight-search.component';
+import {PassengerSearchComponent} from './passenger-search/passenger-search.component';
+import {bookingInterceptor} from './utils/booking.interceptor';
 
 export const FLIGHT_BOOKING_ROUTES: Routes = [
   {

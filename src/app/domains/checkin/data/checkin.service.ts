@@ -5,8 +5,6 @@ import { Injectable } from '@angular/core';
 })
 export class CheckinService {
 
-  constructor() { }
-
   checkin(ticketNumber: string): void {
     console.log('checking in', ticketNumber);
   }
