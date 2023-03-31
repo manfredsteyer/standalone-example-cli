@@ -2,7 +2,7 @@ import {provideHttpClient, withInterceptors, withRequestsMadeViaParent} from "@a
 import {EnvironmentProviders} from "@angular/core";
 import {provideEffects} from "@ngrx/effects";
 import {provideState} from "@ngrx/store";
-import {combineEnvironmentProviders} from "../../shared/util-common/combine-environment-providers";
+import {combineEnvironmentProviders} from "../../shared/util-common";
 import {BookingEffects, bookingFeature} from "../data";
 import {bookingInterceptor} from "./utils/booking.interceptor";
 

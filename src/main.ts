@@ -20,7 +20,7 @@ import { reducer } from './app/+state';
 import { AppComponent } from './app/app.component';
 import { APP_ROUTES } from './app/app.routes';
 import { authInterceptor } from './app/domains/shared/util-auth';
-import { LegacyInterceptor } from './app/domains/shared/util-common/legacy.interceptor';
+import { LegacyInterceptor } from './app/domains/shared/util-common';
 import { DefaultLogAppender, LogLevel, provideLogger, withColor } from './app/domains/shared/util-logger';
 import { TicketsModule } from './app/domains/ticketing/feature-my-tickets';
 

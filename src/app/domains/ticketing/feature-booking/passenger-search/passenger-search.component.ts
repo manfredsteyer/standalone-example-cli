@@ -1,7 +1,7 @@
 import { JsonPipe, NgFor } from "@angular/common";
 import { HttpClient } from "@angular/common/http";
 import { Component, inject } from "@angular/core";
-import { Passenger} from '../../data/passenger';
+import { Passenger} from '../../data';
 
 @Component({
   standalone: true,

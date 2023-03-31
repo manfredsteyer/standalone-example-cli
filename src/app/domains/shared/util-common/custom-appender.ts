@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
-import { LogAppender } from "./logger/log-appender";
-import { LogLevel } from "./logger/log-level";
+import { LogAppender } from "../util-logger";
+import { LogLevel } from "../util-logger";
 
 @Injectable()
 export class CustomAppender implements LogAppender {

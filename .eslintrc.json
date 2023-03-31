@@ -41,10 +41,10 @@
         "plugin:@angular-eslint/template/recommended"
       ],
       "rules": {}
+    },
+    {
+      "files": ["*.ts"],
+      "extends": ["plugin:@softarc/sheriff/default"]
     }
-//    {
-//      "files": ["*.ts"],
-//      "extends": ["plugin:@softarc/sheriff/default"]
-//    }
   ]
 }

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Flight } from '../data/flight';
+import { Flight } from '../data';
 
 @Injectable()
 export class TicketService {
