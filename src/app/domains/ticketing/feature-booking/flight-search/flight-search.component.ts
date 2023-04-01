@@ -6,7 +6,7 @@ import {take} from "rxjs";
 import {ActivatedRoute} from "@angular/router";
 import {BookingSlice, delayFlight, loadFlights, selectFlights} from "../../data";
 import {CityValidator} from "src/app/domains/shared/util-common";
-import {FlightCardComponent} from "../../ui-common/flight-card";
+import {FlightCardComponent} from "../../ui-common";
 
 @Component({
   standalone: true,
