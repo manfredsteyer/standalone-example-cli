@@ -1,5 +1,5 @@
 import { Component, inject } from "@angular/core";
-import { LoggerService } from "../domains/shared/util-logger";
+import { LoggerService } from "../../shared/util-logger";
 
 @Component({
   standalone: true,

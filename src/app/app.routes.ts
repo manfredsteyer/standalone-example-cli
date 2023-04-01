@@ -1,7 +1,7 @@
 import { inject } from "@angular/core";
 import { Routes } from "@angular/router";
-import { AuthService } from "./domains/shared/util-auth";
-import { HomeComponent } from "./home/home.component";
+import { AuthService } from "./shared/util-auth";
+import { HomeComponent } from "./shell/home/home.component";
 
 export const APP_ROUTES: Routes = [
     {
@@ -34,7 +34,7 @@ export const APP_ROUTES: Routes = [
     {
         path: 'about',
         loadComponent: () => 
-            import('./about/about.component')
+            import('./shell/about/about.component')
                 // .then(m => m.AboutComponent)
     },
 ];

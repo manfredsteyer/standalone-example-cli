@@ -16,12 +16,12 @@ import {
 import { provideEffects } from '@ngrx/effects';
 import { provideStore } from '@ngrx/store';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
-import { reducer } from './app/+state';
+import { reducer } from './app/shell/+state/state';
 import { AppComponent } from './app/app.component';
 import { APP_ROUTES } from './app/app.routes';
-import { authInterceptor } from './app/domains/shared/util-auth';
-import { LegacyInterceptor } from './app/domains/shared/util-common';
-import { DefaultLogAppender, LogLevel, provideLogger, withColor } from './app/domains/shared/util-logger';
+import { authInterceptor } from './app/shared/util-auth';
+import { LegacyInterceptor } from './app/shared/util-common';
+import { DefaultLogAppender, LogLevel, provideLogger, withColor } from './app/shared/util-logger';
 import { TicketsModule } from './app/domains/ticketing/feature-my-tickets';
 
 bootstrapApplication(AppComponent, {

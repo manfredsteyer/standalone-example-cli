@@ -4,22 +4,27 @@ export const sheriffConfig: SheriffConfig = {
   version: 1,
   tagging: {
     'src/app': {
-      '+state': 'app:state',
-      'domains/shared/<type>': 'shared',
+      'shared': {
+        'feature-<feature>': ['shared', 'type:feature'],
+        'ui-<ui>': ['shared', 'type:ui'],
+        'data': ['shared', 'type:data'],
+        'util-<ui>': ['shared', 'type:util'],
+      },
       'domains/<domain>': {
-        data: ['domain:<domain>', 'type:data'],
         'feature-<feature>': ['domain:<domain>', 'type:feature'],
         'ui-<ui>': ['domain:<domain>', 'type:ui'],
+        'data': ['domain:<domain>', 'type:data'],
+        'util-<ui>': ['domain:<domain>', 'type:util'],
       },
-      shell: 'app:shell',
     },
   },
   depRules: {
-    root: ['app:state', 'app:shell', 'type:feature', 'shared', 'domain:*'],
+    'root': ['*'],
     'domain:*': [sameTag, 'shared'],
-    shared: 'shared',
-    'type:feature': ['type:feature', 'type:data', 'type:ui'],
-    'type:ui': ['type:data'],
-    'type:data': noDependencies,
+    'shared': ['shared'],
+    'type:feature': ['type:ui', 'type:data', 'type:util'],
+    'type:ui': ['type:data', 'type:util'],
+    'type:data': ['type:util'],
+    'type:util': noDependencies
   },
 };

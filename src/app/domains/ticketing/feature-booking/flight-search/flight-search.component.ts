@@ -5,7 +5,7 @@ import {Store} from "@ngrx/store";
 import {take} from "rxjs";
 import {ActivatedRoute} from "@angular/router";
 import {BookingSlice, delayFlight, loadFlights, selectFlights} from "../../data";
-import {CityValidator} from "src/app/domains/shared/util-common";
+import {CityValidator} from "src/app/shared/util-common";
 import {FlightCardComponent} from "../../ui-common";
 
 @Component({

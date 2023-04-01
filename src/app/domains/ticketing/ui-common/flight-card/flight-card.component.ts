@@ -1,7 +1,7 @@
 import { CommonModule } from "@angular/common";
 import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { RouterModule } from "@angular/router";
-import { CityPipe } from "src/app/domains/shared/util-common";
+import { CityPipe } from "src/app/shared/util-common";
 import { Flight, initFlight } from "../../data";
 
 @Component({

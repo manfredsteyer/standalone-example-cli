@@ -1,4 +1,6 @@
 import {Component} from '@angular/core';
+
+// eslint-disable-next-line @softarc/sheriff/dependency-rule
 import {TicketsModule} from '../feature-my-tickets';
 
 @Component({

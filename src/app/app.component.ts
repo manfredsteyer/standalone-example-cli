@@ -8,7 +8,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
-import { NavbarComponent, SidebarComponent } from './shell';
+import { NavbarComponent } from './shell/navbar/navbar.component';
+import { SidebarComponent } from './shell/sidebar/sidebar.component';
 
 @Component({
   standalone: true,
