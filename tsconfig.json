@@ -23,6 +23,9 @@
       "ES2022",
       "dom"
     ],
+    "paths": {
+      "@demo/checkin/data": ["src/app/domains/checkin/data/index.ts"]
+    }
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

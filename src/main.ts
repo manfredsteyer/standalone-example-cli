@@ -1,9 +1,7 @@
 import { LayoutModule } from '@angular/cdk/layout';
 import {
-  HTTP_INTERCEPTORS,
   provideHttpClient,
   withInterceptors,
-  withInterceptorsFromDi,
 } from '@angular/common/http';
 import { importProvidersFrom } from '@angular/core';
 import { bootstrapApplication } from '@angular/platform-browser';
@@ -20,41 +18,22 @@ import { reducer } from './app/shell/+state/state';
 import { AppComponent } from './app/app.component';
 import { APP_ROUTES } from './app/app.routes';
 import { authInterceptor } from './app/shared/util-auth';
-import { LegacyInterceptor } from './app/shared/util-common';
-import { DefaultLogAppender, LogLevel, provideLogger, withColor } from './app/shared/util-logger';
+import { provideLogger } from './app/shared/util-logger';
 import { TicketsModule } from './app/domains/ticketing/feature-my-tickets';
+import { loggerConfig } from './app/logger.config';
 
 bootstrapApplication(AppComponent, {
   providers: [
     provideHttpClient(
       withInterceptors([authInterceptor]),
-      withInterceptorsFromDi()
     ),
-
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: LegacyInterceptor,
-      multi: true,
-    },
 
     provideRouter(
       APP_ROUTES,
       withPreloading(PreloadAllModules)
-      // withDebugTracing(),
     ),
 
-    provideLogger(
-      {
-        level: LogLevel.DEBUG,
-        appenders: [DefaultLogAppender],
-        formatter: (level, cat, msg) => [level, cat, msg].join(';'),
-      },
-      withColor({
-        debug: 3,
-      })
-    ),
-
-    // provideCategory('home', DefaultLogAppender),
+    provideLogger(loggerConfig),
 
     provideStore(reducer),
     provideEffects(),
@@ -65,9 +44,3 @@ bootstrapApplication(AppComponent, {
     importProvidersFrom(LayoutModule),
   ],
 });
-
-// {
-//   provide: INJECTOR_INITIALIZER,
-//   multi: true,
-//   useValue: () => inject(InitService).init()
-// }

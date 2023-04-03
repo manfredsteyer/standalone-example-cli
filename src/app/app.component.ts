@@ -25,7 +25,6 @@ import { SidebarComponent } from './shell/sidebar/sidebar.component';
 
     NavbarComponent,
     SidebarComponent,
-    // SHELL
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']

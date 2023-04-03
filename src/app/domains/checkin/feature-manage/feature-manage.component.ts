@@ -2,7 +2,8 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CheckinService } from '../data';
-// import { FlightService } from '../../ticketing/data';
+
+// import { } from '../../ticketing/data';
 
 @Component({
   selector: 'app-feature-manage',
@@ -12,11 +13,10 @@ import { CheckinService } from '../data';
   styleUrls: ['./feature-manage.component.css'],
 })
 export class FeatureManageComponent {
-  #service = inject(CheckinService);
-
+  service = inject(CheckinService);
   ticketNumber = '';
 
   checkin() {
-    this.#service.checkin(this.ticketNumber);
+    this.service.checkin(this.ticketNumber);
   }
 }
