@@ -39,7 +39,7 @@
     "@angular/cli": "~15.2.4",
     "@angular/compiler-cli": "^15.2.5",
     "@softarc/eslint-plugin-sheriff": "^0.0.7",
-    "@softarc/sheriff-core": "^0.0.7",
+    "@softarc/sheriff-core": "^0.0.8",
     "@types/jasmine": "~4.3.0",
     "@typescript-eslint/eslint-plugin": "5.48.2",
     "@typescript-eslint/parser": "5.48.2",
