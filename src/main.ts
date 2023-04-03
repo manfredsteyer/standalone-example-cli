@@ -1,9 +1,7 @@
 import { LayoutModule } from '@angular/cdk/layout';
 import {
-  HTTP_INTERCEPTORS,
   provideHttpClient,
   withInterceptors,
-  withInterceptorsFromDi,
 } from '@angular/common/http';
 import { importProvidersFrom } from '@angular/core';
 import { bootstrapApplication } from '@angular/platform-browser';
@@ -16,51 +14,29 @@ import {
 import { provideEffects } from '@ngrx/effects';
 import { provideStore } from '@ngrx/store';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
-import { reducer } from './app/+state';
+import { reducer } from './app/shell/+state/state';
 import { AppComponent } from './app/app.component';
 import { APP_ROUTES } from './app/app.routes';
-import { authInterceptor } from './app/shared/auth.interceptor';
-import { LegacyInterceptor } from './app/shared/legacy.interceptor';
-import { withColor } from './app/shared/logger/features';
-import { DefaultLogAppender } from './app/shared/logger/log-appender';
-import { LogLevel } from './app/shared/logger/log-level';
-import { provideLogger } from './app/shared/logger/providers';
-import { TicketsModule } from './app/tickets/tickets.module';
+import { authInterceptor } from './app/shared/util-auth';
+import { provideLogger } from './app/shared/util-logger';
+import { TicketsModule } from './app/domains/ticketing/feature-my-tickets';
+import { loggerConfig } from './app/logger.config';
 
 bootstrapApplication(AppComponent, {
   providers: [
     provideHttpClient(
       withInterceptors([authInterceptor]),
-      withInterceptorsFromDi()
     ),
-
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: LegacyInterceptor,
-      multi: true,
-    },
 
     provideRouter(
       APP_ROUTES,
       withPreloading(PreloadAllModules)
-      // withDebugTracing(),
     ),
 
-    provideLogger(
-      {
-        level: LogLevel.DEBUG,
-        appenders: [DefaultLogAppender],
-        formatter: (level, cat, msg) => [level, cat, msg].join(';'),
-      },
-      withColor({
-        debug: 3,
-      })
-    ),
-
-    // provideCategory('home', DefaultLogAppender),
+    provideLogger(loggerConfig),
 
     provideStore(reducer),
-    provideEffects([]),
+    provideEffects(),
     provideStoreDevtools(),
     provideAnimations(),
 

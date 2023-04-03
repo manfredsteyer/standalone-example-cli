@@ -1,7 +1,7 @@
 import { inject } from "@angular/core";
 import { Routes } from "@angular/router";
-import { HomeComponent } from "./home/home.component";
-import { AuthService } from "./shared/auth.service";
+import { AuthService } from "./shared/util-auth";
+import { HomeComponent } from "./shell/home/home.component";
 
 export const APP_ROUTES: Routes = [
     {
@@ -17,19 +17,24 @@ export const APP_ROUTES: Routes = [
         path: 'flight-booking',
         canActivate: [() => inject(AuthService).isAuthenticated()],
         loadChildren: () =>
-            import('./booking/flight-booking.routes')
-                // .then(m => m.FLIGHT_BOOKING_ROUTES)
+            import('./domains/ticketing/feature-booking')
+                .then(m => m.FLIGHT_BOOKING_ROUTES)
     },
     {
         path: 'next-flight',
         loadComponent: () => 
-            import('./next-flight/next-flight.component')
-                // .then(m => m.NextFlightComponent)
+            import('./domains/ticketing/feature-next-flight')
+                .then(m => m.NextFlightComponent)
+    },
+    {
+        path: 'checkin',
+        loadComponent: () => import('./domains/checkin/feature-manage')
+            .then(m => m.FeatureManageComponent)
     },
     {
         path: 'about',
         loadComponent: () => 
-            import('./about/about.component')
+            import('./shell/about/about.component')
                 // .then(m => m.AboutComponent)
     },
 ];

@@ -2,13 +2,14 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { map, shareReplay } from 'rxjs';
 import { Component, Inject } from '@angular/core';
 
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { RouterOutlet } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
-import { NavbarComponent, SidebarComponent } from './shell';
+import { NavbarComponent } from './shell/navbar/navbar.component';
+import { SidebarComponent } from './shell/sidebar/sidebar.component';
 
 @Component({
   standalone: true,
