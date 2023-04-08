@@ -1,9 +1,11 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { CheckinService } from '../data';
+import { CheckinService } from '@demo/checkin/data';
 
-// import { } from '../../ticketing/data';
+// import { HiddenService } from '../data/hidden.service';
+
+// import { FlightService } from '../../ticketing/data';
 
 @Component({
   selector: 'app-feature-manage',

@@ -12,22 +12,21 @@ import { NavbarComponent } from './shell/navbar/navbar.component';
 import { SidebarComponent } from './shell/sidebar/sidebar.component';
 
 @Component({
-  standalone: true,
-  selector: 'app-root',
-  imports: [
-    RouterOutlet,
-
-    MatToolbarModule,
-    MatButtonModule,
-    MatSidenavModule,
-    MatIconModule,
-    MatListModule,
-
-    NavbarComponent,
-    SidebarComponent,
-  ],
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+    standalone: true,
+    selector: 'app-root',
+    templateUrl: './app.component.html',
+    styleUrls: ['./app.component.css'],
+    imports: [
+        RouterOutlet,
+        MatToolbarModule,
+        MatButtonModule,
+        MatSidenavModule,
+        MatIconModule,
+        MatListModule,
+        //NavbarComponent,
+        SidebarComponent,
+        NavbarComponent
+    ]
 })
 export class AppComponent {
 
