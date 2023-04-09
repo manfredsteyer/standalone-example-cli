@@ -1,8 +1,7 @@
-import { inject } from '@angular/core';
+import { Signal, inject, signal } from '@angular/core';
 import { MemoizedSelector, Store } from '@ngrx/store';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { take } from 'rxjs/operators';
-import { Signal, signal } from './signals';
 
 export function fromObservable<T>(
   obs$: Observable<T>,

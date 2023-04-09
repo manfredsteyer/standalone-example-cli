@@ -1,12 +1,10 @@
 import { AsyncPipe, JsonPipe, NgForOf, NgIf } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, computed, effect, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CityValidator } from '@demo/shared';
 import { FlightCardComponent } from '../flight-card/flight-card.component';
 import { ActivatedRoute } from '@angular/router';
-import { computed, signal } from 'src/app/signals';
 import { FlightService } from '@demo/data';
-import { effect } from 'src/app/signals/effect';
 import { fromSignal, fromObservable } from 'src/app/interop';
 import { combineLatest, debounceTime, switchMap, tap } from 'rxjs';
 
@@ -34,7 +32,6 @@ export class FlightSearchComponent implements OnInit {
   urgent = signal(false);
 
   flightRoute = computed(() => this.from() + ' to ' + this.to());
-
   loading = signal(false);
 
   from$ = fromSignal(this.from);

@@ -6,10 +6,9 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
+import { Signal, computed, effect, signal } from '@angular/core';
 import {Observable} from 'rxjs';
 import {shareReplay} from 'rxjs/operators';
-import { computed, signal, Signal } from './signals';
-import { effect } from './signals/effect';
 /**
  * Exposes the value of an Angular `Signal` as an RxJS `Observable`.
  *
