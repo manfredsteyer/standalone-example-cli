@@ -1,8 +1,7 @@
-import { inject } from '@angular/core';
+import { Signal, inject, signal } from '@angular/core';
 import { MemoizedSelector, Store } from '@ngrx/store';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { take } from 'rxjs/operators';
-import { Signal, signal } from './signals';
 
 export function fromObservable<T>(
   obs$: Observable<T>,
@@ -15,16 +14,12 @@ export function fromObservable<T>(
   return sig.bind(sig);
 }
 
-export function fromStore<T>(selector: MemoizedSelector<object, T>): () => T {
+export function fromStore<T>(selector: MemoizedSelector<object, T>): Signal<T> {
   const store = inject(Store);
 
-//   let initialValue: T;
   const subj = store
     .select(selector)
     .pipe(take(1)) as BehaviorSubject<T>;
-    // .subscribe((res) => {
-    //   initialValue = res;
-    // });
 
   return fromObservable(store.select(selector), subj.value);
 }

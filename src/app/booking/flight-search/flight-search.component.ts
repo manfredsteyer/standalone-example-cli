@@ -1,31 +1,12 @@
 import { AsyncPipe, JsonPipe, NgForOf, NgIf } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CityValidator } from '@demo/shared';
 import { FlightCardComponent } from '../flight-card/flight-card.component';
-import { ActivatedRoute } from '@angular/router';
-import { signal } from 'src/app/signals';
 import { fromStore } from 'src/app/utils';
 import { selectFlights } from '../+state/selectors';
-import { Store } from '@ngrx/store';
 import { delayFlight, loadFlights } from '../+state/actions';
-
-type ComponentState = {
-  from: string;
-  to: string;
-  urgent: boolean;
-  basket: Record<number, boolean>;
-};
-
-const initState: ComponentState = {
-  from: 'Hamburg',
-  to: 'Graz',
-  urgent: false,
-  basket: {
-    3: true,
-    5: true,
-  },
-};
+import { Store } from '@ngrx/store';
 
 @Component({
   standalone: true,
@@ -42,56 +23,22 @@ const initState: ComponentState = {
   templateUrl: './flight-search.component.html',
 })
 export class FlightSearchComponent implements OnInit {
-  private route = inject(ActivatedRoute);
-
+  
   store = inject(Store);
 
-  // App State
   flights = fromStore(selectFlights);
-  
-  // Component State
-  state = signal(initState);
-
-  constructor() {
-    this.route.paramMap.subscribe((p) => {
-      const from = p.get('from');
-      const to = p.get('to');
-
-      if (from && to) {
-        this.state.update((v) => ({
-          ...v,
-          from,
-          to,
-        }));
-
-        this.search();
-      }
-    });
-  }
+  from = signal('Hamburg');
+  to = signal('Graz');
+  basket = signal<Record<number, boolean>>({ 1: true });
+  urgent = signal(false);
 
   ngOnInit(): void {}
 
-  // Helper function for data binding
-  update(key: string, event: any): void {
-    this.state.update((v) => ({
-      ...v,
-      [key]: event.target.value,
-    }));
-  }
-
-  // Helper function for data binding
-  updateCheckbox(key: string, event: any): void {
-    this.state.update((v) => ({
-      ...v,
-      [key]: event.target.checked,
-    }));
-  }
-
   search(): void {
-    if (!this.state().from || !this.state().to) return;
+    if (!this.from() || !this.to()) return;
 
     this.store.dispatch(
-      loadFlights({ from: this.state().from, to: this.state().to })
+      loadFlights({ from: this.from(), to: this.to() })
     );
   }
 
