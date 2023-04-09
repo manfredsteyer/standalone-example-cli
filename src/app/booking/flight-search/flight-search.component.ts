@@ -1,13 +1,11 @@
 import { AsyncPipe, JsonPipe, NgForOf, NgIf } from "@angular/common";
-import { Component, inject, OnInit } from "@angular/core";
+import { ChangeDetectionStrategy, Component, computed, effect, inject, OnInit, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { CityValidator } from "@demo/shared";
 import { FlightCardComponent } from "../flight-card/flight-card.component";
 import { ActivatedRoute } from "@angular/router";
-import { computed, signal } from "src/app/signals";
 import { Flight, FlightService } from "@demo/data";
 import { addMinutes } from "src/app/date-utils";
-import { effect } from "src/app/signals/effect";
 
 @Component({
   standalone: true,
@@ -21,7 +19,8 @@ import { effect } from "src/app/signals/effect";
     CityValidator,
   ],
   selector: 'flight-search',
-  templateUrl: './flight-search.component.html'
+  templateUrl: './flight-search.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FlightSearchComponent implements OnInit {
 
@@ -80,10 +79,6 @@ export class FlightSearchComponent implements OnInit {
 
   // Just delay the first flight
   delay(): void {
-    this.flights.mutate(f => {
-      const flight = f[0];
-      flight.date = addMinutes(flight.date, 15);
-    });
 
     this.flights.update(f => {
       const flight = f[0];

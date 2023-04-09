@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, EventEmitter, Input, Output } from "@angular/core";
+import { ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, NgZone, Output, inject } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { CityPipe } from "@demo/shared";
 import { Flight, initFlight } from "@demo/data";
@@ -9,6 +9,7 @@ import { Flight, initFlight } from "@demo/data";
   selector: 'flight-card',
   imports: [CommonModule, RouterModule, CityPipe],
   templateUrl: './flight-card.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FlightCardComponent {
   
@@ -16,6 +17,9 @@ export class FlightCardComponent {
   @Input() selected: boolean | undefined;
   @Output() selectedChange = new EventEmitter<boolean>();
   @Input() showEditButton = true;
+
+  private element = inject(ElementRef);
+  private zone = inject(NgZone);
 
   select() {
     this.selected = true;
@@ -25,5 +29,18 @@ export class FlightCardComponent {
   deselect() {
     this.selected = false;
     this.selectedChange.next(false);
+  }
+
+  blink() {
+    // Dirty Hack used to visualize the change detector
+    this.element.nativeElement.firstChild.style.backgroundColor = 'crimson';
+
+    this.zone.runOutsideAngular(() => {
+      setTimeout(() => {
+        this.element.nativeElement.firstChild.style.backgroundColor = 'white';
+      }, 1000);
+    });
+
+    return null;
   }
 }
