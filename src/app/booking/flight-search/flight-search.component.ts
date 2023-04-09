@@ -1,5 +1,5 @@
 import { AsyncPipe, JsonPipe, NgForOf, NgIf } from "@angular/common";
-import { ChangeDetectionStrategy, Component, computed, effect, inject, OnInit, signal } from "@angular/core";
+import { ChangeDetectionStrategy, Component, computed, effect, inject, OnInit, Signal, signal, WritableSignal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { CityValidator } from "@demo/shared";
 import { FlightCardComponent } from "../flight-card/flight-card.component";
@@ -29,7 +29,7 @@ export class FlightSearchComponent implements OnInit {
 
   from = signal('Hamburg');
   to = signal('Graz');
-  flights = signal<Flight[]>([]);
+  flights = signal<WritableSignal<Flight>[]>([]);
   basket = signal<Record<number, boolean>>({ 1: true });
   urgent = signal(false);
 
@@ -74,23 +74,14 @@ export class FlightSearchComponent implements OnInit {
       this.to(),
       this.urgent());
 
-    this.flights.set(flights);
+    this.flights.set(flights.map(f => signal(f)));
   }
 
   // Just delay the first flight
   delay(): void {
-
-    this.flights.update(f => {
-      const flight = f[0];
-      const date = addMinutes(flight.date, 15);
-      const updated = {...flight, date};
-
-      return [
-        updated,
-        ...f.slice(1)
-      ];
-    });
-
+      const flight = this.flights()[0];
+      const date = addMinutes(flight().date, 15);
+      flight.mutate(f => f.date = date);
   }
 }
 

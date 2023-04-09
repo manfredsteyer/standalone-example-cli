@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, NgZone, Output, inject } from "@angular/core";
+import { ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, NgZone, Output, inject, signal } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { CityPipe } from "@demo/shared";
 import { Flight, initFlight } from "@demo/data";
@@ -13,7 +13,8 @@ import { Flight, initFlight } from "@demo/data";
 })
 export class FlightCardComponent {
   
-  @Input() item: Flight = initFlight;
+  @Input() item = signal(initFlight);
+
   @Input() selected: boolean | undefined;
   @Output() selectedChange = new EventEmitter<boolean>();
   @Input() showEditButton = true;
