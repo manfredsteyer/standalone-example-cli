@@ -1,17 +1,14 @@
-import { inject } from '@angular/core';
+import { WritableSignal, Signal, inject, signal } from '@angular/core';
 import { MemoizedSelector, Store } from '@ngrx/store';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { take } from 'rxjs/operators';
-import { SettableSignal, Signal, signal } from './signals';
 
 export function fromObservable<T>(
   obs$: Observable<T>,
   initialValue: T
 ): Signal<T> {
   const sig = signal(initialValue);
-
   obs$.subscribe((val) => sig.update(() => val));
-
   return sig.bind(sig);
 }
 
@@ -32,16 +29,19 @@ export function injectStore() {
 }
 
 export function state<T extends Object>(obj: T): T {
-  const signalMap = new Map<string | symbol, SettableSignal<unknown>>();
+  const signalMap = new Map<string | symbol, WritableSignal<unknown>>();
 
   return new Proxy(obj, {
     get(target: T, prop: string) {
+      console.log('get signal', prop);
+
       const s = getSignal(prop, target);
       return s ? s() : undefined;
     },
     set(target: T, prop: string | symbol, value: unknown) {
       const s = getSignal(prop, target);
       if (s) {
+
         s.set(value);
       } else {
         (target as any)[prop] = value;
@@ -53,7 +53,7 @@ export function state<T extends Object>(obj: T): T {
   function getSignal(
     prop: string | symbol,
     target: T
-  ): SettableSignal<unknown> | undefined {
+  ): WritableSignal<unknown> | undefined {
     if (!signalMap.has(prop)) {
       const value = (target as any)[prop];
       const isObject = typeof value === 'object';
@@ -68,15 +68,15 @@ export function state<T extends Object>(obj: T): T {
 
 type DeepSignal<Type> = {
   [Property in keyof Type]: Type[Property] extends Array<object>
-    ? SettableSignal<DeepArraySignal<DeepSignal<Type[Property][0]>>>
+    ? WritableSignal<DeepArraySignal<DeepSignal<Type[Property][0]>>>
     : Type[Property] extends object
-    ? SettableSignal<DeepSignal<Type[Property]>>
-    : SettableSignal<Type[Property]>;
+    ? WritableSignal<DeepSignal<Type[Property]>>
+    : WritableSignal<Type[Property]>;
 };
 
-export function nest<T>(value: T): SettableSignal<DeepSignal<T>> {
+export function nest<T>(value: T): WritableSignal<DeepSignal<T>> {
   if (value === null) {
-    return signal(null) as unknown as SettableSignal<DeepSignal<T>>;
+    return signal(null) as unknown as WritableSignal<DeepSignal<T>>;
   } else if (Array.isArray(value)) {
     const signals = value.map((v) => nest(v));
     const wrapped = new DeepArraySignal(signals) as DeepSignal<T>;
@@ -111,21 +111,21 @@ export function flatten<T>(value: DeepSignal<T>): T {
 }
 
 class DeepArraySignal<T> {
-  constructor(private signals: SettableSignal<T>[]) {}
+  constructor(private signals: WritableSignal<T>[]) {}
 
   [Symbol.iterator]() {
     return this.signals[Symbol.iterator]();
   }
 
-  set(signals: SettableSignal<T>[]): void {
+  set(signals: WritableSignal<T>[]): void {
     this.signals = signals;
   }
 
-  update(updateFn: (value: SettableSignal<T>[]) => SettableSignal<T>[]): void {
+  update(updateFn: (value: WritableSignal<T>[]) => WritableSignal<T>[]): void {
     this.signals = updateFn(this.signals);
   }
 
-  mutate(mutatorFn: (value: SettableSignal<T>[]) => void): void {
+  mutate(mutatorFn: (value: WritableSignal<T>[]) => void): void {
     mutatorFn(this.signals);
   }
 

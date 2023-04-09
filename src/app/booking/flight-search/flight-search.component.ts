@@ -1,42 +1,13 @@
 import { AsyncPipe, JsonPipe, NgForOf, NgIf } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CityValidator } from '@demo/shared';
 import { FlightCardComponent } from '../flight-card/flight-card.component';
 import { ActivatedRoute } from '@angular/router';
-import { signal } from 'src/app/signals';
-import { Flight, FlightService } from '@demo/data';
-import { effect } from 'src/app/signals/effect';
+import { FlightService } from '@demo/data';
 import { addMinutes } from 'src/app/date-utils';
-import { flatten, nest, state } from 'src/app/utils';
+import { state } from 'src/app/utils';
 import { firstValueFrom } from 'rxjs';
-
-type ComponentState = {
-  from: string;
-  to: string;
-  urgent: boolean;
-  flights: Flight[];
-  basket: Record<number, boolean>;
-};
-
-const initState: ComponentState = {
-  from: 'Hamburg',
-  to: 'Graz',
-  urgent: false,
-  flights: [
-    {
-      id: 1,
-      from: 'G',
-      to: 'H',
-      date: '2022-02-02',
-      delayed: false,
-    },
-  ],
-  basket: {
-    3: true,
-    5: true,
-  },
-};
 
 @Component({
   standalone: true,
@@ -51,15 +22,30 @@ const initState: ComponentState = {
   ],
   selector: 'flight-search',
   templateUrl: './flight-search.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FlightSearchComponent implements OnInit {
   private flightService = inject(FlightService);
   private route = inject(ActivatedRoute);
 
-  // state = signal(initState);
-
-  state = state(initState);
-  // flat = flatten(this.nested());
+  state = state({
+    from: 'Hamburg',
+    to: 'Graz',
+    urgent: false,
+    flights: [
+      {
+        id: 1,
+        from: 'G',
+        to: 'H',
+        date: '2022-02-02',
+        delayed: false,
+      },
+    ],
+    basket: {
+      3: true,
+      5: true,
+    },
+  });
 
   constructor() {
     this.route.paramMap.subscribe((p) => {
@@ -89,5 +75,6 @@ export class FlightSearchComponent implements OnInit {
   delay(): void {
     const flight = this.state.flights[0];
     flight.date = addMinutes(flight.date, 15);
+    // this.state.flights[0] = flight;
   }
 }

@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, EventEmitter, Input, Output, OnChanges, SimpleChanges } from "@angular/core";
+import { Component, EventEmitter, Input, Output, OnChanges, SimpleChanges, ChangeDetectionStrategy } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { CityPipe } from "@demo/shared";
 import { Flight, initFlight } from "@demo/data";
@@ -9,6 +9,7 @@ import { Flight, initFlight } from "@demo/data";
   selector: 'flight-card',
   imports: [CommonModule, RouterModule, CityPipe],
   templateUrl: './flight-card.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FlightCardComponent implements OnChanges {
   
@@ -18,7 +19,7 @@ export class FlightCardComponent implements OnChanges {
   @Input() showEditButton = true;
 
   ngOnChanges(changes: SimpleChanges) {
-    (window as any).item = this.item;
+    console.log('changes', changes);
   }
 
   select() {
