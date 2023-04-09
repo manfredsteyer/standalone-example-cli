@@ -8,7 +8,8 @@ import { signal } from 'src/app/signals';
 import { Flight, FlightService } from '@demo/data';
 import { effect } from 'src/app/signals/effect';
 import { addMinutes } from 'src/app/date-utils';
-import { flatten, nest } from 'src/app/utils';
+import { flatten, nest, state } from 'src/app/utils';
+import { firstValueFrom } from 'rxjs';
 
 type ComponentState = {
   from: string;
@@ -28,8 +29,8 @@ const initState: ComponentState = {
       from: 'G',
       to: 'H',
       date: '2022-02-02',
-      delayed: false
-    }
+      delayed: false,
+    },
   ],
   basket: {
     3: true,
@@ -55,28 +56,19 @@ export class FlightSearchComponent implements OnInit {
   private flightService = inject(FlightService);
   private route = inject(ActivatedRoute);
 
-  state = signal(initState);
+  // state = signal(initState);
 
-  nested = nest(initState);
-  flat = flatten(this.nested());
-
-  flatten = flatten;
+  state = state(initState);
+  // flat = flatten(this.nested());
 
   constructor() {
-    
-    const date = this.nested().flights().at(0).date();
-    console.log('date', date);
-
     this.route.paramMap.subscribe((p) => {
       const from = p.get('from');
       const to = p.get('to');
 
       if (from && to) {
-        this.state.update((v) => ({
-          ...v,
-          from,
-          to,
-        }));
+        this.state.from = from;
+        this.state.to = to;
 
         this.search();
       }
@@ -85,43 +77,17 @@ export class FlightSearchComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  // Helper function for data binding
-  update(key: string, event: any): void {
-    this.state.update((v) => ({
-      ...v,
-      [key]: event.target.value,
-    }));
-  }
+  async search() {
+    if (!this.state.from || !this.state.to) return;
 
-  // Helper function for data binding
-  updateCheckbox(key: string, event: any): void {
-    this.state.update((v) => ({
-      ...v,
-      [key]: event.target.checked,
-    }));
-  }
-
-  search(): void {
-    if (!this.state().from || !this.state().to) return;
-
-    const flights = this.flightService.findAsSignal(
-      this.state().from,
-      this.state().to,
-      this.state().urgent
+    this.state.flights = await firstValueFrom(
+      this.flightService.find(this.state.from, this.state.to, this.state.urgent)
     );
-
-    effect(() => {
-      this.state.mutate((s) => {
-        s.flights = flights();
-      });
-    });
   }
 
   // Just delay the first flight
   delay(): void {
-    this.state.mutate((s) => {
-      const flight = s.flights[0];
-      flight.date = addMinutes(flight.date, 15);
-    });
+    const flight = this.state.flights[0];
+    flight.date = addMinutes(flight.date, 15);
   }
 }

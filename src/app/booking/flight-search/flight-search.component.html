@@ -4,7 +4,7 @@
 
   <div class="form-group">
     <label>From:</label>
-    <input [value]="state().from" (change)="update('from', $event)" appCity name="from" class="form-control">
+    <input [(ngModel)]="state.from" appCity name="from" class="form-control">
   </div>
 
   <div class="alert alert-warning" *ngIf="form?.controls?.['from']?.hasError('appCity')">
@@ -13,27 +13,27 @@
 
   <div class="form-group">
     <label>To:</label>
-    <input [value]="state().to" (change)="update('to', $event)" class="form-control">
+    <input [(ngModel)]="state.to" name="to" class="form-control">
   </div>
   <div class="form-group">
     <label>
-      <input [value]="state().from" (change)="updateCheckbox('from', $event)" name="urgent" type="checkbox">
+      <input [(ngModel)]="state.urgent" name="urgent" type="checkbox">
       Urgent (When it's urgent it fails -- like in real life ;-))
 
     </label>
   </div>
 
-  <div class="form-group" *ngIf="state().flights as flights">
-    <button (click)="search()" [disabled]="!state().from || !state().to" class="btn btn-default">
+  <div class="form-group" *ngIf="state.flights">
+    <button (click)="search()" [disabled]="!state.from || !state.to" class="btn btn-default">
       Search
     </button>
 
-    <button *ngIf="flights.length > 0" class="btn btn-default" (click)="delay()">
+    <button *ngIf="state.flights.length > 0" class="btn btn-default" (click)="delay()">
       Delay 1st Flight
     </button>
 
-    <div *ngIf="flights.length > 0">
-      {{flights.length}} flights found!
+    <div *ngIf="state.flights.length > 0">
+      {{state.flights.length}} flights found!
     </div>
 
   </div>
@@ -41,21 +41,11 @@
 
 <div class="row">
 
-  <div *ngFor="let f of nested().flights()" class="col-xs-12 col-sm-6 col-md-4 col-lg-4 col-xl-3">
-    <flight-card [item]="flatten(f())" />
-
-    <!-- <flight-card [item]="f" [(selected)]="basket[f.id]">
-    </flight-card> -->
-
+  <div *ngFor="let f of state.flights" class="col-xs-12 col-sm-6 col-md-4 col-lg-4 col-xl-3">
+    <flight-card [item]="f" />
   </div>
 
-  <div *ngFor="let f of state().flights" class="col-xs-12 col-sm-6 col-md-4 col-lg-4 col-xl-3">
-    <flight-card [item]="f" [(selected)]="state().basket[f.id]" />
-
-    <!-- <flight-card [item]="f" [(selected)]="basket[f.id]">
-    </flight-card> -->
-
-  </div>
+ 
 </div>
 
-<pre>{{ state().basket | json }}</pre>
+<pre>{{ state.basket | json }}</pre>

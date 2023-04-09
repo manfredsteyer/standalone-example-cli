@@ -2,11 +2,7 @@ import { inject } from '@angular/core';
 import { MemoizedSelector, Store } from '@ngrx/store';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { take } from 'rxjs/operators';
-import {
-  SettableSignal,
-  Signal,
-  signal,
-} from './signals';
+import { SettableSignal, Signal, signal } from './signals';
 
 export function fromObservable<T>(
   obs$: Observable<T>,
@@ -33,6 +29,41 @@ export function fromStore<T>(selector: MemoizedSelector<object, T>): () => T {
 
 export function injectStore() {
   return inject(Store);
+}
+
+export function state<T extends Object>(obj: T): T {
+  const signalMap = new Map<string | symbol, SettableSignal<unknown>>();
+
+  return new Proxy(obj, {
+    get(target: T, prop: string) {
+      const s = getSignal(prop, target);
+      return s ? s() : undefined;
+    },
+    set(target: T, prop: string | symbol, value: unknown) {
+      const s = getSignal(prop, target);
+      if (s) {
+        s.set(value);
+      } else {
+        (target as any)[prop] = value;
+      }
+      return true;
+    },
+  });
+
+  function getSignal(
+    prop: string | symbol,
+    target: T
+  ): SettableSignal<unknown> | undefined {
+    if (!signalMap.has(prop)) {
+      const value = (target as any)[prop];
+      const isObject = typeof value === 'object';
+      const valueOrProxy = isObject ? state(value) : value;
+
+      const s = signal<unknown>(valueOrProxy);
+      signalMap.set(prop, s);
+    }
+    return signalMap.get(prop);
+  }
 }
 
 type DeepSignal<Type> = {
@@ -64,7 +95,6 @@ export function nest<T>(value: T): SettableSignal<DeepSignal<T>> {
 }
 
 export function flatten<T>(value: DeepSignal<T>): T {
-
   if (typeof value !== 'object' || !value) {
     return value;
   }
