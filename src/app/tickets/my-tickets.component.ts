@@ -8,8 +8,8 @@ import { TicketService } from './ticket.service';
     <h2 class="title">{{title}}</h2>
 
     <ng-container *ngFor="let ticket of tickets">
-        <flight-card [item]="ticket" [showEditButton]="false"></flight-card>
-    </ng-container>
+    {{ticket | json}}
+  </ng-container>
   `
 })
 export class MyTicketsComponent implements OnInit {

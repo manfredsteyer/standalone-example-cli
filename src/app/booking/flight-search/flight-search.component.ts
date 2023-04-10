@@ -1,14 +1,14 @@
 import { AsyncPipe, JsonPipe, NgForOf, NgIf } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, effect, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CityValidator } from '@demo/shared';
 import { FlightCardComponent } from '../flight-card/flight-card.component';
 import { ActivatedRoute } from '@angular/router';
-import { signal } from 'src/app/signals';
 import { Flight, FlightService } from '@demo/data';
-import { effect } from 'src/app/signals/effect';
 import { addMinutes } from 'src/app/date-utils';
 import { flatten, nest } from 'src/app/utils';
+import { firstValueFrom } from 'rxjs';
+import { ChangeDetectionStrategy } from '@angular/core';
 
 type ComponentState = {
   from: string;
@@ -50,6 +50,7 @@ const initState: ComponentState = {
   ],
   selector: 'flight-search',
   templateUrl: './flight-search.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FlightSearchComponent implements OnInit {
   private flightService = inject(FlightService);
@@ -101,27 +102,32 @@ export class FlightSearchComponent implements OnInit {
     }));
   }
 
-  search(): void {
+  async search() {
     if (!this.state().from || !this.state().to) return;
 
-    const flights = this.flightService.findAsSignal(
+    const flights = await firstValueFrom(this.flightService.find(
       this.state().from,
       this.state().to,
       this.state().urgent
-    );
+    ));
+    
 
-    effect(() => {
-      this.state.mutate((s) => {
-        s.flights = flights();
-      });
-    });
+    const x = nest({flights});
+    const y = x().flights();
+
+    this.nested().flights.set(y);
+
   }
 
   // Just delay the first flight
   delay(): void {
-    this.state.mutate((s) => {
-      const flight = s.flights[0];
-      flight.date = addMinutes(flight.date, 15);
+    // this.state.mutate((s) => {
+    //   const flight = s.flights[0];
+    //   flight.date = addMinutes(flight.date, 15);
+    // });
+    this.nested.mutate(s => {
+      const flight = s.flights().at(0);
+      flight.date.set(addMinutes(flight.date(), 15));
     });
   }
 }

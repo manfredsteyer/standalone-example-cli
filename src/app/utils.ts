@@ -1,12 +1,7 @@
-import { inject } from '@angular/core';
+import { Signal, WritableSignal, inject, signal } from '@angular/core';
 import { MemoizedSelector, Store } from '@ngrx/store';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { take } from 'rxjs/operators';
-import {
-  SettableSignal,
-  Signal,
-  signal,
-} from './signals';
 
 export function fromObservable<T>(
   obs$: Observable<T>,
@@ -35,17 +30,17 @@ export function injectStore() {
   return inject(Store);
 }
 
-type DeepSignal<Type> = {
+export type DeepSignal<Type> = {
   [Property in keyof Type]: Type[Property] extends Array<object>
-    ? SettableSignal<DeepArraySignal<DeepSignal<Type[Property][0]>>>
+    ? WritableSignal<DeepArraySignal<DeepSignal<Type[Property][0]>>>
     : Type[Property] extends object
-    ? SettableSignal<DeepSignal<Type[Property]>>
-    : SettableSignal<Type[Property]>;
+    ? WritableSignal<DeepSignal<Type[Property]>>
+    : WritableSignal<Type[Property]>;
 };
 
-export function nest<T>(value: T): SettableSignal<DeepSignal<T>> {
+export function nest<T>(value: T): WritableSignal<DeepSignal<T>> {
   if (value === null) {
-    return signal(null) as unknown as SettableSignal<DeepSignal<T>>;
+    return signal(null) as unknown as WritableSignal<DeepSignal<T>>;
   } else if (Array.isArray(value)) {
     const signals = value.map((v) => nest(v));
     const wrapped = new DeepArraySignal(signals) as DeepSignal<T>;
@@ -81,21 +76,21 @@ export function flatten<T>(value: DeepSignal<T>): T {
 }
 
 class DeepArraySignal<T> {
-  constructor(private signals: SettableSignal<T>[]) {}
+  constructor(private signals: WritableSignal<T>[]) {}
 
   [Symbol.iterator]() {
     return this.signals[Symbol.iterator]();
   }
 
-  set(signals: SettableSignal<T>[]): void {
+  set(signals: WritableSignal<T>[]): void {
     this.signals = signals;
   }
 
-  update(updateFn: (value: SettableSignal<T>[]) => SettableSignal<T>[]): void {
+  update(updateFn: (value: WritableSignal<T>[]) => WritableSignal<T>[]): void {
     this.signals = updateFn(this.signals);
   }
 
-  mutate(mutatorFn: (value: SettableSignal<T>[]) => void): void {
+  mutate(mutatorFn: (value: WritableSignal<T>[]) => void): void {
     mutatorFn(this.signals);
   }
 

@@ -1,18 +1,21 @@
 import { CommonModule } from "@angular/common";
-import { Component, EventEmitter, Input, Output } from "@angular/core";
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, Signal } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { CityPipe } from "@demo/shared";
 import { Flight, initFlight } from "@demo/data";
+import { DeepSignal } from "src/app/utils";
 
 @Component({
   standalone: true,
   selector: 'flight-card',
   imports: [CommonModule, RouterModule, CityPipe],
   templateUrl: './flight-card.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush
+
 })
 export class FlightCardComponent {
   
-  @Input() item: Flight = initFlight;
+  @Input() item!: DeepSignal<Flight>;
   @Input() selected: boolean | undefined;
   @Output() selectedChange = new EventEmitter<boolean>();
   @Input() showEditButton = true;
