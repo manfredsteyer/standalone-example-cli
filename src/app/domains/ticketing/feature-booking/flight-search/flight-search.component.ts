@@ -27,7 +27,6 @@ import {FlightCardComponent} from "../../ui-common";
 export class FlightSearchComponent  {
 
   private flightService = inject(FlightService);
-  private route = inject(ActivatedRoute);
 
   from = 'Hamburg'; // in Germany
   to = 'Graz'; // in Austria
@@ -40,19 +39,6 @@ export class FlightSearchComponent  {
     5: true
   };
 
-  constructor() {
-    this.route.paramMap.subscribe(p => {
-      const from = p.get('from');
-      const to = p.get('to');
-
-      if (from && to) {
-        this.from = from;
-        this.to = to;
-        this.search();
-      }
-    });
-  }
-
   search(): void {
     if (!this.from || !this.to) return;
 
@@ -61,20 +47,12 @@ export class FlightSearchComponent  {
         this.flights = flights;
       }
     );
-
   }
 
   delay(): void {
     const date = new Date(this.flights[0].date);
     date.setTime(date.getTime() + 1000 * 60 * 15);
-
-    // Mutable
     this.flights[0].date = date.toISOString();
-
-    // Immutable
-    // const newFlight: Flight = { ...this.flights[0], date: date.toISOString()}
-    // const newFlights = [newFlight, ...this.flights.slice(1)];
-    // this.flights = newFlights;
   }
 
 }
