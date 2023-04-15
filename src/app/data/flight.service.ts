@@ -1,7 +1,6 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable, Signal } from '@angular/core';
 import { firstValueFrom, Observable } from 'rxjs';
-import { fromObservable } from '../utils';
 import { Flight } from './flight';
 
 @Injectable({
