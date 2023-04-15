@@ -66,11 +66,15 @@ export class FlightSearchComponent  {
 
   delay(): void {
     const date = new Date(this.flights[0].date);
-
     date.setTime(date.getTime() + 1000 * 60 * 15);
-    const newFlight: Flight = { ...this.flights[0], date: date.toISOString()}
-    const newFlights = [ newFlight, ...this.flights.slice(1)];
-    this.flights = newFlights;
+
+    // Mutable
+    this.flights[0].date = date.toISOString();
+
+    // Immutable
+    // const newFlight: Flight = { ...this.flights[0], date: date.toISOString()}
+    // const newFlights = [newFlight, ...this.flights.slice(1)];
+    // this.flights = newFlights;
   }
 
 }
