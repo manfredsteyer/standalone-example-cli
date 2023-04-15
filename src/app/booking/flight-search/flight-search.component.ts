@@ -3,10 +3,10 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CityValidator } from '@demo/shared';
 import { FlightCardComponent } from '../flight-card/flight-card.component';
-import { fromStore } from 'src/app/utils';
 import { selectFlights } from '../+state/selectors';
 import { delayFlight, loadFlights } from '../+state/actions';
 import { Store } from '@ngrx/store';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   standalone: true,
@@ -25,8 +25,7 @@ import { Store } from '@ngrx/store';
 export class FlightSearchComponent implements OnInit {
   
   store = inject(Store);
-
-  flights = fromStore(selectFlights);
+  flights = toSignal(this.store.select(selectFlights), { initialValue: [] });
   from = signal('Hamburg');
   to = signal('Graz');
   basket = signal<Record<number, boolean>>({ 1: true });
