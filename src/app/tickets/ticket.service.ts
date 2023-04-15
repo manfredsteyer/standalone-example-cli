@@ -5,8 +5,8 @@ import { Flight } from '../data/flight';
 export class TicketService {
 
     readonly tickets: Flight[] = [
-        { id: 4711, from: 'Graz', to: 'Düsseldorf', delayed: false, date: new Date().toISOString()},
-        { id: 4712, from: 'Graz', to: 'Paderborn', delayed: false, date: new Date().toISOString()}
+        { id: 4711, from: 'Graz', to: 'Düsseldorf', delayed: false, date: new Date().toISOString(), counter: 0},
+        { id: 4712, from: 'Graz', to: 'Paderborn', delayed: false, date: new Date().toISOString(), counter: 0}
     ];
 
     constructor() { 

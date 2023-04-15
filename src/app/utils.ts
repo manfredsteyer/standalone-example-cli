@@ -30,25 +30,46 @@ export function injectStore() {
 
 export function state<T extends Object>(obj: T): T {
   const signalMap = new Map<string | symbol, WritableSignal<unknown>>();
+  let old: WritableSignal<unknown>;
 
   return new Proxy(obj, {
-    get(target: T, prop: string) {
-      console.log('get signal', prop);
+    get(target: T, prop: string, re) {
+
+      // if (typeof (target as any)[prop] === 'function'
+      //   || typeof (target as any)[prop] === 'undefined'
+      // ) {
+      //   return (target as any)[prop];
+      // }
+
+      if (prop === 'toJSON') {
+        return null;
+
+      }
+
+      const returnSignal = prop.endsWith("$signal");
+      if (returnSignal) {
+        prop = prop.split('$signal')[0];
+      }
 
       const s = getSignal(prop, target);
+      if (returnSignal) return s || (() => undefined) as any;
+
       return s ? s() : undefined;
     },
-    set(target: T, prop: string | symbol, value: unknown) {
+    set(target: T, prop: string | symbol, value: T) {
       const s = getSignal(prop, target);
       if (s) {
+        s.set(value as any);
+        // (target as any).counter = (target as any).counter ? (target as any).counter + 1 : 1;
 
-        s.set(value);
       } else {
         (target as any)[prop] = value;
       }
       return true;
     },
   });
+
+
 
   function getSignal(
     prop: string | symbol,
@@ -60,9 +81,24 @@ export function state<T extends Object>(obj: T): T {
       const valueOrProxy = isObject ? state(value) : value;
 
       const s = signal<unknown>(valueOrProxy);
+
+
+
+      // (s as any).counter = 0;
+      console.log('prop', prop);
       signalMap.set(prop, s);
     }
-    return signalMap.get(prop);
+    console.log(prop, signalMap.has(prop) ? signalMap.get(prop)!() : 'undef')
+    const s = signalMap.get(prop);
+
+    if (s && prop === 'counter' && old) {
+      console.log(old === s);
+    }
+    if (s && prop === 'counter') {
+      old = s;
+    }
+
+    return s;
   }
 }
 
