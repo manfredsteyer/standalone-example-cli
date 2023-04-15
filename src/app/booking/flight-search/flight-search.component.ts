@@ -5,8 +5,8 @@ import { CityValidator } from '@demo/shared';
 import { FlightCardComponent } from '../flight-card/flight-card.component';
 import { ActivatedRoute } from '@angular/router';
 import { FlightService } from '@demo/data';
-import { fromSignal, fromObservable } from 'src/app/interop';
 import { combineLatest, debounceTime, switchMap, tap } from 'rxjs';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   standalone: true,
@@ -34,8 +34,8 @@ export class FlightSearchComponent implements OnInit {
   flightRoute = computed(() => this.from() + ' to ' + this.to());
   loading = signal(false);
 
-  from$ = fromSignal(this.from);
-  to$ = fromSignal(this.to);
+  from$ = toObservable(this.from);
+  to$ = toObservable(this.to);
 
   flights$ = combineLatest({ from: this.from$, to: this.to$ }).pipe(
     debounceTime(300),
@@ -44,7 +44,7 @@ export class FlightSearchComponent implements OnInit {
     tap(() => this.loading.set(false))
   );
 
-  flights = fromObservable(this.flights$, []);
+  flights = toSignal(this.flights$, { initialValue: [] });
 
   constructor() {
     this.route.paramMap.subscribe((p) => {
