@@ -4,7 +4,7 @@ import {FormsModule} from "@angular/forms";
 import {Store} from "@ngrx/store";
 import {take} from "rxjs";
 import {ActivatedRoute} from "@angular/router";
-import {BookingSlice, delayFlight, loadFlights, selectFlights} from "../../data";
+import {BookingSlice, Flight, FlightService, delayFlight, loadFlights, selectFlights} from "../../data";
 import {CityValidator} from "src/app/shared/util-common";
 import {FlightCardComponent} from "../../ui-common";
 
@@ -26,16 +26,16 @@ import {FlightCardComponent} from "../../ui-common";
 })
 export class FlightSearchComponent  {
 
-  private store = inject<Store<BookingSlice>>(Store);
+  private flightService = inject(FlightService);
   private route = inject(ActivatedRoute);
 
   from = 'Hamburg'; // in Germany
   to = 'Graz'; // in Austria
   urgent = false;
 
-  flights$ = this.store.select(selectFlights);
+  flights: Flight[] = [];
 
-  basket: { [id: number]: boolean } = {
+  basket: Record<number, boolean> = {
     3: true,
     5: true
   };
@@ -56,17 +56,21 @@ export class FlightSearchComponent  {
   search(): void {
     if (!this.from || !this.to) return;
 
-    this.store.dispatch(loadFlights({
-      from: this.from,
-      to: this.to
-    }));
+    this.flightService.find(this.from, this.to).subscribe(
+      flights => {
+        this.flights = flights;
+      }
+    );
+
   }
 
   delay(): void {
-    this.flights$.pipe(take(1)).subscribe(flights => {
-      const id = flights[0].id;
-      this.store.dispatch(delayFlight({id}));
-    });
+    const date = new Date(this.flights[0].date);
+
+    date.setTime(date.getTime() + 1000 * 60 * 15);
+    const newFlight: Flight = { ...this.flights[0], date: date.toISOString()}
+    const newFlights = [ newFlight, ...this.flights.slice(1)];
+    this.flights = newFlights;
   }
 
 }
