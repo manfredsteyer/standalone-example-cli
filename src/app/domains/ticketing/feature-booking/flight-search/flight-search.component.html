@@ -4,7 +4,7 @@
 
   <div class="form-group">
     <label>From:</label>
-    <input [(ngModel)]="from" appCity name="from" class="form-control">
+    <input [ngModel]="from()" (ngModelChange)="from.set($event)" appCity name="from" class="form-control">
   </div>
 
   <div class="alert alert-warning" *ngIf="form?.controls?.['from']?.hasError('appCity')">
@@ -13,18 +13,18 @@
 
   <div class="form-group">
     <label>To:</label>
-    <input [(ngModel)]="to" name="to" class="form-control">
+    <input [ngModel]="to()" (ngModelChange)="to.set($event)" name="to" class="form-control">
   </div>
   <div class="form-group">
     <label>
-      <input [(ngModel)]="urgent" name="urgent" type="checkbox">
+      <input [ngModel]="urgent" (ngModelChange)="urgent.set($event)" name="urgent" type="checkbox">
       Urgent (When it's urgent it fails -- like in real life ;-))
 
     </label>
   </div>
 
   <div class="form-group">
-    <button (click)="search()" [disabled]="!from || !to" class="btn btn-default">
+    <button (click)="search()" [disabled]="!from() || !to()" class="btn btn-default">
       Search
     </button>
 
@@ -35,9 +35,11 @@
   
 </form>
 
+Route: {{flightRoute()}}
+
 <div class="row">
-  <div *ngFor="let f of flights" class="col-xs-12 col-sm-6 col-md-4 col-lg-4 col-xl-3">
-    <app-flight-card [item]="f" [(selected)]="basket[f.id]" />
+  <div *ngFor="let f of flights()" class="col-xs-12 col-sm-6 col-md-4 col-lg-4 col-xl-3">
+    <app-flight-card [item]="f" [(selected)]="basket()[f.id]" />
 
     <!-- <flight-card [item]="f" [(selected)]="basket[f.id]">
     </flight-card> -->
@@ -45,4 +47,5 @@
   </div>
 </div>
 
-<pre>{{ basket | json }}</pre>
+
+<pre>{{ basket() | json }}</pre>

@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, ElementRef, EventEmitter, Input, NgZone, Output, inject } from "@angular/core";
+import { ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, NgZone, Output, inject } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { CityPipe } from "src/app/shared/util-common";
 import { Flight, initFlight } from "../../data";
@@ -9,6 +9,8 @@ import { Flight, initFlight } from "../../data";
   selector: 'app-flight-card',
   imports: [CommonModule, RouterModule, CityPipe],
   templateUrl: './flight-card.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush
+
 })
 export class FlightCardComponent {
 
