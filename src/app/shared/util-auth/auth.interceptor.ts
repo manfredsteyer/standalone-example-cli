@@ -1,9 +1,8 @@
 import { HttpInterceptorFn } from "@angular/common/http";
-import { tap } from "rxjs";
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
     
-    console.log('authInterceptor (root scope)');
+    // console.log('authInterceptor (root scope)');
 
     if (req.url.startsWith('https://demo.angulararchitects.io/api/')) {
         // Setting a dummy token for demonstration
@@ -12,6 +11,6 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     }
 
     return next(req).pipe(
-        tap(resp => console.log('response', resp))
+        // tap(resp => console.log('response', resp))
     );
 }

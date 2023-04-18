@@ -6,7 +6,7 @@ import { Observable, tap } from 'rxjs';
 export class LegacyInterceptor implements HttpInterceptor {
     intercept(req: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
 
-        console.log('LegacyInterceptor (root scope)');
+        // console.log('LegacyInterceptor (root scope)');
 
         if (req.url.startsWith('https://demo.angulararchitects.io/api/')) {
             // Setting a dummy token for demonstration
@@ -15,7 +15,7 @@ export class LegacyInterceptor implements HttpInterceptor {
         }
 
         return next.handle(req).pipe(
-            tap(resp => console.log('response', resp))
+            // tap(resp => console.log('response', resp))
         );
     }
 }

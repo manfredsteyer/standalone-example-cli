@@ -3,7 +3,7 @@ import { tap } from "rxjs";
 
 export const bookingInterceptor: HttpInterceptorFn = (req, next) => {
     
-    console.log('bookingInterceptor (lazy scope)');
+    // console.log('bookingInterceptor (lazy scope)');
 
     if (req.url.startsWith('https://demo.angulararchitects.io/api/')) {
         // Setting a dummy token for demonstration
@@ -12,6 +12,6 @@ export const bookingInterceptor: HttpInterceptorFn = (req, next) => {
     }
 
     return next(req).pipe(
-        tap(resp => console.log('response', resp))
+        // tap(resp => console.log('response', resp))
     );
 }
