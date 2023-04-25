@@ -1,27 +1,66 @@
-# StandaloneCli
+# Experiment: Signals and Mutables
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 15.0.0.
+✅ Just use ordinary objects (properties) and mutate them
 
-## Development server
+✅ Get signal-based fine-grained change detection
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+✅ Just declare your state with the ``state`` function:
 
-## Code scaffolding
+    ```typescript
+    @Component({ ... })
+    export class FlightSearchComponent {
+        state = state({
+            from: 'Hamburg',
+            to: 'Graz',
+            urgent: false,
+            flights: [] as Flight[],
+            basket: {
+                3: true,
+                5: true,
+            },
+        });
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+        [...]
+    }
+    ```
 
-## Build
+## How to try it out?
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+The application uses a trick to visualize the change detection. Each updated flight blinks red:
 
-## Running unit tests
+![Updated flights blink](./app.png)
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+1. Start the Angular app
+2. Click the ``flights`` menu item on the left 
+3. Search for flights
+4. All flights blink because they need to be data bound
+5. Click "Delay 1st flight"
+6. Only the 1st flight blinks
 
-## Running end-to-end tests
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+## How does it work?
 
-## Further help
+✅ ``state`` returns a proxy
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+✅ This proxy creates signals for its properties on demand
+
+
+## How is this different from other approaches?
+
+✅ This is an experiment for lightweight management of signals without any store library (with all advantages and disadvantages not using stores comes with)
+
+✅ Mutable data structures are supported
+
+
+## Credits
+
+✅ My GDE fellow [Chau Tran](https://twitter.com/Nartc1410) first came up with a store implementation that created signals on demand.  
+
+✅ The usage of Proxies was also inspired by the store implementation found in [SolidJS](https://www.solidjs.com/).
+
+
+## Open Questions
+
+✅ We need some performance tests, esp. to find out if we create too many Signals.
+
+✅ We need to check for edge cases 
