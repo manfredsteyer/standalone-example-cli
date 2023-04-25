@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, firstValueFrom } from 'rxjs';
 import { Flight } from './flight';
 
 @Injectable({
@@ -21,6 +21,11 @@ export class FlightService {
       },
       error: (err) => console.error('Error loading flights', err),
     });
+  }
+
+
+  findPromise(from: string, to: string, urgent = false): Promise<Flight[]> {
+    return firstValueFrom(this.find(from, to, urgent));
   }
 
   find(
