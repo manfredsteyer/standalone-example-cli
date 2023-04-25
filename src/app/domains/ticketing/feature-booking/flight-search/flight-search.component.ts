@@ -8,6 +8,10 @@ import {BookingSlice, delayFlight, loadFlights, selectFlights} from "../../data"
 import {CityValidator} from "src/app/shared/util-common";
 import {FlightCardComponent} from "../../ui-common";
 
+// import { HiddenService } from "../../../checkin/data/hidden.service";
+// import { CheckinService } from "@demo/checkin/data";
+
+
 @Component({
   standalone: true,
   imports: [
