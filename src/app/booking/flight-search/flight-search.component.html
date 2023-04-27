@@ -42,9 +42,11 @@
 <div class="row">
 
   <div *ngFor="let f of state.flights" class="col-xs-12 col-sm-6 col-md-4 col-lg-4 col-xl-3">
-    <flight-card [item]="f" />
+    <flight-card [item]="f" [(selected)]="state.basket[f.id]" />
   </div>
  
 </div>
 
-<pre>{{ state.flights | json }}</pre>
+<ul>
+  <li *ngFor="let key of basketKeys">{{key}}: {{state.basket[key]}}</li>
+</ul>

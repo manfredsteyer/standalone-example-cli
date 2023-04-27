@@ -1,10 +1,26 @@
 import { WritableSignal, signal } from '@angular/core';
 
+const $PROXY = Symbol('$PROXY');
+
+export function isProxy<T>(obj: T): boolean {
+  return !!(obj as any)[$PROXY];
+}
+
 export function state<T extends Object>(obj: T): T {
   const signalMap = new Map<string | symbol, WritableSignal<unknown>>();
 
+  if (isProxy(obj)) {
+    return obj;
+  }
+
   return new Proxy(obj, {
-    get(target: T, prop: string, re) {
+    get(target: T, prop: string|symbol, receiver) {
+      if (prop === $PROXY) {
+        return receiver;
+      }
+      if (typeof (target as any)[prop] === 'function') {
+        return (target as any)[prop];
+      }
       const s = getSignal(prop, target);
       return s ? s() : undefined;
     },
@@ -15,9 +31,8 @@ export function state<T extends Object>(obj: T): T {
       }
       if (s) {
         s.set(value as any);
-      } else {
-        (target as any)[prop] = value;
-      }
+      } 
+      (target as any)[prop] = value;
       return true;
     },
   });
@@ -37,3 +52,4 @@ export function state<T extends Object>(obj: T): T {
     return s;
   }
 }
+

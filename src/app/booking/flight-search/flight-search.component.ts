@@ -11,7 +11,7 @@ import { FlightCardComponent } from '../flight-card/flight-card.component';
 import { ActivatedRoute } from '@angular/router';
 import { Flight, FlightService } from '@demo/data';
 import { addMinutes } from 'src/app/date-utils';
-import { state } from 'src/app/utils';
+import { isProxy, state } from 'src/app/utils';
 import { firstValueFrom } from 'rxjs';
 
 @Component({
@@ -42,7 +42,7 @@ export class FlightSearchComponent implements OnInit {
     basket: {
       3: true,
       5: true,
-    },
+    } as Record<number, boolean>,
   });
 
   constructor() {
@@ -76,7 +76,12 @@ export class FlightSearchComponent implements OnInit {
 
   // Just delay the first flight
   delay(): void {
+    this.state.basket[6] = false;
     const flight = this.state.flights[0];
     flight.date = addMinutes(flight.date, 15);
+  }
+
+  get basketKeys(): number[] {
+    return Object.keys(this.state.basket) as unknown as number[];
   }
 }
