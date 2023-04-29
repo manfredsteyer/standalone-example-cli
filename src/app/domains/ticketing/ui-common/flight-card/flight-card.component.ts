@@ -13,7 +13,7 @@ import { Flight, initFlight } from "../../data";
 })
 export class FlightCardComponent {
 
-  @Input() item: Flight = initFlight;
+  @Input({ required: true }) item: Flight = initFlight;
   @Input() selected: boolean | undefined;
   @Output() selectedChange = new EventEmitter<boolean>();
   @Input() showEditButton = true;

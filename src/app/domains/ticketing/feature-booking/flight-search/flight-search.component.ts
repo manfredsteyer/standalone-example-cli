@@ -1,5 +1,5 @@
 import { AsyncPipe, JsonPipe, NgForOf, NgIf } from '@angular/common';
-import { Component, computed, effect, inject, signal } from '@angular/core';
+import { Component, Input, OnInit, computed, effect, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
   Flight,
@@ -25,8 +25,10 @@ import { addMinutes } from 'src/app/shared/util-common/date-utils';
   templateUrl: './flight-search.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FlightSearchComponent {
+export class FlightSearchComponent implements OnInit {
   private flightService = inject(FlightService);
+
+  @Input() q = '';
 
   from = signal('Hamburg'); // in Germany
   to = signal('Graz'); // in Austria
@@ -43,6 +45,15 @@ export class FlightSearchComponent {
     effect(() => {
       this.search();
     });
+  }
+
+  ngOnInit(): void {
+    if (this.q) {
+      console.log('q');
+      const [from, to] = this.q.split('-');
+      this.from.set(from);
+      this.to.set(to);
+    }
   }
 
   async search() {
