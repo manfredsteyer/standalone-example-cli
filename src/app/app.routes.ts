@@ -1,7 +1,8 @@
 import { inject } from "@angular/core";
-import { Routes } from "@angular/router";
+import { Routes, mapToCanActivate } from "@angular/router";
 import { AuthService } from "./shared/util-auth";
 import { HomeComponent } from "./shell/home/home.component";
+import { AuthGuard } from "./shared/util-auth/auth.guard";
 
 export const APP_ROUTES: Routes = [
     {
@@ -11,6 +12,7 @@ export const APP_ROUTES: Routes = [
     },
     {
         path: 'home',
+        canActivate: mapToCanActivate([AuthGuard]),
         component: HomeComponent
     },
     {

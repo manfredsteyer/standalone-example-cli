@@ -1,14 +1,47 @@
 import { AsyncPipe, JsonPipe, NgForOf, NgIf } from '@angular/common';
-import { Component, Input, OnInit, computed, effect, inject, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import {
-  Flight,
-  FlightService,
-} from '../../data';
+  Component,
+  DestroyRef,
+  Injector,
+  Input,
+  OnInit,
+  Signal,
+  assertInInjectionContext,
+  computed,
+  effect,
+  inject,
+  runInInjectionContext,
+  signal,
+} from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { Flight, FlightService, selectFlights } from '../../data';
 import { CityValidator } from 'src/app/shared/util-common';
 import { FlightCardComponent } from '../../ui-common';
 import { ChangeDetectionStrategy } from '@angular/core';
 import { addMinutes } from 'src/app/shared/util-common/date-utils';
+import { Store } from '@ngrx/store';
+import { Observable, interval, of, takeUntil } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Router } from '@angular/router';
+
+function selectAllFlights(): Observable<Flight[]> {
+  assertInInjectionContext(selectAllFlights);
+  const store = inject(Store);
+  return store.select(selectFlights);
+}
+
+function selectAllFlightsInInjectionContext(
+  injector: Injector
+): Observable<Flight[]> {
+  let store: Store | undefined;
+  runInInjectionContext(injector, () => {
+    store = inject(Store);
+  });
+  if (store) {
+    return store.select(selectFlights);
+  }
+  return of([]);
+}
 
 @Component({
   standalone: true,
@@ -28,6 +61,10 @@ import { addMinutes } from 'src/app/shared/util-common/date-utils';
 export class FlightSearchComponent implements OnInit {
   private flightService = inject(FlightService);
 
+  destroyRef = inject(DestroyRef);
+  injector = inject(Injector);
+  router = inject(Router);
+
   @Input() q = '';
 
   from = signal('Hamburg'); // in Germany
@@ -42,12 +79,30 @@ export class FlightSearchComponent implements OnInit {
   });
 
   constructor() {
+    const sub = interval(1000).subscribe((counter) => console.log(counter));
+    const cleanup = this.destroyRef.onDestroy(() => {
+      sub.unsubscribe();
+    });
+    //cleanup();
+
+    interval(1000)
+      .pipe(takeUntilDestroyed())
+      .subscribe((counter) => console.log(counter));
+
     effect(() => {
       this.search();
     });
   }
 
   ngOnInit(): void {
+    console.log(
+      'lastSuccessfullNavigation',
+      this.router.lastSuccessfulNavigation
+    );
+
+    // const flights$ = selectAllFlights();
+    // const x = selectAllFlightsInInjectionContext(this.injector);
+
     if (this.q) {
       console.log('q');
       const [from, to] = this.q.split('-');
@@ -58,15 +113,19 @@ export class FlightSearchComponent implements OnInit {
 
   async search() {
     if (!this.from() || !this.to()) return;
-    const flights = await this.flightService.findPromise(this.from(), this.to());
+    const flights = await this.flightService.findPromise(
+      this.from(),
+      this.to()
+    );
     this.flights.set(flights);
   }
 
   delay(): void {
     const flights = this.flights();
     const flight = flights[0];
-    this.flights.mutate(flights => {
-      flights[0].date = addMinutes(flight.date, 15);
-    });
+    this.flights.update((flights) => [
+      { ...flight, date: addMinutes(flight.date, 15) },
+      ...flights.slice(1),
+    ]);
   }
 }

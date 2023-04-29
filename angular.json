@@ -13,7 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/standalone-cli",
+            "outputPath": "dist/standalone-cli/browser",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": [
@@ -103,6 +103,60 @@
               "src/**/*.html"
             ]
           }
+        },
+        "server": {
+          "builder": "@angular-devkit/build-angular:server",
+          "options": {
+            "outputPath": "dist/standalone-cli/server",
+            "main": "server.ts",
+            "tsConfig": "tsconfig.server.json"
+          },
+          "configurations": {
+            "production": {
+              "outputHashing": "media"
+            },
+            "development": {
+              "buildOptimizer": false,
+              "optimization": false,
+              "sourceMap": true,
+              "extractLicenses": false,
+              "vendorChunk": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve-ssr": {
+          "builder": "@nguniversal/builders:ssr-dev-server",
+          "configurations": {
+            "development": {
+              "browserTarget": "standalone-cli:build:development",
+              "serverTarget": "standalone-cli:server:development"
+            },
+            "production": {
+              "browserTarget": "standalone-cli:build:production",
+              "serverTarget": "standalone-cli:server:production"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "prerender": {
+          "builder": "@nguniversal/builders:prerender",
+          "options": {
+            "routes": [
+              "/"
+            ]
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "standalone-cli:build:production",
+              "serverTarget": "standalone-cli:server:production"
+            },
+            "development": {
+              "browserTarget": "standalone-cli:build:development",
+              "serverTarget": "standalone-cli:server:development"
+            }
+          },
+          "defaultConfiguration": "production"
         }
       }
     }

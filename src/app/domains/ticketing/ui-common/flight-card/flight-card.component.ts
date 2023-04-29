@@ -10,6 +10,9 @@ import { Flight, initFlight } from "../../data";
   imports: [CommonModule, RouterModule, CityPipe],
   templateUrl: './flight-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  // host: {
+  //   'ngSkipHydration': 'true'
+  // }
 })
 export class FlightCardComponent {
 
