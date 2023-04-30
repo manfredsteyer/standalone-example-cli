@@ -1,4 +1,4 @@
-import { ApplicationConfig } from "@angular/core";
+import { ApplicationConfig, CSP_NONCE } from "@angular/core";
 import { LayoutModule } from '@angular/cdk/layout';
 import {
   provideHttpClient,
@@ -31,6 +31,8 @@ export const appConfig: ApplicationConfig = {
         provideClientHydration(
           // withNoHttpTransferCache()
         ),
+
+        // { provide: CSP_NONCE, useValue: '123456'},
     
         // { provide: APP_ID, useValue: 'serverApp' },
     
