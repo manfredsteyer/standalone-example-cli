@@ -4,7 +4,7 @@
 
   <div class="form-group">
     <label>From:</label>
-    <input [value]="from()" (keydown)="from.set($any($event).target.value)" appCity name="from" class="form-control">
+    <input [ngModel]="from()" (ngModelChange)="from.set($event)" appCity name="from" class="form-control">
   </div>
 
   <div class="alert alert-warning" *ngIf="form?.controls?.['from']?.hasError('appCity')">
@@ -13,11 +13,7 @@
 
   <div class="form-group">
     <label>To:</label>
-    <input [value]="to()" (keydown)="to.set($any($event).target.value)" class="form-control">
-  </div>
-
-  <div *ngIf="loading()">
-    <i>Loading...</i>
+    <input [ngModel]="to()" (ngModelChange)="to.set($event)" name="to" class="form-control">
   </div>
 
 </form>
