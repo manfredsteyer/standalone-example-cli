@@ -21,7 +21,7 @@ import { ChangeDetectionStrategy } from '@angular/core';
 import { addMinutes } from 'src/app/shared/util-common/date-utils';
 import { Store } from '@ngrx/store';
 import { Observable, interval, of, takeUntil } from 'rxjs';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 
 function selectAllFlights(): Observable<Flight[]> {
@@ -30,9 +30,7 @@ function selectAllFlights(): Observable<Flight[]> {
   return store.select(selectFlights);
 }
 
-function selectAllFlightsInInjectionContext(
-  injector: Injector
-): Observable<Flight[]> {
+function selectAllFlights2(injector: Injector): Observable<Flight[]> {
   let store: Store | undefined;
   runInInjectionContext(injector, () => {
     store = inject(Store);
@@ -79,15 +77,16 @@ export class FlightSearchComponent implements OnInit {
   });
 
   constructor() {
-    const sub = interval(1000).subscribe((counter) => console.log(counter));
-    const cleanup = this.destroyRef.onDestroy(() => {
-      sub.unsubscribe();
-    });
+    // const sub = interval(1000).subscribe((counter) => console.log(counter));
+    // const cleanup = this.destroyRef.onDestroy(() => {
+    //   sub.unsubscribe();
+    // });
+
     //cleanup();
 
-    interval(1000)
-      .pipe(takeUntilDestroyed())
-      .subscribe((counter) => console.log(counter));
+    // interval(1000)
+    //   .pipe(takeUntilDestroyed())
+    //   .subscribe((counter) => console.log(counter));
 
     effect(() => {
       this.search();
