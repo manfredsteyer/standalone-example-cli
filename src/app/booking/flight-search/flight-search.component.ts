@@ -1,5 +1,5 @@
 import { AsyncPipe, JsonPipe, NgForOf, NgIf } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, effect, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, Injector, OnInit, runInInjectionContext, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CityValidator } from '@demo/shared';
 import { FlightCardComponent } from '../flight-card/flight-card.component';
@@ -33,6 +33,8 @@ export class FlightSearchComponent implements OnInit {
 
   flightRoute = computed(() => this.from() + ' to ' + this.to());
 
+  injector = inject(Injector);
+
   constructor() {
     effect(() => {
       console.log('route:', this.flightRoute());
@@ -42,10 +44,15 @@ export class FlightSearchComponent implements OnInit {
     //   this.search();
     // });
 
-    effect(() => {
-      // Writing into signals is not allowed here:
-      // this.to.set(this.from());
+    effect(async () => {
+      const flights = await this.flightService.findAsPromise(this.from(), this.to());
+      this.flights.set(flights);
     });
+
+    // effect(() => {
+    //   // Writing into signals is not allowed here:
+    //   this.to.set(this.from());
+    // });
 
     // This would be allowed:
     // effect(() => {
@@ -59,13 +66,18 @@ export class FlightSearchComponent implements OnInit {
     // effect(() => {
     //   console.log('route:', this.flightRoute());
     // });
+
+    runInInjectionContext(this.injector, () => {
+      effect(() => {
+        console.log('route:', this.flightRoute());
+      });
+    });
   }
 
-  async search() {
+  async search(): Promise<void> {
     if (!this.from() || !this.to()) {
       return;
     }
-
     const flights = await this.flightService.findAsPromise(this.from(), this.to());
     this.flights.set(flights);
   }
