@@ -31,12 +31,9 @@ export class FlightService {
     }
 
     const params = new HttpParams().set('from', from).set('to', to);
-
     const headers = new HttpHeaders().set('Accept', 'application/json');
     const flights$ = this.http.get<Flight[]>(url, { params, headers });
 
     return flights$;
   }
-
- 
 }

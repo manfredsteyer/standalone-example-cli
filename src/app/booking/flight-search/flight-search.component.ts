@@ -1,11 +1,10 @@
-import { AsyncPipe, JsonPipe, NgForOf, NgIf } from "@angular/common";
-import { ChangeDetectionStrategy, Component, computed, effect, inject, OnInit, signal } from "@angular/core";
-import { FormsModule } from "@angular/forms";
-import { CityValidator } from "@demo/shared";
-import { FlightCardComponent } from "../flight-card/flight-card.component";
-import { ActivatedRoute } from "@angular/router";
-import { Flight, FlightService } from "@demo/data";
-import { addMinutes } from "src/app/date-utils";
+import { AsyncPipe, JsonPipe, NgForOf, NgIf } from '@angular/common';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, OnInit, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { CityValidator } from '@demo/shared';
+import { FlightCardComponent } from '../flight-card/flight-card.component';
+import { Flight, FlightService } from '@demo/data';
+import { addMinutes } from 'src/app/date-utils';
 
 @Component({
   standalone: true,
@@ -14,7 +13,7 @@ import { addMinutes } from "src/app/date-utils";
     NgForOf,
     AsyncPipe,
     JsonPipe,
-    FormsModule, 
+    FormsModule,
     FlightCardComponent,
     CityValidator,
   ],
@@ -23,44 +22,51 @@ import { addMinutes } from "src/app/date-utils";
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FlightSearchComponent implements OnInit {
-
   private flightService = inject(FlightService);
-  private route = inject(ActivatedRoute);
 
   from = signal('Hamburg');
   to = signal('Graz');
   flights = signal<Flight[]>([]);
+
   basket = signal<Record<number, boolean>>({ 1: true });
   urgent = signal(false);
 
   flightRoute = computed(() => this.from() + ' to ' + this.to());
 
   constructor() {
-
-    this.route.paramMap.subscribe(p => {
-      const from = p.get('from');
-      const to = p.get('to');
-
-      if (from && to) {
-        this.from.set(from);
-        this.to.set(to);
-        this.search();
-      }
+    effect(() => {
+      console.log('route:', this.flightRoute());
     });
 
+    // effect(() => {
+    //   this.search();
+    // });
+
+    effect(() => {
+      // Writing into signals is not allowed here:
+      // this.to.set(this.from());
+    });
+
+    // This would be allowed:
+    // effect(() => {
+    //   this.to.set(this.from());
+    // }, { allowSignalWrites: true })
   }
+
 
   ngOnInit(): void {
+    // Effects are not allowed here:
+    // effect(() => {
+    //   console.log('route:', this.flightRoute());
+    // });
   }
 
-  async search(): Promise<void> {
-    if (!this.from() || !this.to()) return;
+  async search() {
+    if (!this.from() || !this.to()) {
+      return;
+    }
 
-    const flights = await this.flightService.findAsPromise(
-      this.from(), 
-      this.to(),
-      this.urgent());
-
+    const flights = await this.flightService.findAsPromise(this.from(), this.to());
     this.flights.set(flights);
   }
 
@@ -80,4 +86,3 @@ export class FlightSearchComponent implements OnInit {
 
   }
 }
-

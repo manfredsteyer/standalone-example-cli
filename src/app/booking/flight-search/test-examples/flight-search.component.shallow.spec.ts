@@ -1,14 +1,11 @@
-import { AsyncPipe, JsonPipe, NgForOf, NgIf } from '@angular/common';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting, HttpTestingController } from '@angular/common/http/testing';
 import { provideLocationMocks } from '@angular/common/testing';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
 import { provideRouter } from '@angular/router';
 import { Flight } from '@demo/data';
-import { CityValidator } from '@demo/shared';
 import { provideEffects } from '@ngrx/effects';
 import { provideState, provideStore } from '@ngrx/store';
 import { BookingEffects } from '../+state/effects';
