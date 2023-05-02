@@ -25,7 +25,8 @@ import { toSignal } from '@angular/core/rxjs-interop';
 export class FlightSearchComponent implements OnInit {
   
   store = inject(Store);
-  flights = toSignal(this.store.select(selectFlights), { initialValue: [] });
+  flights = this.store.selectSignal(selectFlights);
+  
   from = signal('Hamburg');
   to = signal('Graz');
   basket = signal<Record<number, boolean>>({ 1: true });
