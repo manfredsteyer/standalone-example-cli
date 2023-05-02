@@ -54,24 +54,25 @@ export function state<T extends Object>(obj: T): T {
 }
 
 
-export type DeepSignal<Type> =  {
+export type DeepSignal<Type> = Type extends Array<object> ?
+Array<WritableSignal<DeepSignal<Type[0]>>> :
+{
   [Property in keyof Type]: Type[Property] extends object
     ? WritableSignal<DeepSignal<Type[Property]>>
     : WritableSignal<Type[Property]>;
 };
 
-export function nest<T>(value: T): WritableSignal<DeepSignal<T>> {
+export function nest<T>(value: T): DeepSignal<T> {
   const signalMap = new Map<string | symbol, WritableSignal<unknown>>();
 
   if (typeof value === 'object') {
     const deep = Array.isArray(value) ?
-      [] as DeepSignal<T> :
+      [] as Array<DeepSignal<T>> :
       {} as DeepSignal<T>;
 
     for (const key of Object.keys(value as object)) {
       Object.defineProperty(deep, key, {
         get() {
-          console.log('get', key);
           return getSignal(key, value);
         },
         set(v: unknown) {
@@ -81,9 +82,9 @@ export function nest<T>(value: T): WritableSignal<DeepSignal<T>> {
         },
       });
     }
-    return signal(deep);
+    return deep as DeepSignal<T>;
   } else {
-    return signal(value as DeepSignal<T>);
+    return value as DeepSignal<T>;
   }
 
   function getSignal(
@@ -91,11 +92,10 @@ export function nest<T>(value: T): WritableSignal<DeepSignal<T>> {
     target: T
   ): WritableSignal<unknown> | undefined {
     if (!signalMap.has(prop)) {
-      console.log('create', prop);
       const value = (target as any)[prop];
       const isObject = typeof value === 'object';
-      const s = isObject ? nest(value) : signal<unknown>(value);
-      signalMap.set(prop, s);
+      const s = isObject ? nest(value) : value;
+      signalMap.set(prop, signal(s));
     }
     const s = signalMap.get(prop);
     return s;

@@ -4,12 +4,12 @@
 
   <div class="form-group">
     <label>From:</label>
-    <input [ngModel]="state().from()" (ngModelChange)="state().from.set($event)" appCity name="from" class="form-control">
+    <input [ngModel]="state.from()" (ngModelChange)="state.from.set($event)" name="from" class="form-control">
   </div>
 
   <div class="form-group">
     <label>To:</label>
-    <input [ngModel]="state().to()" (ngModelChange)="state().to.set($event)" name="to" class="form-control">
+    <input [ngModel]="state.to()" (ngModelChange)="state.to.set($event)" name="to" class="form-control">
   </div>
 
   <div class="form-group">
@@ -26,9 +26,8 @@
 
 <div class="row">
 
-  <div *ngFor="let f of state().flights()" class="col-xs-12 col-sm-6 col-md-4 col-lg-4 col-xl-3">
-    <!-- <flight-card [item]="f" [(selected)]="state.basket[f.id]" /> -->
-    <pre>- {{ f().id() }} </pre>
+  <div *ngFor="let f of state.flights()" class="col-xs-12 col-sm-6 col-md-4 col-lg-4 col-xl-3">
+    <flight-card [item]="f" [selected]="state.basket()[f().id()]" />
   </div>
  
 </div>
@@ -37,5 +36,5 @@
 
 <h4>Basket</h4>
 <ul>
-  <li *ngFor="let key of basketKeys">{{key}}: {{ $any(this.state().basket())[key]() }} </li>
+  <li *ngFor="let key of basketKeys">{{key}}: {{ $any(this.state.basket())[key]() }} </li>
 </ul>

@@ -1,8 +1,9 @@
 import { CommonModule } from "@angular/common";
-import { Component, EventEmitter, Input, Output, OnChanges, SimpleChanges, ChangeDetectionStrategy, Signal, effect, signal, inject, ElementRef, NgZone } from "@angular/core";
+import { Component, EventEmitter, Input, Output, OnChanges, SimpleChanges, ChangeDetectionStrategy, Signal, effect, signal, inject, ElementRef, NgZone, WritableSignal } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { CityPipe } from "@demo/shared";
 import { initFlight } from "@demo/data";
+import { nest } from "src/app/utils";
 
 @Component({
   standalone: true,
@@ -15,23 +16,19 @@ export class FlightCardComponent implements OnChanges {
   private element = inject(ElementRef);
   private zone = inject(NgZone);
 
-  @Input() item = initFlight;
-  @Input() selected: boolean | undefined;
-  @Output() selectedChange = new EventEmitter<boolean>();
-  @Input() showEditButton = true;
+  @Input() item = signal(nest(initFlight));
+  @Input() selected = signal(false);
 
   ngOnChanges(changes: SimpleChanges) {
     console.log('changes', changes);
   }
 
   select() {
-    this.selected = true;
-    this.selectedChange.next(true);
+    this.selected.set(true);
   }
 
   deselect() {
-    this.selected = false;
-    this.selectedChange.next(false);
+    this.selected.set(false);
   }
 
   blink() {
