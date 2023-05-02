@@ -4,6 +4,8 @@ import {
   Component,
   inject,
   OnInit,
+  signal,
+  Signal,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CityValidator } from '@demo/shared';
@@ -11,7 +13,7 @@ import { FlightCardComponent } from '../flight-card/flight-card.component';
 import { ActivatedRoute } from '@angular/router';
 import { Flight, FlightService } from '@demo/data';
 import { addMinutes } from 'src/app/date-utils';
-import { isProxy, state } from 'src/app/utils';
+import { isProxy, nest, state } from 'src/app/utils';
 import { firstValueFrom } from 'rxjs';
 
 @Component({
@@ -33,7 +35,7 @@ export class FlightSearchComponent implements OnInit {
   private flightService = inject(FlightService);
   private route = inject(ActivatedRoute);
 
-  state = state({
+  state = nest({
     from: 'Hamburg',
     to: 'Graz',
     urgent: false,
@@ -45,43 +47,35 @@ export class FlightSearchComponent implements OnInit {
     } as Record<number, boolean>,
   });
 
-  constructor() {
-    this.route.paramMap.subscribe((p) => {
-      const from = p.get('from');
-      const to = p.get('to');
-
-      if (from && to) {
-        this.state.from = from;
-        this.state.to = to;
-
-        this.search();
-      }
-    });
+   ngOnInit(): void {
+    console.log('flights', this.state().flights());
+    
   }
 
-  ngOnInit(): void {}
-
   async search() {
-    if (!this.state.from || !this.state.to) return;
+    if (!this.state().from() || !this.state().to()) return;
 
-    this.state.flights = 
-      await firstValueFrom(
-        this.flightService.find(
-          this.state.from,
-          this.state.to,
-          this.state.urgent
-        )
-      );
+    const flights = await firstValueFrom(
+      this.flightService.find(
+        this.state().from(),
+        this.state().to(),
+        this.state().urgent()
+      ));
+
+    const nested = nest([]);
+    // const test = nest({x: {y: 1}});
+
+    this.state().flights.set(nested);
   }
 
   // Just delay the first flight
   delay(): void {
-    this.state.basket[6] = false;
-    const flight = this.state.flights[0];
-    flight.date = addMinutes(flight.date, 15);
+    this.state().basket()[2] = signal(true);
+    // const flight = this.state().flights()[0]();
+    // flight.date.set(addMinutes(flight.date(), 15));
   }
 
-  get basketKeys(): number[] {
-    return Object.keys(this.state.basket) as unknown as number[];
+  get basketKeys() {
+    return Object.keys(this.state().basket());
   }
 }
