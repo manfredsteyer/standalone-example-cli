@@ -48,6 +48,10 @@ export class FlightSearchComponent implements OnInit {
     }
   });
 
+  // criteria2 = toSignal(this.criteria$, { 
+  //   requireSync: true
+  // });
+
   constructor() {
     effect(() => {
       console.log('route:', this.flightRoute());
