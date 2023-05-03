@@ -15,23 +15,23 @@
 
 ✅ Just declare your state with the ``state`` function:
 
-    ```typescript
-    @Component({ ... })
-    export class FlightSearchComponent {
-        state = state({
-            from: 'Hamburg',
-            to: 'Graz',
-            urgent: false,
-            flights: [] as Flight[],
-            basket: {
-                3: true,
-                5: true,
-            },
-        });
+```typescript
+@Component({ ... })
+export class FlightSearchComponent {
+    state = state({
+        from: 'Hamburg',
+        to: 'Graz',
+        urgent: false,
+        flights: [] as Flight[],
+        basket: {
+            3: true,
+            5: true,
+        },
+    });
 
-        [...]
-    }
-    ```
+    [...]
+}
+```
 
 ## How to try it out?
 
