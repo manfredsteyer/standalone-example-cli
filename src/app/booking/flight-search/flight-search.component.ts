@@ -43,7 +43,11 @@ export class FlightSearchComponent implements OnInit {
     } as Record<number, boolean>,
   });
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    for(let flightSignal of this.state.flights()) {
+      console.log('id', flightSignal().id());
+    }
+  }
 
   async search() {
     if (!this.state.from() || !this.state.to()) return;

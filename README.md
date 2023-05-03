@@ -1,28 +1,48 @@
-# Experiment: Signals and Mutables
+# Experiment 2: Explicit Signals and Mutables
 
-✅ Just use ordinary objects (properties) and mutate them
+
+## Experiments
+
+- [Experiment 1: Hidden Signals and Mutables](https://github.com/manfredsteyer/standalone-example-cli/tree/nest)
+- Experiment 2: Explicit Signals and Mutables (this one)
+ 
+
+## What's this experiment about?
+
+✅ Convert objects into object with nested signals
 
 ✅ Get signal-based fine-grained change detection
 
-✅ Just declare your state with the ``state`` function:
+✅ Just declare your state with the ``nest`` function:
 
-    ```typescript
-    @Component({ ... })
-    export class FlightSearchComponent {
-        state = state({
-            from: 'Hamburg',
-            to: 'Graz',
-            urgent: false,
-            flights: [] as Flight[],
-            basket: {
-                3: true,
-                5: true,
-            },
-        });
+```typescript
+@Component({ ... })
+export class FlightSearchComponent {
+    state = nest({
+        from: 'Hamburg',
+        to: 'Graz',
+        urgent: false,
+        flights: [
+            { id: 17, ... }, 
+            {id: 18, ...}
+        ] as Flight[],
+        basket: {
+            3: true,
+            5: true,
+        },
+    });
 
-        [...]
-    }
-    ```
+    [...]
+}
+```
+
+This results in a typed structure of nested signals:
+
+```typescript
+for(let flightSignal of this.state.flights()) {
+  console.log('id', flightSignal().id());
+}
+```
 
 ## How to try it out?
 
@@ -40,9 +60,9 @@ The application uses a trick to visualize the change detection. Each updated fli
 
 ## How does it work?
 
-✅ ``state`` returns a proxy
+✅ ``nest`` returns a ``DeepSignal`` -- an typed object with nested signals
 
-✅ This proxy creates signals for its properties on demand
+✅ This ``DeepSignal`` creates signals for its properties on demand
 
 
 ## How is this different from other approaches?
@@ -56,11 +76,9 @@ The application uses a trick to visualize the change detection. Each updated fli
 
 ✅ My GDE fellow [Chau Tran](https://twitter.com/Nartc1410) first came up with a store implementation that created signals on demand.  
 
-✅ The usage of Proxies was also inspired by the store implementation found in [SolidJS](https://www.solidjs.com/).
+✅ My colleagues [Michael Egger-Zikes](https://twitter.com/MikeZks) and [Rainer Hahnekamp](https://twitter.com/rainerhahnekamp) for several good discussions and valuable critical feedback.
 
 
 ## Open Questions
-
-✅ We need some performance tests, esp. to find out if we create too many Signals.
 
 ✅ We need to check for edge cases 
