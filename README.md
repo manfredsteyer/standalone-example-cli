@@ -1,4 +1,13 @@
-# Experiment: Signals and Mutables
+# Experiment 1: Hidden Signals and Mutables
+
+
+## Experiments
+
+- Experiment 1: Hidden Signals and Mutables (this one)
+- [Experiment 2: Explicit Signals and Mutables](https://github.com/manfredsteyer/standalone-example-cli/tree/nest)
+ 
+
+## What's this experiment about?
 
 ✅ Just use ordinary objects (properties) and mutate them
 
