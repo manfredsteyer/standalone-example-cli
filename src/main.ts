@@ -25,7 +25,7 @@ import { loggerConfig } from './app/logger.config';
 bootstrapApplication(AppComponent, {
   providers: [
     provideHttpClient(
-      withInterceptors([authInterceptor]),
+      // withInterceptors([authInterceptor]),
     ),
 
     provideRouter(
