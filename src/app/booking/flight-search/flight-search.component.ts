@@ -35,6 +35,10 @@ export class FlightSearchComponent implements OnInit {
   urgent = signal(false);
 
   constructor() {
+    effect(() => {
+      console.log('flights updated', this.flights()),
+      this.blink(); 
+    })
   }
 
   ngOnInit(): void {}
