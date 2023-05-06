@@ -35,6 +35,7 @@ export class FlightSearchComponent implements OnInit {
   urgent = signal(false);
 
   constructor() {
+
   }
 
   ngOnInit(): void {}

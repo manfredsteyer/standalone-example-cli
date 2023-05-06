@@ -10,15 +10,13 @@ export interface BookingSlice {
 }
 
 export interface BookingState {
-    flights: Flight[];
+    flights: Record<number, Flight>;
+    flightIds: number[];
 }
 
 export const initialState: BookingState = {
-    flights: []
-}
-
-function updateDate(flight: Flight): Flight {
-    return {...flight, date: addMinutes(flight.date, 15) };
+    flights: {},
+    flightIds: []
 }
 
 export const bookingFeature = createFeature({
@@ -29,8 +27,23 @@ export const bookingFeature = createFeature({
             return { ...state, flights: action.flights };
         }),
         on(delayFlight, (state, action) => {
-            const flights = state.flights.map(f => f.id !== action.id ? f : updateDate(f) )
-            return { ...state, flights };
+
+            const id = action.id;
+            const flight = state.flights[id];
+            const newFlight = { ...flight, date: addMinutes(flight.date, 15) };
+
+            const flights = { 
+                ...state.flights,
+                [id]: newFlight
+            }
+
+            return {
+                ...state,
+                flights
+            };
+
+            // const flights = state.flights.map(f => f.id !== action.id ? f : updateDate(f) )
+            // return { ...state, flights };
         })
     )
 });
