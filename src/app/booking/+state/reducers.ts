@@ -1,6 +1,7 @@
 import { Flight } from "@demo/data";
 import { createFeature, createReducer, on } from "@ngrx/store";
 import { delayFlight, loadFlightsSuccess } from "./actions";
+import { addMinutes } from "src/app/date-utils";
 
 export const BOOKING_FEATURE_KEY = 'booking';
 
@@ -17,7 +18,7 @@ export const initialState: BookingState = {
 }
 
 function updateDate(flight: Flight): Flight {
-    return {...flight, date: new Date().toISOString() }
+    return {...flight, date: addMinutes(flight.date, 15) };
 }
 
 export const bookingFeature = createFeature({
