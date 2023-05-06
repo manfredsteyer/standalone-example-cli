@@ -12,11 +12,13 @@ export interface BookingSlice {
 export interface BookingState {
     flights: Record<number, Flight>;
     flightIds: number[];
+    otherStuff: number[];
 }
 
 export const initialState: BookingState = {
     flights: {},
-    flightIds: []
+    flightIds: [],
+    otherStuff: [1,2,3]
 }
 
 export const bookingFeature = createFeature({
@@ -24,7 +26,22 @@ export const bookingFeature = createFeature({
     reducer: createReducer(
         initialState,
         on(loadFlightsSuccess, (state, action) => {
-            return { ...state, flights: action.flights };
+        
+            const flights = action.flights.reduce((acc, f) => {
+                return {
+                    ...acc,
+                    [f.id]: f
+                }
+            }, {});
+
+            const flightIds = action.flights.map(f => f.id);
+
+            return {
+                ...state,
+                flights,
+                flightIds
+            }
+
         }),
         on(delayFlight, (state, action) => {
 
