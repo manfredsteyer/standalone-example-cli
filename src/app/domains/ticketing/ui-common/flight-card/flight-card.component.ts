@@ -26,4 +26,17 @@ export class FlightCardComponent {
     this.selected = false;
     this.selectedChange.next(false);
   }
+
+  blink() {
+    // Dirty Hack used to visualize the change detector
+    this.element.nativeElement.firstChild.style.backgroundColor = 'crimson';
+
+    this.zone.runOutsideAngular(() => {
+      setTimeout(() => {
+        this.element.nativeElement.firstChild.style.backgroundColor = 'white';
+      }, 1000);
+    });
+
+    return null;
+  }
 }
