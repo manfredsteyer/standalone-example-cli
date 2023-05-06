@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, EventEmitter, Input, Output } from "@angular/core";
+import { Component, ElementRef, EventEmitter, Input, NgZone, Output, inject } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { CityPipe } from "src/app/shared/util-common";
 import { Flight, initFlight } from "../../data";
@@ -11,6 +11,8 @@ import { Flight, initFlight } from "../../data";
   templateUrl: './flight-card.component.html',
 })
 export class FlightCardComponent {
+  private element = inject(ElementRef);
+  private zone = inject(NgZone);
 
   @Input() item: Flight = initFlight;
   @Input() selected: boolean | undefined;
