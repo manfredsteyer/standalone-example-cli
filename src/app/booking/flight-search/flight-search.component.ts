@@ -1,12 +1,11 @@
 import { AsyncPipe, JsonPipe, NgForOf, NgIf } from '@angular/common';
-import { Component, OnInit, computed, effect, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, NgZone, OnInit, computed, effect, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CityValidator } from '@demo/shared';
 import { FlightCardComponent } from '../flight-card/flight-card.component';
 import { selectFlights } from '../+state/selectors';
-import { delayFlight, loadFlights } from '../+state/actions';
+import { loadFlights } from '../+state/actions';
 import { Store } from '@ngrx/store';
-import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   standalone: true,
@@ -21,9 +20,12 @@ import { toSignal } from '@angular/core/rxjs-interop';
   ],
   selector: 'flight-search',
   templateUrl: './flight-search.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FlightSearchComponent implements OnInit {
-  
+  private element = inject(ElementRef);
+  private zone = inject(NgZone);
+
   store = inject(Store);
   flights = this.store.selectSignal(selectFlights);
   
@@ -31,6 +33,9 @@ export class FlightSearchComponent implements OnInit {
   to = signal('Graz');
   basket = signal<Record<number, boolean>>({ 1: true });
   urgent = signal(false);
+
+  constructor() {
+  }
 
   ngOnInit(): void {}
 
@@ -42,10 +47,16 @@ export class FlightSearchComponent implements OnInit {
     );
   }
 
-  // Just delay the first flight
-  delay(): void {
-    const flights = this.flights();
-    const id = flights[0].id;
-    this.store.dispatch(delayFlight({ id }));
+  blink() {
+    // Dirty Hack used to visualize the change detector
+    this.element.nativeElement.firstChild.style.backgroundColor = 'crimson';
+
+    this.zone.runOutsideAngular(() => {
+      setTimeout(() => {
+        this.element.nativeElement.firstChild.style.backgroundColor = 'white';
+      }, 1000);
+    });
+
+    return null;
   }
 }

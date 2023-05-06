@@ -30,8 +30,8 @@ import { TicketsModule } from './app/tickets/tickets.module';
 bootstrapApplication(AppComponent, {
   providers: [
     provideHttpClient(
-      withInterceptors([authInterceptor]),
-      withInterceptorsFromDi()
+      // withInterceptors([authInterceptor]),
+      // withInterceptorsFromDi()
     ),
 
     {
