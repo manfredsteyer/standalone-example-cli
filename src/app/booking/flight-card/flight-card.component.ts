@@ -11,7 +11,9 @@ import { Flight, initFlight } from "@demo/data";
   templateUrl: './flight-card.component.html',
 })
 export class FlightCardComponent {
-  
+  private element = inject(ElementRef);
+  private zone = inject(NgZone);
+
   @Input() item: Flight = initFlight;
   @Input() selected: boolean | undefined;
   @Output() selectedChange = new EventEmitter<boolean>();
@@ -26,4 +28,18 @@ export class FlightCardComponent {
     this.selected = false;
     this.selectedChange.next(false);
   }
+
+  blink() {
+    // Dirty Hack used to visualize the change detector
+    this.element.nativeElement.firstChild.style.backgroundColor = 'crimson';
+
+    this.zone.runOutsideAngular(() => {
+      setTimeout(() => {
+        this.element.nativeElement.firstChild.style.backgroundColor = 'white';
+      }, 1000);
+    });
+
+    return null;
+  }
+
 }
