@@ -1,7 +1,5 @@
-import { Store, createFeatureSelector, createSelector } from "@ngrx/store";
+import { createFeatureSelector, createSelector } from "@ngrx/store";
 import { BookingState, BOOKING_FEATURE_KEY } from "./reducers";
-import { state } from "src/app/utils";
-import { toSignal } from "@angular/core/rxjs-interop";
 import { Flight } from "@demo/data";
 import { Signal } from "@angular/core";
 
@@ -23,7 +21,7 @@ export const selectFlightsRecord = createSelector(
 );
 
 export const selectOtherStuff = createSelector(
-    (s => ((s as any)[BOOKING_FEATURE_KEY] as BookingState).otherStuff),
+    selectBooking,
     otherStuff => otherStuff
 );
 

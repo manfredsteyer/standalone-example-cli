@@ -58,7 +58,6 @@ export class FlightSearchComponent implements OnInit {
     { requireSync: true }
   );
 
-
   from = signal('Hamburg');
   to = signal('Graz');
   basket = signal<Record<number, boolean>>({ 1: true });
