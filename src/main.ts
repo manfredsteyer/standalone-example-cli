@@ -30,15 +30,15 @@ import { TicketsModule } from './app/tickets/tickets.module';
 bootstrapApplication(AppComponent, {
   providers: [
     provideHttpClient(
-      withInterceptors([authInterceptor]),
-      withInterceptorsFromDi()
+      // withInterceptors([authInterceptor]),
+      // withInterceptorsFromDi()
     ),
 
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: LegacyInterceptor,
-      multi: true,
-    },
+    // {
+    //   provide: HTTP_INTERCEPTORS,
+    //   useClass: LegacyInterceptor,
+    //   multi: true,
+    // },
 
     provideRouter(
       APP_ROUTES,

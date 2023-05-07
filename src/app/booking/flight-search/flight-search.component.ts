@@ -5,7 +5,7 @@ import { CityValidator } from '@demo/shared';
 import { FlightCardComponent } from '../flight-card/flight-card.component';
 import { Flight, FlightService } from '@demo/data';
 import { addMinutes } from 'src/app/date-utils';
-import { createStore } from '../../solid-store';
+import { createSolidStore } from 'src/app/store-utils';
 
 @Component({
   standalone: true,
@@ -27,36 +27,27 @@ export class FlightSearchComponent implements OnInit {
 
   private element = inject(ElementRef);
   private zone = inject(NgZone);
+  private injector = inject(Injector);
 
   from = signal('Hamburg');
   to = signal('Graz');
-  flights = signal<Flight[]>([]);
-
   basket = signal<Record<number, boolean>>({ 1: true });
   urgent = signal(false);
 
   flightRoute = computed(() => this.from() + ' to ' + this.to());
 
-  injector = inject(Injector);
-
-  _store = createStore({
-    counter: 0,
+  store = createSolidStore({
     flights: [] as Flight[]
-  });
+  })
 
-  get store() {
-    return this._store[0];
-  }
-
-  get setStore() {
-    return this._store[1];
-  }
+  // Just for convenience
+  state = this.store.state;
 
   constructor() {
 
     effect(() => {
       this.blink();
-      console.log('flights array changed', this.store.flights)
+      console.log('flights array changed', this.state.flights)
     });
 
     effect(() => {
@@ -64,7 +55,6 @@ export class FlightSearchComponent implements OnInit {
     });
 
   }
-
 
   ngOnInit(): void {
     runInInjectionContext(this.injector, () => {
@@ -78,46 +68,15 @@ export class FlightSearchComponent implements OnInit {
     if (!this.from() || !this.to()) {
       return;
     }
-    // const flights = await this.flightService.findAsPromise(this.from(), this.to());
-    // this.flights.set(flights);
-
-    const now = new Date().toISOString();
-    console.log('store', this.store.flights);
-    console.log('store', this.store.flights);
-
-    console.log('counter', this.store.counter);
-    console.log('counter', this.store.counter);
-
-    this.setStore('flights', [
-      { id: 1, from: 'A', to: 'B', date: now, delayed: false},
-      { id: 2, from: 'B', to: 'C', date: now, delayed: false}
-    ]);
-
-    this.setStore('counter', c => c+1);
-
-    console.log('store', this.store.flights);
-
-    console.log('counter', this.store.counter);
-
-
+    const flights = await this.flightService.findAsPromise(this.from(), this.to());
+    this.store.set('flights', flights);
   }
+
   // Just delay the first flight
   delay(): void {
-
-    const f = this.store.flights[0];
+    const f = this.state.flights[0];
     const date = addMinutes(f.date, 15);
-    this.setStore('flights', 0, f => ({...f, date}));
-    // this.flights.update(f => {
-    //   const flight = f[0];
-    //   const date = addMinutes(flight.date, 15);
-    //   const updated = {...flight, date};
-
-    //   return [
-    //     updated,
-    //     ...f.slice(1)
-    //   ];
-    // });
-
+    this.store.set('flights', 0, {...f, date});
   }
 
   blink() {
