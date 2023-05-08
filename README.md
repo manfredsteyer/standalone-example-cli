@@ -14,29 +14,29 @@
 
 ✅ Just declare your state with the ``createSolidStore`` function:
 
-    ```typescript
-    store = createSolidStore({
-        flights: [] as Flight[],
-        from: 'Hamburg',
-        to: 'Graz',
-        basket: { 1: true } as Record<number, boolean>,
-        urgent: false,
-    });
-    ```
+```typescript
+store = createSolidStore({
+    flights: [] as Flight[],
+    from: 'Hamburg',
+    to: 'Graz',
+    basket: { 1: true } as Record<number, boolean>,
+    urgent: false,
+});
+```
 
-    The function ``createSolidStore`` is just a wrapper for the SolidJS store returning its getter and setter via a simple data structure with a ``state`` property (getter) and a ``set`` property (setter, equivalent to ``setState``). 
+The function ``createSolidStore`` is just a wrapper for the SolidJS store returning its getter and setter via a simple data structure with a ``state`` property (getter) and a ``set`` property (setter, equivalent to ``setState``). 
 
-    When accessing the store, we get a proxy wrapping an Angular Signal:
+When accessing the store, we get a proxy wrapping an Angular Signal:
 
-    ```typescript
-    const flights = store.state.flights;
-    ```
+```typescript
+const flights = store.state.flights;
+```
 
-    Updating the store:
+Updating the store:
 
-    ```typescript
-    store.set('flights', flights);
-    ```
+```typescript
+store.set('flights', flights);
+```
 
 ## How to try it out?
 
