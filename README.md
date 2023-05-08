@@ -5,7 +5,7 @@
 
 - [Experiment 1: Hidden Signals and Mutables](https://github.com/manfredsteyer/standalone-example-cli/tree/nest)
 - Experiment 2: Explicit Signals and Mutables (this one)
- 
+- [Experiment 3: Nested Angular Signals with the SolidJS Store](https://github.com/manfredsteyer/standalone-example-cli/tree/solid)
 
 ## What's this experiment about?
 
