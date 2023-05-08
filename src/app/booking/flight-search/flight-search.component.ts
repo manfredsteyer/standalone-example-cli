@@ -27,17 +27,13 @@ export class FlightSearchComponent implements OnInit {
 
   private element = inject(ElementRef);
   private zone = inject(NgZone);
-  private injector = inject(Injector);
-
-  from = signal('Hamburg');
-  to = signal('Graz');
-  basket = signal<Record<number, boolean>>({ 1: true });
-  urgent = signal(false);
-
-  flightRoute = computed(() => this.from() + ' to ' + this.to());
 
   store = createSolidStore({
-    flights: [] as Flight[]
+    flights: [] as Flight[],
+    from: 'Hamburg',
+    to: 'Graz',
+    basket: { 1: true } as Record<number, boolean>,
+    urgent: false,
   })
 
   // Just for convenience
@@ -50,25 +46,16 @@ export class FlightSearchComponent implements OnInit {
       console.log('flights array changed', this.state.flights)
     });
 
-    effect(() => {
-      console.log('route:', this.flightRoute());
-    });
-
   }
 
   ngOnInit(): void {
-    runInInjectionContext(this.injector, () => {
-      effect(() => {
-        console.log('route:', this.flightRoute());
-      });
-    });
   }
 
   async search(): Promise<void> {
-    if (!this.from() || !this.to()) {
+    if (!this.state.from || !this.state.to) {
       return;
     }
-    const flights = await this.flightService.findAsPromise(this.from(), this.to());
+    const flights = await this.flightService.findAsPromise(this.state.from, this.state.to);
     this.store.set('flights', flights);
   }
 
