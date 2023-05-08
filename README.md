@@ -68,6 +68,3 @@ The application uses a trick to visualize the change detection. Each updated fli
 
 ✅ Thanks to [Ryan Carniato](https://twitter.com/RyanCarniato), who is not only a great community member but also the principal author of SolidJS and mastermind for Signals.
 
-✅ The usage of Proxies was also inspired by the store implementation found in [SolidJS](https://www.solidjs.com/).
-
-
