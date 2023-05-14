@@ -13,7 +13,7 @@ export type DeepWritableSignal<Type> = {
 };
 
 export type DeepSignal<Type> = {
-  [Property in keyof Type]: Type[Property] extends object
+  [Property in keyof Type]: Type[Property] extends Object
     ? Signal<DeepSignal<Type[Property]>>
     : Signal<Type[Property]>;
 };
@@ -36,18 +36,17 @@ export function createStore<T>(init: T) {
     return value();
   };
 
-
-  function update<U extends Object>(
+  function update<U>(
     projector: Projector<
       DeepWritableSignal<T>,
-      WritableSignal<DeepWritableSignal<U>>
+      WritableSignal<DeepWritableSignal<U>> | WritableSignal<U>
     >,
     valueOrUpdater: Updater<U> | U
   ): void;
-  function update<U extends Object>(
+  function update<U>(
     projector: Projector<
       DeepWritableSignal<T>,
-      WritableSignal<WritableSignal<DeepWritableSignal<U>>[]>
+      WritableSignal<WritableSignal<DeepWritableSignal<U>>[]> | WritableSignal<WritableSignal<U>[]>
     >,
     valueOrUpdater: Updater<U[]> | U[]
   ): void;

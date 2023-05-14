@@ -60,17 +60,7 @@ export class FlightSearchComponent implements OnInit {
   }
 
   updateBasket(item: number, value: boolean) {
-    console.log('basket', item, value);
-    this.store.update<Record<number, boolean>>(
-      (s) => s.basket()[item] as any,
-      value as any);
-    
-      this.store.update(
-        s => s.basket()[item],
-        value
-      );
-
-    console.log('after update', this.basket()[item]())
+    this.store.update((s) => s.basket()[item], value);
   }
 
   async search() {
@@ -86,12 +76,6 @@ export class FlightSearchComponent implements OnInit {
 
     this.store.update((s) => s.flights, flights);
 
-    this.store.update((s) => {
-      const r = s.flights()[0]
-      return r;
-    }, x => x);
-
-
     for (let f of flights) {
       this.store.update(
         (s) => s.basket,
@@ -103,15 +87,7 @@ export class FlightSearchComponent implements OnInit {
   delay(): void {
     this.store.update(
       (s) => s.flights()[0]().date,
-      (date: string) => addMinutes(date, 15)
-    );
-
-    this.store.update(
-      (s) => { 
-        const x = s.flights()[0];
-        return x;
-      },
-      x => x
+      (date) => addMinutes(date, 15)
     );
   }
 
