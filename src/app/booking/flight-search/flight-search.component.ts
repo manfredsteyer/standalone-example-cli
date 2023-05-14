@@ -3,15 +3,17 @@ import {
   ChangeDetectionStrategy,
   Component,
   inject,
+  Injector,
   OnInit,
   signal,
+  WritableSignal,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CityValidator } from '@demo/shared';
 import { FlightCardComponent } from '../flight-card/flight-card.component';
 import { Flight, FlightService } from '@demo/data';
 import { addMinutes } from 'src/app/date-utils';
-import { nest } from 'src/app/utils';
+import { nest, toReadOnly } from 'src/app/utils';
 import { firstValueFrom } from 'rxjs';
 
 @Component({
@@ -32,7 +34,9 @@ import { firstValueFrom } from 'rxjs';
 export class FlightSearchComponent implements OnInit {
   private flightService = inject(FlightService);
 
-  state = nest({
+  private injector = inject(Injector);
+
+  _state = nest({
     from: 'Hamburg',
     to: 'Graz',
     urgent: false,
@@ -43,13 +47,18 @@ export class FlightSearchComponent implements OnInit {
     } as Record<number, boolean>,
   });
 
+  state = toReadOnly(this._state, this.injector);
+
   ngOnInit(): void {
+
     for(let flightSignal of this.state.flights()) {
       console.log('id', flightSignal().id());
     }
   }
 
   async search() {
+    console.log(this.state.from(), this.state.to(), this.state.urgent());
+
     if (!this.state.from() || !this.state.to()) return;
 
     const flights = await firstValueFrom(
@@ -62,16 +71,16 @@ export class FlightSearchComponent implements OnInit {
 
     for (let f of flights) {
       if (!this.state.basket()[f.id]) {
-        this.state.basket()[f.id] = signal(false);
+        this._state.basket()[f.id] = signal(false);
       }
     }
 
     const nested = nest(flights);
-    this.state.flights.set(nested);
+    this._state.flights.set(nested);
   }
 
   delay(): void {
-    const flight = this.state.flights()[0]();
+    const flight = this._state.flights()[0]();
     flight.date.set(addMinutes(flight.date(), 15));
   }
 

@@ -2,8 +2,8 @@ import { CommonModule } from "@angular/common";
 import { Component, EventEmitter, Input, Output, OnChanges, SimpleChanges, ChangeDetectionStrategy, Signal, effect, signal, inject, ElementRef, NgZone, WritableSignal } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { CityPipe } from "@demo/shared";
-import { initFlight } from "@demo/data";
-import { nest } from "src/app/utils";
+import { Flight, initFlight } from "@demo/data";
+import { DeepSignal, nest, toReadOnly } from "src/app/utils";
 
 @Component({
   standalone: true,
@@ -16,7 +16,7 @@ export class FlightCardComponent implements OnChanges {
   private element = inject(ElementRef);
   private zone = inject(NgZone);
 
-  @Input() item = signal(nest(initFlight));
+  @Input() item = nest(signal(initFlight)) as unknown as Signal<DeepSignal<Flight>>;
   @Input() selected = signal(false);
 
   ngOnChanges(changes: SimpleChanges) {
