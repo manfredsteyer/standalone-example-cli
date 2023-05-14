@@ -2,18 +2,16 @@ import { AsyncPipe, JsonPipe, NgForOf, NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   inject,
-  Injector,
   OnInit,
-  signal,
-  WritableSignal,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CityValidator } from '@demo/shared';
 import { FlightCardComponent } from '../flight-card/flight-card.component';
 import { Flight, FlightService } from '@demo/data';
 import { addMinutes } from 'src/app/date-utils';
-import { nest, toReadOnly } from 'src/app/utils';
+import { createStore, nest } from 'src/app/utils';
 import { firstValueFrom } from 'rxjs';
 
 @Component({
@@ -34,12 +32,12 @@ import { firstValueFrom } from 'rxjs';
 export class FlightSearchComponent implements OnInit {
   private flightService = inject(FlightService);
 
-  private injector = inject(Injector);
-
-  _state = nest({
-    from: 'Hamburg',
-    to: 'Graz',
-    urgent: false,
+  store = createStore({
+    criteria: {
+      from: 'Hamburg',
+      to: 'Graz',
+      urgent: false,
+    },
     flights: [] as Flight[],
     basket: {
       3: true,
@@ -47,44 +45,78 @@ export class FlightSearchComponent implements OnInit {
     } as Record<number, boolean>,
   });
 
-  state = toReadOnly(this._state, this.injector);
+  flights = this.store.select((s) => s.flights);
+  criteria = this.store.select((s) => s.criteria);
+  basket = this.store.select((s) => s.basket);
 
-  ngOnInit(): void {
+  flightRoute = computed(
+    () => this.criteria().from() + ' to ' + this.criteria().to()
+  );
 
-    for(let flightSignal of this.state.flights()) {
-      console.log('id', flightSignal().id());
-    }
+  ngOnInit(): void {}
+
+  update(criteria: string, value: string) {
+    this.store.update((s) => (s.criteria as any)[criteria], value);
+  }
+
+  updateBasket(item: number, value: boolean) {
+    console.log('basket', item, value);
+    this.store.update<Record<number, boolean>>(
+      (s) => s.basket()[item] as any,
+      value as any);
+    
+      this.store.update(
+        s => s.basket()[item],
+        value
+      );
+
+    console.log('after update', this.basket()[item]())
   }
 
   async search() {
-    console.log(this.state.from(), this.state.to(), this.state.urgent());
+    const from = this.criteria().from();
+    const to = this.criteria().to();
+    const urgent = this.criteria().urgent();
 
-    if (!this.state.from() || !this.state.to()) return;
+    if (!from || !to) return;
 
     const flights = await firstValueFrom(
-      this.flightService.find(
-        this.state.from(),
-        this.state.to(),
-        this.state.urgent()
-      )
+      this.flightService.find(from, to, urgent)
     );
 
-    for (let f of flights) {
-      if (!this.state.basket()[f.id]) {
-        this._state.basket()[f.id] = signal(false);
-      }
-    }
+    this.store.update((s) => s.flights, flights);
 
-    const nested = nest(flights);
-    this._state.flights.set(nested);
+    this.store.update((s) => {
+      const r = s.flights()[0]
+      return r;
+    }, x => x);
+
+
+    for (let f of flights) {
+      this.store.update(
+        (s) => s.basket,
+        (x) => ({ ...x, [f.id]: false })
+      );
+    }
   }
 
   delay(): void {
-    const flight = this._state.flights()[0]();
-    flight.date.set(addMinutes(flight.date(), 15));
+    this.store.update(
+      (s) => s.flights()[0]().date,
+      (date: string) => addMinutes(date, 15)
+    );
+
+    this.store.update(
+      (s) => { 
+        const x = s.flights()[0];
+        return x;
+      },
+      x => x
+    );
   }
 
   get basketKeys() {
-    return Object.keys(this.state.basket());
+    console.log('basket', Object.keys(this.basket()), this.basket());
+    return Object.keys(this.basket());
   }
 }

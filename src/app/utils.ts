@@ -1,28 +1,86 @@
-import { Injector, Signal, WritableSignal, computed, effect, signal, untracked } from '@angular/core';
+import {
+  Signal,
+  WritableSignal,
+  computed,
+  isSignal,
+  signal,
+} from '@angular/core';
 
-export type DeepWritableSignal<Type> =
-  /*Type extends Array<object> ?
-Array<WritableSignal<DeepWritableSignal<Type[0]>>> :*/
-  {
-    [Property in keyof Type]: Type[Property] extends object
-      ? WritableSignal<DeepWritableSignal<Type[Property]>>
-      : WritableSignal<Type[Property]>;
+export type DeepWritableSignal<Type> = {
+  [Property in keyof Type]: Type[Property] extends object
+    ? WritableSignal<DeepWritableSignal<Type[Property]>>
+    : WritableSignal<Type[Property]>;
+};
+
+export type DeepSignal<Type> = {
+  [Property in keyof Type]: Type[Property] extends object
+    ? Signal<DeepSignal<Type[Property]>>
+    : Signal<Type[Property]>;
+};
+
+export type Projector<T, U> = (selector: T) => U;
+export type Updater<T> = (value: T) => T;
+
+export function createStore<T>(init: T) {
+  const writeModel = nest(init);
+  const readModel = toReadOnly(writeModel);
+
+  const select = <U>(projector: Projector<DeepSignal<T>, U>): U => {
+    return projector(readModel);
   };
 
-export type DeepSignal<Type> =
-  /*Type extends Array<object> ?
-Array<Signal<DeepSignal<Type[0]>>> :*/
-  {
-    [Property in keyof Type]: Type[Property] extends object
-      ? Signal<DeepSignal<Type[Property]>>
-      : Signal<Type[Property]>;
+  const selectValue = <U>(
+    projector: Projector<DeepSignal<T>, Signal<U>>
+  ): U => {
+    const value = projector(readModel);
+    return value();
   };
 
-export function toReadOnly<T>(deep: DeepWritableSignal<T>, injector: Injector): DeepSignal<T> {
+
+  function update<U extends Object>(
+    projector: Projector<
+      DeepWritableSignal<T>,
+      WritableSignal<DeepWritableSignal<U>>
+    >,
+    valueOrUpdater: Updater<U> | U
+  ): void;
+  function update<U extends Object>(
+    projector: Projector<
+      DeepWritableSignal<T>,
+      WritableSignal<WritableSignal<DeepWritableSignal<U>>[]>
+    >,
+    valueOrUpdater: Updater<U[]> | U[]
+  ): void;
+  function update(projector: any, valueOrUpdater: any) {
+    const s = projector(writeModel);
+    let value: unknown;
+
+    if (typeof valueOrUpdater === 'function') {
+      value = valueOrUpdater(s());
+    } else {
+      value = valueOrUpdater;
+    }
+
+    if (typeof value === 'object') {
+      value = nest(value);
+    }
+
+    s.set(value);
+  }
+
+  return {
+    state: readModel,
+    select,
+    selectValue,
+    update,
+  };
+}
+
+export function toReadOnly<T>(deep: DeepWritableSignal<T>): DeepSignal<T> {
+  // Perhaps for Prod Mode?
   // return deep as DeepSignal<T>;
-  // debugger;
 
-  const cache = new Map<string, WritableSignal<unknown>>();
+  const mirrorMap = new Map<string, Signal<unknown>>();
 
   const result = Array.isArray(deep)
     ? ([] as Array<DeepSignal<T>>)
@@ -30,46 +88,34 @@ export function toReadOnly<T>(deep: DeepWritableSignal<T>, injector: Injector): 
 
   for (const key of Object.keys(deep)) {
     Object.defineProperty(result, key, {
+      enumerable: true,
       get() {
         const s = (deep as any)[key] as WritableSignal<any>;
-        let mirror: WritableSignal<unknown>;
-
-        if (!cache.has(key)) {
-          mirror = createMirror(s);
-          cache.set(key, mirror);
-          setupSync(s, mirror);
-        }
-        else {
-          mirror = cache.get(key)!;
-        }
-
-        return mirror.asReadonly();
+        const mirror = getMirror(key, s);
+        return mirror;
       },
     });
-
   }
   return result as DeepSignal<T>;
 
-  function setupSync(s: WritableSignal<any>, mirror: WritableSignal<unknown>) {
-    effect(() => {
-      const value = s();
-      if (typeof value === 'object') {
-        mirror.set(toReadOnly(value as DeepSignal<unknown>, injector));
-      }
-      else {
-        mirror.set(value);
-      }
-    }, { allowSignalWrites: true, injector });
+  function getMirror(key: string, s: WritableSignal<any>) {
+    if (!mirrorMap.has(key)) {
+      let mirror = createMirror(s);
+      mirrorMap.set(key, mirror);
+    }
+    const mirror = mirrorMap.get(key)!;
+    return mirror;
   }
 
   function createMirror(s: WritableSignal<any>) {
-    const value = s();
-    if (typeof value === 'object') {
-      return signal(toReadOnly(value, injector));
-    }
-    else {
-      return signal(value);
-    }
+    return computed(() => {
+      const value = s();
+      if (typeof value === 'object') {
+        return toReadOnly(value);
+      } else {
+        return value;
+      }
+    });
   }
 }
 
@@ -106,8 +152,13 @@ export function nest<T>(value: T): DeepWritableSignal<T> {
     if (!signalMap.has(prop)) {
       const value = (target as any)[prop];
       const isObject = typeof value === 'object';
-      const s = isObject ? nest(value) : value;
-      signalMap.set(prop, signal(s));
+      const s = isSignal(value)
+        ? value
+        : isObject
+        ? signal(nest(value))
+        : signal(value);
+
+      signalMap.set(prop, s as WritableSignal<unknown>);
     }
     const s = signalMap.get(prop);
     return s;

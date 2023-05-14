@@ -7,8 +7,8 @@
       <p>Flight-No.: #{{item().id()}}</p>
       <p>Date: {{ item().date() | date: 'dd.MM.yyyy HH:mm'}}</p>
       <p>
-          <button class="btn btn-default" *ngIf="!selected" (click)="select()">Select</button>
-          <button class="btn btn-default" *ngIf="selected" (click)="deselect()">Remove</button>
+          <button class="btn btn-default" *ngIf="!selected()" (click)="select()">Select</button>
+          <button class="btn btn-default" *ngIf="selected()" (click)="deselect()">Remove</button>
       </p>
   </div>
 
