@@ -1,35 +1,47 @@
 import { createFeature, createReducer, on } from "@ngrx/store";
 import { Flight } from "../flight";
-import { delayFlight, loadFlightsSuccess } from "./actions";
-
-export const BOOKING_FEATURE_KEY = 'booking';
-
-export interface BookingSlice {
-    [BOOKING_FEATURE_KEY]: BookingState
-}
+import { addMinutes } from "src/app/shared/util-common";
+import { ticketingActions } from "./actions";
 
 export interface BookingState {
     flights: Flight[];
+    criteria: {
+        from: string;
+        to: string;
+    }
 }
 
 export const initialState: BookingState = {
-    flights: []
+    flights: [],
+    criteria: {
+        from: '',
+        to: ''
+    }
 }
 
 function updateDate(flight: Flight): Flight {
-    return {...flight, date: new Date().toISOString() }
+    return {...flight, date: addMinutes(flight.date, 15) }
 }
 
 export const bookingFeature = createFeature({
-    name: BOOKING_FEATURE_KEY,
+    name: 'booking',
     reducer: createReducer(
         initialState,
-        on(loadFlightsSuccess, (state, action) => {
+        on(ticketingActions.flightsLoaded, (state, action) => {
             return { ...state, flights: action.flights };
         }),
-        on(delayFlight, (state, action) => {
+        on(ticketingActions.delayFlight, (state, action) => {
             const flights = state.flights.map(f => f.id !== action.id ? f : updateDate(f) )
             return { ...state, flights };
-        })
+        }),
+        on(ticketingActions.updateCriteria, (state, action) => {
+            return {
+                ...state,
+                criteria: {
+                    from: action.from,
+                    to: action.to
+                }
+            }
+        }),
     )
 });

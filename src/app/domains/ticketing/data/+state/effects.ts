@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { map, switchMap } from "rxjs";
 import { FlightService } from "../flight.service";
-import { loadFlights, loadFlightsSuccess } from "./actions";
+import { ticketingActions } from "./actions";
 
 @Injectable({
     providedIn: 'root'
@@ -10,9 +10,9 @@ import { loadFlights, loadFlightsSuccess } from "./actions";
 export class BookingEffects {
 
     loadFlights$ = createEffect(() => this.actions$.pipe(
-        ofType(loadFlights),
+        ofType(ticketingActions.loadFlights),
         switchMap(a => this.flightService.find(a.from, a.to)),
-        map(flights => loadFlightsSuccess({flights}))
+        map(flights => ticketingActions.flightsLoaded({flights}))
     ));
 
     constructor(private actions$: Actions, 

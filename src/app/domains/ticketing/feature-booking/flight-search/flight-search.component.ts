@@ -1,10 +1,10 @@
 import {AsyncPipe, JsonPipe, NgForOf, NgIf} from "@angular/common";
-import {Component, inject, signal} from "@angular/core";
+import {Component, inject} from "@angular/core";
 import {FormsModule} from "@angular/forms";
 import {CityValidator} from "src/app/shared/util-common";
 import {FlightCardComponent} from "../../ui-common";
-import { FlightBookingFacade } from "../../data";
 import { ChangeDetectionStrategy } from "@angular/core";
+import { Store } from "@ngrx/store";
 
 @Component({
   standalone: true,
@@ -24,9 +24,9 @@ import { ChangeDetectionStrategy } from "@angular/core";
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FlightSearchComponent  {
-  private facade = inject(FlightBookingFacade);
+  private store = inject(Store);
 
-  from = this.facade.from;
+  from = this.store.select()
   to = this.facade.to;
   basket = this.facade.basket;
   flights = this.facade.flights;
