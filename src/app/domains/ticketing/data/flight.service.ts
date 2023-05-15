@@ -1,26 +1,18 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, firstValueFrom } from 'rxjs';
 import { Flight } from './flight';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FlightService {
-  flights: Flight[] = [];
   baseUrl = `https://demo.angulararchitects.io/api`;
-
-  reqDelay = 1000;
 
   constructor(private http: HttpClient) {}
 
-  load(from: string, to: string, urgent: boolean): void {
-    this.find(from, to, urgent).subscribe({
-      next: (flights) => {
-        this.flights = flights;
-      },
-      error: (err) => console.error('Error loading flights', err),
-    });
+  findPromise(from: string, to: string, urgent = false): Promise<Flight[]> {
+    return firstValueFrom(this.find(from, to, urgent));
   }
 
   find(
@@ -58,15 +50,4 @@ export class FlightService {
     return this.http.post<Flight>(url, flight);
   }
 
-  delay() {
-    const ONE_MINUTE = 1000 * 60;
-
-    const oldFlights = this.flights;
-    const oldFlight = oldFlights[0];
-    const oldDate = new Date(oldFlight.date);
-
-    // Mutable
-    oldDate.setTime(oldDate.getTime() + 15 * ONE_MINUTE);
-    oldFlight.date = oldDate.toISOString();
-  }
 }

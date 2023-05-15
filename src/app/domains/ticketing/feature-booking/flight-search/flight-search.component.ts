@@ -1,16 +1,10 @@
 import {AsyncPipe, JsonPipe, NgForOf, NgIf} from "@angular/common";
-import {Component, inject} from "@angular/core";
+import {Component, inject, signal} from "@angular/core";
 import {FormsModule} from "@angular/forms";
-import {Store} from "@ngrx/store";
 import {take} from "rxjs";
-import {ActivatedRoute} from "@angular/router";
-import {BookingSlice, delayFlight, loadFlights, selectFlights} from "../../data";
 import {CityValidator} from "src/app/shared/util-common";
 import {FlightCardComponent} from "../../ui-common";
-
-// import { HiddenService } from "../../../checkin/data/hidden.service";
-// import { CheckinService } from "@demo/checkin/data";
-
+import { Flight, FlightService } from "../../data";
 
 @Component({
   standalone: true,
@@ -30,48 +24,25 @@ import {FlightCardComponent} from "../../ui-common";
 })
 export class FlightSearchComponent  {
 
-  private store = inject<Store<BookingSlice>>(Store);
-  private route = inject(ActivatedRoute);
+  private flightService = inject(FlightService);
 
-  from = 'Hamburg'; // in Germany
-  to = 'Graz'; // in Austria
-  urgent = false;
+  from = signal('Hamburg');
+  to = signal('Graz');
+  flights = signal<Flight[]>([]);
 
-  flights$ = this.store.select(selectFlights);
+  async search() {
+    if (!this.from() || !this.to()) return;
 
-  basket: { [id: number]: boolean } = {
-    3: true,
-    5: true
-  };
-
-  constructor() {
-    this.route.paramMap.subscribe(p => {
-      const from = p.get('from');
-      const to = p.get('to');
-
-      if (from && to) {
-        this.from = from;
-        this.to = to;
-        this.search();
-      }
-    });
-  }
-
-  search(): void {
-    if (!this.from || !this.to) return;
-
-    this.store.dispatch(loadFlights({
-      from: this.from,
-      to: this.to
-    }));
+    const flights = await this.flightService.findPromise(this.from(), this.to());
+    this.flights.set(flights);
   }
 
   delay(): void {
-    this.flights$.pipe(take(1)).subscribe(flights => {
-      const id = flights[0].id;
-      this.store.dispatch(delayFlight({id}));
-    });
+    const flights = this.flights();
+    const flight = flights[0];
+
+    const date = addMinutes(flight.date, 15);
+
   }
 
 }
-
