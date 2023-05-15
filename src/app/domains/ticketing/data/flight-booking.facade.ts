@@ -1,51 +1,37 @@
-import { Injectable, inject, signal } from '@angular/core';
-import { FlightService } from './flight.service';
-import { Flight } from './flight';
-import { addMinutes } from 'src/app/shared/util-common';
+import { Injectable, inject } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { ticketingFeature } from './+state/reducers';
+import { ticketingActions } from './+state/actions';
 
 @Injectable({ providedIn: 'root' })
 export class FlightBookingFacade {
-  private flightService = inject(FlightService);
+  private store = inject(Store);
 
-  private _flights = signal<Flight[]>([]);
-  readonly flights = this._flights.asReadonly();
-
-  private _from = signal('Hamburg');
-  readonly from = this._from.asReadonly();
-  
-  private _to = signal('Graz');
-  readonly to = this._to.asReadonly();
-
-  private _basket = signal<Record<number, boolean>>({});
-  readonly basket = this._basket.asReadonly();
+  criteria = this.store.selectSignal(ticketingFeature.selectCriteria);
+  basket = this.store.selectSignal(ticketingFeature.selectBasket);
+  flights = this.store.selectSignal(ticketingFeature.selectFlights);
 
   updateCriteria(from: string, to: string): void {
-    this._from.set(from);
-    this._to.set(from);
+    this.store.dispatch(ticketingActions.updateCriteria({ from, to }));
   }
 
   updateBasket(id: number, selected: boolean): void {
-    this._basket.update(b => ({
-      ...b,
-      [id]: selected,
-    }));
+    this.store.dispatch(ticketingActions.updateBasket({ id, selected }));
   }
-  
+
   async load() {
-    if (!this.from() || !this.to()) return;
-    const flights = await this.flightService.findPromise(this.from(), this.to());
-    this._flights.set(flights);
+    if (!this.criteria().from || !this.criteria().to) return;
+    this.store.dispatch(
+      ticketingActions.loadFlights({
+        from: this.criteria().from,
+        to: this.criteria().to,
+      })
+    );
   }
 
   delay(): void {
     const flights = this.flights();
-    const flight = flights[0];
-
-    const date = addMinutes(flight.date, 15);
-
-    this._flights.update((flights) => [
-      { ...flight, date },
-      ...flights.slice(1),
-    ]);
+    const id = flights[0].id;
+    this.store.dispatch(ticketingActions.delayFlight({ id }));
   }
 }
