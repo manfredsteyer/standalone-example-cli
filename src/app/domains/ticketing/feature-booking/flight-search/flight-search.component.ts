@@ -1,10 +1,10 @@
 import {AsyncPipe, JsonPipe, NgForOf, NgIf} from "@angular/common";
 import {Component, inject, signal} from "@angular/core";
 import {FormsModule} from "@angular/forms";
-import {take} from "rxjs";
-import {CityValidator} from "src/app/shared/util-common";
+import {CityValidator, addMinutes} from "src/app/shared/util-common";
 import {FlightCardComponent} from "../../ui-common";
 import { Flight, FlightService } from "../../data";
+import { ChangeDetectionStrategy } from "@angular/core";
 
 @Component({
   standalone: true,
@@ -20,7 +20,8 @@ import { Flight, FlightService } from "../../data";
     CityValidator,
   ],
   selector: 'app-flight-search',
-  templateUrl: './flight-search.component.html'
+  templateUrl: './flight-search.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FlightSearchComponent  {
 
@@ -29,6 +30,7 @@ export class FlightSearchComponent  {
   from = signal('Hamburg');
   to = signal('Graz');
   flights = signal<Flight[]>([]);
+  basket = signal<Record<number, boolean>>({});
 
   async search() {
     if (!this.from() || !this.to()) return;
@@ -43,6 +45,15 @@ export class FlightSearchComponent  {
 
     const date = addMinutes(flight.date, 15);
 
+    this.flights.update(flights => ([
+      { ...flight, date },
+      ...flights.slice(1)
+    ]));
+
+    // Alterntive w/ Mutables
+    // this.flights.mutate(flights => {
+    //   flights[0].date = date;
+    // });
   }
 
 }
