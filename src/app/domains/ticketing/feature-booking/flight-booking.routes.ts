@@ -3,7 +3,7 @@ import {Routes} from '@angular/router';
 import {provideEffects} from '@ngrx/effects';
 import {provideState} from '@ngrx/store';
 import {AuthService} from '../../../shared/util-auth';
-import {BookingEffects, bookingFeature} from '../data';
+import {BookingEffects, ticketingFeature} from '../data';
 import {FlightBookingComponent} from './flight-booking.component';
 import {FlightEditComponent} from './flight-edit/flight-edit.component';
 import {FlightSearchComponent} from './flight-search/flight-search.component';
@@ -16,7 +16,7 @@ export const FLIGHT_BOOKING_ROUTES: Routes = [
     canActivate: [() => inject(AuthService).isAuthenticated()],
     providers: [
       // NGRX
-      provideState(bookingFeature),
+      provideState(ticketingFeature),
       provideEffects(BookingEffects),
     ],
     children: [

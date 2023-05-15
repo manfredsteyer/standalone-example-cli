@@ -8,14 +8,17 @@ export interface BookingState {
     criteria: {
         from: string;
         to: string;
-    }
+    },
+    basket: Record<number, boolean>
 }
 
 export const initialState: BookingState = {
     flights: [],
     criteria: {
-        from: '',
-        to: ''
+        from: 'Graz',
+        to: 'Hamburg'
+    },
+    basket: {
     }
 }
 
@@ -23,7 +26,7 @@ function updateDate(flight: Flight): Flight {
     return {...flight, date: addMinutes(flight.date, 15) }
 }
 
-export const bookingFeature = createFeature({
+export const ticketingFeature = createFeature({
     name: 'booking',
     reducer: createReducer(
         initialState,
@@ -43,5 +46,14 @@ export const bookingFeature = createFeature({
                 }
             }
         }),
+        on(ticketingActions.updateBasket, (state, action) => {
+            return {
+                ...state,
+                basket: { 
+                    ...state.basket, 
+                    [action.id]: action.selected
+                }
+            }
+        })
     )
 });
