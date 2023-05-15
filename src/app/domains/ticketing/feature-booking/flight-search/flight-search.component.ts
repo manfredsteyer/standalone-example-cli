@@ -27,15 +27,13 @@ export class FlightSearchComponent  {
 
   private facade = inject(FlightBookingFacade);
 
-  from = signal('Hamburg');
-  to = signal('Graz');
-  basket = signal<Record<number, boolean>>({});
-
+  from = this.facade.from;
+  to = this.facade.to;
+  basket = this.facade.basket;
   flights = this.facade.flights;
 
   async search() {
-    if (!this.from() || !this.to()) return;
-    this.facade.load(this.from(), this.to());
+    this.facade.load();
   }
 
   delay(): void {

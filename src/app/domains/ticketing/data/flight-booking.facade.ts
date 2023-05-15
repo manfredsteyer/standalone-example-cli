@@ -10,8 +10,13 @@ export class FlightBookingFacade {
   private _flights = signal<Flight[]>([]);
   readonly flights = this._flights.asReadonly();
 
-  async load(from: string, to: string) {
-    const flights = await this.flightService.findPromise(from, to);
+  readonly from = signal('Hamburg');
+  readonly to = signal('Graz');
+  readonly basket = signal<Record<number, boolean>>({});
+
+  async load() {
+    if (!this.from() || !this.to()) return;
+    const flights = await this.flightService.findPromise(this.from(), this.to());
     this._flights.set(flights);
   }
 
