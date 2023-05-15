@@ -25,25 +25,63 @@ export function createStore<T>(init: T) {
   const writeModel = nest(init);
   const readModel = toReadOnly(writeModel);
 
-  const select = <U>(projector: Projector<DeepSignal<T>, U>): U => {
-    return projector(readModel);
-  };
+  function select<T2 extends keyof T>(segment: T2): void;
+  function select<T2 extends keyof T, T3 extends keyof T[T2]>(
+    s1: T2,
+    s2: T3
+  ): void;
+  function select<
+    T2 extends keyof T,
+    T3 extends keyof T[T2],
+    T4 extends keyof T[T2][T3]
+  >(s1: T2, s2: T3, s3: T4): void;
+  function select<
+    T2 extends keyof T,
+    T3 extends keyof T[T2],
+    T4 extends keyof T[T2][T3],
+    T5 extends keyof T[T2][T3][T4]
+  >(s1: T2, s2: T3, s3: T4, s4: T5): void;
+  function select<U>(projector: Projector<DeepSignal<T>, U>): U;
+  function select(...args: any[]) {
+    if (typeof args[0] === 'function') {
+      const projector = args[0];
+      return projector(readModel);
+    } else {
+      return navigate.apply(null, args as any);
+    }
+  }
 
-  const selectValue = <U>(
-    projector: Projector<DeepSignal<T>, Signal<U>>
-  ): U => {
-    const value = projector(readModel);
-    return value();
-  };
-
-  const selectFlat = <U>(
-    projector: Projector<DeepSignal<T>, Signal<DeepSignal<U>>>
-  ): U => {
-    const value = projector(readModel);
-    const flat = flatten(value());
-    return flat;
-  };
-
+  function update<T2 extends keyof T>(
+    segment: T2,
+    valueOrUpdater: Updater<T[T2]> | T[T2]
+  ): void;
+  function update<T2 extends keyof T, T3 extends keyof T[T2]>(
+    s1: T2,
+    s2: T3,
+    valueOrUpdater: Updater<T[T2][T3]> | T[T2][T3]
+  ): void;
+  function update<
+    T2 extends keyof T,
+    T3 extends keyof T[T2],
+    T4 extends keyof T[T2][T3]
+  >(
+    s1: T2,
+    s2: T3,
+    s3: T4,
+    valueOrUpdater: Updater<T[T2][T3][T4]> | T[T2][T3][T4]
+  ): void;
+  function update<
+    T2 extends keyof T,
+    T3 extends keyof T[T2],
+    T4 extends keyof T[T2][T3],
+    T5 extends keyof T[T2][T3][T4]
+  >(
+    s1: T2,
+    s2: T3,
+    s3: T4,
+    s4: T5,
+    valueOrUpdater: Updater<T[T2][T3][T4][T5]> | T[T2][T3][T4][T5]
+  ): void;
   function update<U>(
     projector: Projector<
       DeepWritableSignal<T>,
@@ -59,8 +97,17 @@ export function createStore<T>(init: T) {
     >,
     valueOrUpdater: Updater<U[]> | U[]
   ): void;
-  function update(projector: any, valueOrUpdater: any) {
-    const s = projector(writeModel);
+  function update(...params: any[]) {
+    let valueOrUpdater: any = params.pop();
+    let s;
+
+    if (typeof params[0] === 'string') {
+      s = navigate.apply(null, [writeModel, ...params] as any);
+    } else {
+      const projector = params[0];
+      s = projector(writeModel);
+    }
+
     let value: unknown;
 
     if (typeof valueOrUpdater === 'function') {
@@ -78,8 +125,6 @@ export function createStore<T>(init: T) {
 
   return {
     select,
-    selectFlat,
-    selectValue,
     update,
   };
 }
@@ -114,13 +159,10 @@ export function navigate<
   T4 extends keyof W<T1[T2]>[T3],
   T5 extends keyof W<T1[T2]>[T3][T4]
 >(root: T1, s1: T2, s2: T3, s3: T4, s4: T5): Signal<W<T1[T2]>[T3][T4][T5]>;
-// export function navigate<T1, T2 extends keyof T1, T3 extends keyof W<T1[T2]>, T4 extends keyof W<W<T1[T2]>[T3]>, T5 extends keyof T1[T2][T3][T4], T6 extends keyof T1[T2][T3][T4][T5]>(root: T1, s1: T2, s2: T3, s3: T4, s4: T5, s5: T6): T1[T2][T3][T4][T5][T6];
-// export function navigate<T1, T2 extends keyof T1, T3 extends keyof W<T1[T2]>, T4 extends keyof W<W<T1[T2]>[T3]>, T5 extends keyof T1[T2][T3][T4], T6 extends keyof T1[T2][T3][T4][T5], T7 extends keyof T1[T2][T3][T4][T5][T6]>(root: T1, s1: T2, s2: T3, s3: T4, s4: T5, s5: T6, s6: T7): T1[T2][T3][T4][T5][T6][T7];
-// export function navigate<T1, T2 extends keyof T1, T3 extends keyof W<T1[T2]>, T4 extends keyof W<W<T1[T2]>[T3]>, T5 extends keyof T1[T2][T3][T4], T6 extends keyof T1[T2][T3][T4][T5], T7 extends keyof T1[T2][T3][T4][T5][T6], T8 extends keyof T1[T2][T3][T4][T5][T6][T7]>(root: T1, s1: T2, s2: T3, s3: T4, s4: T5, s5: T6, s6: T7): T1[T2][T3][T4][T5][T6][T7][T8];
 export function navigate(root: any, ...segments: any[]) {
   let current = root;
 
-  for (let i = 0; i < segments.length-1; i++) {
+  for (let i = 0; i < segments.length - 1; i++) {
     if (isNullOrUndef(current)) {
       return current;
     }
@@ -128,7 +170,7 @@ export function navigate(root: any, ...segments: any[]) {
     current = current[segment]();
   }
 
-  return current[segments[segments.length-1]];
+  return current[segments[segments.length - 1]];
 }
 
 export function toReadOnly<T>(deep: DeepWritableSignal<T>): DeepSignal<T> {
