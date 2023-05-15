@@ -36,6 +36,14 @@ export function createStore<T>(init: T) {
     return value();
   };
 
+  const selectFlat = <U>(
+    projector: Projector<DeepSignal<T>, Signal<DeepSignal<U>>>
+  ): U => {
+    const value = projector(readModel);
+    const flat = flatten(value());
+    return flat;
+  };
+
   function update<U>(
     projector: Projector<
       DeepWritableSignal<T>,
@@ -46,7 +54,8 @@ export function createStore<T>(init: T) {
   function update<U>(
     projector: Projector<
       DeepWritableSignal<T>,
-      WritableSignal<WritableSignal<DeepWritableSignal<U>>[]> | WritableSignal<WritableSignal<U>[]>
+      | WritableSignal<WritableSignal<DeepWritableSignal<U>>[]>
+      | WritableSignal<WritableSignal<U>[]>
     >,
     valueOrUpdater: Updater<U[]> | U[]
   ): void;
@@ -68,11 +77,58 @@ export function createStore<T>(init: T) {
   }
 
   return {
-    state: readModel,
     select,
+    selectFlat,
     selectValue,
     update,
   };
+}
+
+type W1<T extends Signal<any>> = T extends Signal<infer U> ? U : never;
+type W2<T extends DeepSignal<any>> = T extends DeepSignal<infer U> ? U : never;
+type W<T extends Signal<any>> = W2<W1<T>>;
+
+function isNullOrUndef<T>(v: T): boolean {
+  return typeof v === 'undefined' || v === null;
+}
+
+export function navigate<T1 extends DeepSignal<any>, T2 extends keyof T1>(
+  root: T1,
+  segment: T2
+): Signal<T1[T2]>;
+export function navigate<
+  T1 extends DeepSignal<any>,
+  T2 extends keyof T1,
+  T3 extends keyof W<T1[T2]>
+>(root: T1, s1: T2, s2: T3): Signal<W<T1[T2]>[T3]>;
+export function navigate<
+  T1 extends DeepSignal<any>,
+  T2 extends keyof T1,
+  T3 extends keyof W<T1[T2]>,
+  T4 extends keyof W<T1[T2]>[T3]
+>(root: T1, s1: T2, s2: T3, s3: T4): Signal<W<T1[T2]>[T3][T4]>;
+export function navigate<
+  T1 extends DeepSignal<any>,
+  T2 extends keyof T1,
+  T3 extends keyof W<T1[T2]>,
+  T4 extends keyof W<T1[T2]>[T3],
+  T5 extends keyof W<T1[T2]>[T3][T4]
+>(root: T1, s1: T2, s2: T3, s3: T4, s4: T5): Signal<W<T1[T2]>[T3][T4][T5]>;
+// export function navigate<T1, T2 extends keyof T1, T3 extends keyof W<T1[T2]>, T4 extends keyof W<W<T1[T2]>[T3]>, T5 extends keyof T1[T2][T3][T4], T6 extends keyof T1[T2][T3][T4][T5]>(root: T1, s1: T2, s2: T3, s3: T4, s4: T5, s5: T6): T1[T2][T3][T4][T5][T6];
+// export function navigate<T1, T2 extends keyof T1, T3 extends keyof W<T1[T2]>, T4 extends keyof W<W<T1[T2]>[T3]>, T5 extends keyof T1[T2][T3][T4], T6 extends keyof T1[T2][T3][T4][T5], T7 extends keyof T1[T2][T3][T4][T5][T6]>(root: T1, s1: T2, s2: T3, s3: T4, s4: T5, s5: T6, s6: T7): T1[T2][T3][T4][T5][T6][T7];
+// export function navigate<T1, T2 extends keyof T1, T3 extends keyof W<T1[T2]>, T4 extends keyof W<W<T1[T2]>[T3]>, T5 extends keyof T1[T2][T3][T4], T6 extends keyof T1[T2][T3][T4][T5], T7 extends keyof T1[T2][T3][T4][T5][T6], T8 extends keyof T1[T2][T3][T4][T5][T6][T7]>(root: T1, s1: T2, s2: T3, s3: T4, s4: T5, s5: T6, s6: T7): T1[T2][T3][T4][T5][T6][T7][T8];
+export function navigate(root: any, ...segments: any[]) {
+  let current = root;
+
+  for (let i = 0; i < segments.length-1; i++) {
+    if (isNullOrUndef(current)) {
+      return current;
+    }
+    const segment = segments[i];
+    current = current[segment]();
+  }
+
+  return current[segments[segments.length-1]];
 }
 
 export function toReadOnly<T>(deep: DeepWritableSignal<T>): DeepSignal<T> {
@@ -162,4 +218,16 @@ export function nest<T>(value: T): DeepWritableSignal<T> {
     const s = signalMap.get(prop);
     return s;
   }
+}
+
+export function flatten<T>(value: DeepSignal<T>): T {
+  if (typeof value !== 'object' || !value) {
+    return value;
+  }
+
+  let result = Array.isArray(value) ? ([] as T) : ({} as T);
+  for (const key of Object.keys(value)) {
+    (result as any)[key] = flatten((value as any)[key]());
+  }
+  return result;
 }
