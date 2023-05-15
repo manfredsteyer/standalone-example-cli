@@ -24,7 +24,6 @@ import { ChangeDetectionStrategy } from "@angular/core";
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FlightSearchComponent  {
-
   private facade = inject(FlightBookingFacade);
 
   from = this.facade.from;
@@ -40,4 +39,11 @@ export class FlightSearchComponent  {
     this.facade.delay();
   }
 
+  updateCriteria(from: string, to: string): void {
+    this.facade.updateCriteria(from, to);
+  }
+
+  updateBasket(id: number, selected: boolean): void {
+    this.facade.updateBasket(id, selected);
+  }
 }
