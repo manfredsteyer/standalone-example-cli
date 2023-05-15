@@ -5,6 +5,7 @@
 - [Experiment 1: Hidden Signals and Mutables](https://github.com/manfredsteyer/standalone-example-cli/tree/proxy)
 - [Experiment 2: Explicit Signals and Mutables](https://github.com/manfredsteyer/standalone-example-cli/tree/nest)
 - Experiment 3: Nested Angular Signals with the SolidJS Store (this one)
+- [Experiment 4: Store with Explicit Signals and ideas from SolidJS](https://github.com/manfredsteyer/standalone-example-cli/tree/signal-store)
 
 ## What's this experiment about?
 
