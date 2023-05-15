@@ -8,7 +8,7 @@
 - [Experiment 3: Nested Angular Signals with the SolidJS Store](https://github.com/manfredsteyer/standalone-example-cli/tree/solid)
 - Experiment 4: Store with Explicit Signals and ideas from SolidJS (this here)
 
-## What's this experiment about?
+## What's This Experiment About?
 
 ✅ Providing a store following ideas from SolidJS
 
@@ -21,7 +21,7 @@
 ✅ The read data is read/only, preventing readers from corrupting the state
 
 
-**Creating the store**
+**Creating the Store**
 
 ```typescript
 store = createStore({
@@ -65,7 +65,7 @@ this.store.update(
 
 **Alternative Syntax for Updating**
 
-This syntax, inspired by SolidJS, is shorter and the used properties are type safe (!).
+This syntax, inspired by SolidJS, is shorter, and the used properties are type safe (!).
 
 ```typescript
 this.store.update('flights', flights);
@@ -75,6 +75,15 @@ this.store.update('flights', flights);
 this.store.update(
     'flights', 0, 'date', 
     (date) => addMinutes(date, 15));
+```
+
+**Alternative Syntax for Selecting**
+
+```typescript
+const date = this.store.select('flights', 0, 'date')
+
+// Respective lambda syntax:
+// const date = this.store.select(s => s.flights()[0]().date)
 ```
 
 ## How to try it out?

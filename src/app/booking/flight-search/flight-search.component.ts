@@ -88,6 +88,9 @@ export class FlightSearchComponent {
 
     // Alternative (did I mentation, the parameters are type safe?)
     this.store.update('flights', 0, 'date', (date) => addMinutes(date, 15));
+
+    // Alternative select syntax:
+    // const date = this.store.select('flights', 0, 'date')
   }
 
   get basketKeys() {
