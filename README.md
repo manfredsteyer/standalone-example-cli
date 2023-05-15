@@ -1,47 +1,80 @@
-# Experiment 2: Explicit Signals and Mutables
+# Experiment 4: Store with Explicit Signals and ideas from SolidJS
 
 
 ## Experiments
 
 - [Experiment 1: Hidden Signals and Mutables](https://github.com/manfredsteyer/standalone-example-cli/tree/nest)
-- Experiment 2: Explicit Signals and Mutables (this one)
+- [Experiment 2: Explicit Signals and Mutables](https://github.com/manfredsteyer/standalone-example-cli/tree/nest)
 - [Experiment 3: Nested Angular Signals with the SolidJS Store](https://github.com/manfredsteyer/standalone-example-cli/tree/solid)
+- Experiment 4: Store with Explicit Signals and ideas from SolidJS (this here)
 
 ## What's this experiment about?
 
-✅ Convert objects into object with nested signals
+✅ Providing a store following ideas from SolidJS
 
-✅ Get signal-based fine-grained change detection
+✅ However, as usual in Angular, the Signals are made **explicit** (no proxies!)
 
-✅ Just declare your state with the ``nest`` function:
+✅ The store uses nested Signals for a fine-grained reactivity
+
+✅ The nested Signals are created on demand
+
+✅ The read data is read/only, preventing readers from corrupting the state
+
+
+**Creating the store**
 
 ```typescript
-@Component({ ... })
-export class FlightSearchComponent {
-    state = nest({
+store = createStore({
+    criteria: {
         from: 'Hamburg',
         to: 'Graz',
         urgent: false,
-        flights: [
-            { id: 17, ... }, 
-            {id: 18, ...}
-        ] as Flight[],
-        basket: {
-            3: true,
-            5: true,
-        },
-    });
-
-    [...]
-}
+    },
+    flights: [] as Flight[],
+    basket: {
+        3: true,
+        5: true,
+    } as Record<number, boolean>,
+});
 ```
 
-This results in a typed structure of nested signals:
+**Selecting Values**
 
 ```typescript
-for(let flightSignal of this.state.flights()) {
-  console.log('id', flightSignal().id());
-}
+flights = this.store.select((s) => s.flights);
+criteria = this.store.select((s) => s.criteria());
+basket = this.store.select((s) => s.basket);
+
+flightRoute = computed(
+    () => this.criteria.from() + ' to ' + this.criteria.to()
+);
+```
+
+**Updating the Store**
+
+```typescript
+this.store.update((s) => s.flights, flights);
+
+[...]
+
+this.store.update(
+    (s) => s.flights()[0]().date,
+    (date) => addMinutes(date, 15)
+);
+```
+
+**Alternative Syntax for Updating**
+
+This syntax, inspired by SolidJS, is shorter and the used properties are type safe (!).
+
+```typescript
+this.store.update('flights', flights);
+
+[...]
+
+this.store.update(
+    'flights', 0, 'date', 
+    (date) => addMinutes(date, 15));
 ```
 
 ## How to try it out?
@@ -58,26 +91,13 @@ The application uses a trick to visualize the change detection. Each updated fli
 6. Only the 1st flight blinks
 
 
-## How does it work?
-
-✅ ``nest`` returns a ``DeepSignal`` -- an typed object with nested signals
-
-✅ This ``DeepSignal`` creates signals for its properties on demand
-
-
-## How is this different from other approaches?
-
-✅ This is an experiment for lightweight management of signals without any store library (with all advantages and disadvantages not using stores comes with)
-
-✅ Mutable data structures are supported
-
-
 ## Credits
 
 ✅ My GDE fellow [Chau Tran](https://twitter.com/Nartc1410) first came up with a store implementation that created signals on demand.  
 
 ✅ My colleagues [Michael Egger-Zikes](https://twitter.com/MikeZks) and [Rainer Hahnekamp](https://twitter.com/rainerhahnekamp) for several good discussions and valuable critical feedback.
 
+✅ Thanks to [Ryan Carniato](https://twitter.com/RyanCarniato), who is not only a great community member but also the principal author of SolidJS and mastermind for Signals.
 
 ## Open Questions
 
