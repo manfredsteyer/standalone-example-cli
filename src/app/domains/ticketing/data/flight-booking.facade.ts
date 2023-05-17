@@ -4,19 +4,34 @@ import { Flight } from './flight';
 import { FlightService } from './flight.service';
 import { addMinutes } from 'src/app/shared/util-common';
 
+interface FlightBookingState {
+  flights: Flight[];
+  criteria: {
+    from: string,
+    to: string
+  };
+  basket: Record<number, boolean>;
+}
+
+@Injectable({ providedIn: 'root' })
+class FlightBookingStore extends ComponentStore<FlightBookingState> {
+  constructor() {
+    super({
+      flights: [] as Flight[],
+      criteria: {
+        from: 'Graz',
+        to: 'Hamburg',
+      },
+      basket: {} as Record<number, boolean>,
+    });
+  }
+}
+
 @Injectable({ providedIn: 'root' })
 export class FlightBookingFacade {
 
   private flightService = inject(FlightService);
-
-  private store = new ComponentStore({
-    flights: [] as Flight[],
-    criteria: {
-      from: 'Graz',
-      to: 'Hamburg',
-    },
-    basket: {} as Record<number, boolean>,
-  });
+  private store = inject(FlightBookingStore);
 
   criteria = this.store.selectSignal((s) => s.criteria);
   basket = this.store.selectSignal((s) => s.basket);
