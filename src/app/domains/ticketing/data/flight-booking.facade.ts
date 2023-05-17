@@ -1,15 +1,15 @@
 import { Injectable, inject } from '@angular/core';
-import { ComponentStore } from '@ngrx/component-store';
 import { Flight } from './flight';
 import { FlightService } from './flight.service';
 import { addMinutes } from 'src/app/shared/util-common';
+import { createComponentStore } from 'src/app/shared/util-common/store-factory';
 
 @Injectable({ providedIn: 'root' })
 export class FlightBookingFacade {
 
   private flightService = inject(FlightService);
 
-  private store = new ComponentStore({
+  private store = createComponentStore({
     flights: [] as Flight[],
     criteria: {
       from: 'Graz',
