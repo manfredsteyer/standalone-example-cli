@@ -7,17 +7,15 @@ import { addMinutes } from 'src/app/shared/util-common';
 export class FlightBookingFacade {
   private flightService = inject(FlightService);
 
-  private _flights = signal<Flight[]>([]);
-  readonly flights = this._flights.asReadonly();
-
+  readonly flights = signal<Flight[]>([]);
   readonly from = signal('Hamburg');
   readonly to = signal('Graz');
   readonly basket = signal<Record<number, boolean>>({});
 
-  async load() {
+  async load(): Promise<void> {
     if (!this.from() || !this.to()) return;
     const flights = await this.flightService.findPromise(this.from(), this.to());
-    this._flights.set(flights);
+    this.flights.set(flights);
   }
 
   delay(): void {
@@ -26,7 +24,7 @@ export class FlightBookingFacade {
 
     const date = addMinutes(flight.date, 15);
 
-    this._flights.update((flights) => [
+    this.flights.update((flights) => [
       { ...flight, date },
       ...flights.slice(1),
     ]);
