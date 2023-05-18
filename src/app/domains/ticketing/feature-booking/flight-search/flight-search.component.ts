@@ -1,5 +1,5 @@
 import { AsyncPipe, JsonPipe, NgForOf, NgIf } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CityValidator } from 'src/app/shared/util-common';
 import { FlightCardComponent } from '../../ui-common';
@@ -22,6 +22,10 @@ import { FlightBookingFacade } from '../../data';
   templateUrl: './flight-search.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FlightSearchComponent {
+export class FlightSearchComponent implements OnInit {
   facade = inject(FlightBookingFacade);
+
+  ngOnInit(): void {
+    this.facade.load();
+  }
 }
