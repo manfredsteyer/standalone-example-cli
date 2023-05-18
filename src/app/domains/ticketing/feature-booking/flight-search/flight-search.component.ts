@@ -1,5 +1,5 @@
 import {AsyncPipe, JsonPipe, NgForOf, NgIf} from "@angular/common";
-import {Component, inject, signal} from "@angular/core";
+import {Component, inject} from "@angular/core";
 import {FormsModule} from "@angular/forms";
 import {CityValidator} from "src/app/shared/util-common";
 import {FlightCardComponent} from "../../ui-common";
