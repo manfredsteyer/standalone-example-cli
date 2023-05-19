@@ -31,6 +31,7 @@ export class FlightSearchComponent  {
   basket = this.facade.basket;
   flights = this.facade.flights;
 
+  
   async search() {
     this.facade.load();
   }

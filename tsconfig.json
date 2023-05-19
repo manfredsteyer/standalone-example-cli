@@ -24,7 +24,6 @@
       "dom"
     ],
     "paths": {
-      "@demo/checkin/data": ["src/app/domains/checkin/data/index.ts"]
     }
   },
   "angularCompilerOptions": {
