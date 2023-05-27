@@ -1,35 +1,44 @@
-import { Injectable, computed, inject, signal } from '@angular/core';
+import { Injectable, computed, inject } from '@angular/core';
 import { FlightService } from './flight.service';
 import { Flight } from './flight';
-import { addMinutes, equal, patchSignal } from 'src/app/shared/util-common';
+import {
+  addMinutes,
+  createState,
+  equal,
+} from 'src/app/shared/util-common';
 
 @Injectable({ providedIn: 'root' })
 export class FlightBookingFacade {
   private flightService = inject(FlightService);
 
-  private state = signal({
-    from: 'Hamburg',
-    to: 'Graz',
-    flights: [] as Flight[],
-    basket: {} as Record<number, boolean>,
-  });
+  private state = createState(
+    {
+      from: 'Hamburg',
+      to: 'Graz',
+      flights: [] as Flight[],
+      basket: {} as Record<number, boolean>,
+    },
+    { equal }
+  );
 
-  flights = computed(() => this.state().flights, { equal });
-  from = computed(() => this.state().from, { equal });
-  to = computed(() => this.state().to, { equal });
-  basket = computed(() => this.state().basket, { equal });
+  // Option 1: fetch root signals as readonly
+  flights = this.state.flights.asReadonly();
+  from = this.state.from.asReadonly();
+  to = this.state.to.asReadonly();
+
+  // Option 2: use computed for selectors
+  basket = computed(() => this.state.basket(), { equal });
 
   updateCriteria(from: string, to: string): void {
-    patchSignal(this.state, { from, to });
+    this.state.from.set(from);
+    this.state.to.set(to);
   }
 
   updateBasket(id: number, selected: boolean): void {
-    patchSignal(this.state, {
-      basket: {
-        ...this.state().basket,
-        [id]: selected,
-      }
-    })
+    this.state.basket.update((basket) => ({
+      ...basket,
+      [id]: selected,
+    }));
   }
 
   async load() {
@@ -38,8 +47,8 @@ export class FlightBookingFacade {
       this.from(),
       this.to()
     );
-    
-    patchSignal(this.state, { flights });
+
+    this.state.flights.set(flights);
   }
 
   delay(): void {
@@ -48,8 +57,8 @@ export class FlightBookingFacade {
 
     const date = addMinutes(flight.date, 15);
     const updFlight = { ...flight, date };
-    const updFlights = [updFlight, ...this.state().flights.slice(1)];
-    
-    patchSignal(this.state, { flights: updFlights  });
+    const updFlights = [updFlight, ...this.state.flights().slice(1)];
+
+    this.state.flights.set(updFlights);
   }
 }
