@@ -3,12 +3,14 @@ import { Component, ElementRef, EventEmitter, Input, NgZone, Output, inject } fr
 import { RouterModule } from "@angular/router";
 import { CityPipe } from "src/app/shared/util-common";
 import { Flight, initFlight } from "../../data";
+import { ChangeDetectionStrategy } from "@angular/core";
 
 @Component({
   standalone: true,
   selector: 'app-flight-card',
   imports: [CommonModule, RouterModule, CityPipe],
   templateUrl: './flight-card.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FlightCardComponent {
 
