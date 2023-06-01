@@ -1,10 +1,7 @@
 import {AsyncPipe, JsonPipe, NgForOf, NgIf} from "@angular/common";
 import {Component, inject} from "@angular/core";
 import {FormsModule} from "@angular/forms";
-import {Store} from "@ngrx/store";
-import {take} from "rxjs";
-import {ActivatedRoute} from "@angular/router";
-import {BookingSlice, Flight, FlightService, delayFlight, loadFlights, selectFlights} from "../../data";
+import {Flight, FlightService} from "../../data";
 import {CityValidator} from "src/app/shared/util-common";
 import {FlightCardComponent} from "../../ui-common";
 
@@ -33,11 +30,6 @@ export class FlightSearchComponent  {
   urgent = false;
 
   flights: Flight[] = [];
-
-  basket: Record<number, boolean> = {
-    3: true,
-    5: true
-  };
 
   search(): void {
     if (!this.from || !this.to) return;
