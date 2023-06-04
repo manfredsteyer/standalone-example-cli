@@ -1,13 +1,13 @@
-import { Injectable, computed, inject } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { FlightService } from './flight.service';
 import { Flight } from './flight';
-import { addMinutes, createState, equal } from 'src/app/shared/util-common';
+import { addMinutes, createStore } from 'src/app/shared/util-common';
 
 @Injectable({ providedIn: 'root' })
 export class FlightBookingFacade {
   private flightService = inject(FlightService);
 
-  private state = createState({
+  private state = createStore({
     from: 'Hamburg',
     to: 'Graz',
     flights: [] as Flight[],
@@ -15,21 +15,21 @@ export class FlightBookingFacade {
   });
 
   // Option 1: fetch root signals as readonly
-  flights = this.state.flights.asReadonly();
-  from = this.state.from.asReadonly();
-  to = this.state.to.asReadonly();
+  flights = this.state.select(s => s.flights());
+  from = this.state.select(s => s.from());
+  to = this.state.select(s => s.to())
 
   // Option 2: use computed for selectors
-  basket = computed(() => this.state.basket(), { equal });
-  selected = computed(() => this.flights().filter(f => this.basket()[f.id]), { equal })
+  basket = this.state.select(s => s.basket());
+  selected = this.state.select(s => s.flights().filter(f => s.basket()[f.id]));
 
   updateCriteria(from: string, to: string): void {
-    this.state.from.set(from);
-    this.state.to.set(to);
+    this.state.update('from', from);
+    this.state.update('to', to);
   }
 
   updateBasket(id: number, selected: boolean): void {
-    this.state.basket.update((basket) => ({
+    this.state.update('basket', (basket) => ({
       ...basket,
       [id]: selected,
     }));
@@ -42,7 +42,7 @@ export class FlightBookingFacade {
       this.to()
     );
 
-    this.state.flights.set(flights);
+    this.state.update('flights', flights);
   }
 
   delay(): void {
@@ -51,8 +51,8 @@ export class FlightBookingFacade {
 
     const date = addMinutes(flight.date, 15);
     const updFlight = { ...flight, date };
-    const updFlights = [updFlight, ...this.state.flights().slice(1)];
+    const updFlights = [updFlight, ...this.flights().slice(1)];
 
-    this.state.flights.set(updFlights);
+    this.state.update('flights', updFlights);
   }
 }
