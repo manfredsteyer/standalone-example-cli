@@ -6,9 +6,11 @@ import {
   signalStore,
   withState,
   withComputed,
+  withUpdaters,
+  withEffects,
 } from '../../../ngrx-signal-store-poc';
 
-const Store = signalStore(
+const FlightBookingStore = signalStore(
   { providedIn: 'root' },
   withState({
     from: 'Paris',
@@ -18,13 +20,48 @@ const Store = signalStore(
   }),
   withComputed(({ flights, basket }) => ({
     selected: computed(() => flights().filter((f) => basket()[f.id])),
-  }))
+  })),
+  withUpdaters(({ update, basket, flights }) => ({
+    updateCriteria: (from: string, to: string) => {
+      update({ from, to });
+    },
+    updateBasket: (flightId: number, selected: boolean) => {
+      update({
+        basket: {
+          ...basket,
+          [flightId]: selected,
+        },
+      });
+    },
+    delay: () => {
+      const currentFlights = flights();
+      const flight = currentFlights[0];
+
+      const date = addMinutes(flight.date, 15);
+      const updFlight = { ...flight, date };
+      const updFlights = [updFlight, ...currentFlights.slice(1)];
+
+      update({ flights: updFlights });
+    },
+  })),
+  withEffects(({ update, from, to }) => {
+    const flightService = inject(FlightService);
+
+    return {
+      async load() {
+        if (!from() || !to()) return;
+        const flights = await flightService.findPromise(from(), to());
+
+        update({ flights });
+      },
+    };
+  })
 );
 
 @Injectable({ providedIn: 'root' })
 export class FlightBookingFacade {
-  private flightService = inject(FlightService);
-  private store = inject(Store);
+  // private flightService = inject(FlightService);
+  private store = inject(FlightBookingStore);
 
   // fetch root signals as readonly
   flights = this.store.flights;
@@ -36,38 +73,18 @@ export class FlightBookingFacade {
   selected = this.store.selected;
 
   updateCriteria(from: string, to: string): void {
-    this.store.update({ from });
-    this.store.update({ to });
+    this.store.updateCriteria(from, to);
   }
 
   updateBasket(id: number, selected: boolean): void {
-    this.store.update((state) => ({
-      ...state,
-      basket: {
-        ...state.basket,
-        [id]: selected,
-      },
-    }));
+    this.store.updateBasket(id, selected);
   }
 
   async load() {
-    if (!this.from() || !this.to()) return;
-    const flights = await this.flightService.findPromise(
-      this.from(),
-      this.to()
-    );
-
-    this.store.update({flights});
+    this.store.load();
   }
 
   delay(): void {
-    const flights = this.flights();
-    const flight = flights[0];
-
-    const date = addMinutes(flight.date, 15);
-    const updFlight = { ...flight, date };
-    const updFlights = [updFlight, ...this.store.flights().slice(1)];
-
-    this.store.update({flights: updFlights});
+    this.store.delay()
   }
 }
