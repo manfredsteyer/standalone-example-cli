@@ -1,25 +1,18 @@
 import { Injectable, computed, inject } from '@angular/core';
 import { FlightService } from './flight.service';
 import { Flight } from './flight';
-import {
-  addMinutes,
-  createState,
-  equal,
-} from 'src/app/shared/util-common';
+import { addMinutes, createState, equal } from 'src/app/shared/util-common';
 
 @Injectable({ providedIn: 'root' })
 export class FlightBookingFacade {
   private flightService = inject(FlightService);
 
-  private state = createState(
-    {
-      from: 'Hamburg',
-      to: 'Graz',
-      flights: [] as Flight[],
-      basket: {} as Record<number, boolean>,
-    },
-    { equal }
-  );
+  private state = createState({
+    from: 'Hamburg',
+    to: 'Graz',
+    flights: [] as Flight[],
+    basket: {} as Record<number, boolean>,
+  });
 
   // Option 1: fetch root signals as readonly
   flights = this.state.flights.asReadonly();
@@ -28,6 +21,7 @@ export class FlightBookingFacade {
 
   // Option 2: use computed for selectors
   basket = computed(() => this.state.basket(), { equal });
+  selected = computed(() => this.flights().filter(f => this.basket()[f.id]), { equal })
 
   updateCriteria(from: string, to: string): void {
     this.state.from.set(from);

@@ -30,7 +30,7 @@ export class FlightSearchComponent  {
   to = this.facade.to;
   basket = this.facade.basket;
   flights = this.facade.flights;
-
+  selected = this.facade.selected;
   
   async search() {
     this.facade.load();
