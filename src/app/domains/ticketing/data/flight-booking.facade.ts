@@ -1,37 +1,52 @@
 import { Injectable, computed, inject } from '@angular/core';
 import { FlightService } from './flight.service';
 import { Flight } from './flight';
-import { addMinutes, createState, equal } from 'src/app/shared/util-common';
+import { addMinutes } from 'src/app/shared/util-common';
+import {
+  signalStore,
+  withState,
+  withComputed,
+} from '../../../ngrx-signal-store-poc';
+
+const Store = signalStore(
+  { providedIn: 'root' },
+  withState({
+    from: 'Paris',
+    to: 'London',
+    flights: [] as Flight[],
+    basket: {} as Record<number, boolean>,
+  }),
+  withComputed(({ flights, basket }) => ({
+    selected: computed(() => flights().filter((f) => basket()[f.id])),
+  }))
+);
 
 @Injectable({ providedIn: 'root' })
 export class FlightBookingFacade {
   private flightService = inject(FlightService);
+  private store = inject(Store);
 
-  private state = createState({
-    from: 'Hamburg',
-    to: 'Graz',
-    flights: [] as Flight[],
-    basket: {} as Record<number, boolean>,
-  });
+  // fetch root signals as readonly
+  flights = this.store.flights;
+  from = this.store.from;
+  to = this.store.to;
+  basket = this.store.basket;
 
-  // Option 1: fetch root signals as readonly
-  flights = this.state.flights.asReadonly();
-  from = this.state.from.asReadonly();
-  to = this.state.to.asReadonly();
-
-  // Option 2: use computed for selectors
-  basket = computed(() => this.state.basket(), { equal });
-  selected = computed(() => this.flights().filter(f => this.basket()[f.id]), { equal })
+  // fetch selected signal
+  selected = this.store.selected;
 
   updateCriteria(from: string, to: string): void {
-    this.state.from.set(from);
-    this.state.to.set(to);
+    this.store.update({ from });
+    this.store.update({ to });
   }
 
   updateBasket(id: number, selected: boolean): void {
-    this.state.basket.update((basket) => ({
-      ...basket,
-      [id]: selected,
+    this.store.update((state) => ({
+      ...state,
+      basket: {
+        ...state.basket,
+        [id]: selected,
+      },
     }));
   }
 
@@ -42,7 +57,7 @@ export class FlightBookingFacade {
       this.to()
     );
 
-    this.state.flights.set(flights);
+    this.store.update({flights});
   }
 
   delay(): void {
@@ -51,8 +66,8 @@ export class FlightBookingFacade {
 
     const date = addMinutes(flight.date, 15);
     const updFlight = { ...flight, date };
-    const updFlights = [updFlight, ...this.state.flights().slice(1)];
+    const updFlights = [updFlight, ...this.store.flights().slice(1)];
 
-    this.state.flights.set(updFlights);
+    this.store.update({flights: updFlights});
   }
 }

@@ -16,10 +16,12 @@ export const sheriffConfig: SheriffConfig = {
         'data': ['domain:<domain>', 'type:data'],
         'util-<ui>': ['domain:<domain>', 'type:util'],
       },
+      'ngrx-signal-store-poc': ['type:util', 'shared']
     },
   },
   depRules: {
     'root': ['*'],
+    'ngrx-signal-store-poc': ['*'],
     'domain:*': [sameTag, 'shared'],
     'shared': ['shared'],
     'type:feature': ['type:ui', 'type:data', 'type:util'],
