@@ -10,7 +10,7 @@ import {
   withEffects,
 } from '../../../ngrx-signal-store-poc';
 
-const FlightBookingStore = signalStore(
+export const FlightBookingStore = signalStore(
   { providedIn: 'root' },
   withState({
     from: 'Paris',

@@ -1,9 +1,9 @@
 import {AsyncPipe, JsonPipe, NgForOf, NgIf} from "@angular/common";
-import {Component, inject, signal} from "@angular/core";
+import {Component, inject} from "@angular/core";
 import {FormsModule} from "@angular/forms";
 import {CityValidator} from "src/app/shared/util-common";
 import {FlightCardComponent} from "../../ui-common";
-import { FlightBookingFacade } from "../../data";
+import { FlightBookingFacade, FlightBookingStore } from "../../data";
 import { ChangeDetectionStrategy } from "@angular/core";
 
 @Component({
@@ -24,27 +24,27 @@ import { ChangeDetectionStrategy } from "@angular/core";
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FlightSearchComponent  {
-  private facade = inject(FlightBookingFacade);
+  private store = inject(FlightBookingStore);
 
-  from = this.facade.from;
-  to = this.facade.to;
-  basket = this.facade.basket;
-  flights = this.facade.flights;
-  selected = this.facade.selected;
+  from = this.store.from;
+  to = this.store.to;
+  basket = this.store.basket;
+  flights = this.store.flights;
+  selected = this.store.selected;
   
   async search() {
-    this.facade.load();
+    this.store.load();
   }
 
   delay(): void {
-    this.facade.delay();
+    this.store.delay();
   }
 
   updateCriteria(from: string, to: string): void {
-    this.facade.updateCriteria(from, to);
+    this.store.updateCriteria(from, to);
   }
 
   updateBasket(id: number, selected: boolean): void {
-    this.facade.updateBasket(id, selected);
+    this.store.updateBasket(id, selected);
   }
 }
