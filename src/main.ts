@@ -9,6 +9,7 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 import {
   PreloadAllModules,
   provideRouter,
+  withComponentInputBinding,
   withPreloading,
 } from '@angular/router';
 import { provideEffects } from '@ngrx/effects';
@@ -30,7 +31,8 @@ bootstrapApplication(AppComponent, {
 
     provideRouter(
       APP_ROUTES,
-      withPreloading(PreloadAllModules)
+      withPreloading(PreloadAllModules),
+      withComponentInputBinding(),
     ),
 
     provideLogger(loggerConfig),

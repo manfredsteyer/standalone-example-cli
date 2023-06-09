@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 
 @Component({
@@ -10,8 +10,9 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 })
 export class FlightEditComponent implements OnInit {
   
-  id: string | undefined;
-  showDetails: string | undefined;
+  @Input() id = '';
+  @Input() showDetails = '';
+  
   showWarning = false;
 
   constructor(@Inject(ActivatedRoute) private route: ActivatedRoute) {}
