@@ -17,7 +17,7 @@ export class FlightCardComponent implements OnChanges {
   private zone = inject(NgZone);
 
   @Input() item!: Signal<DeepSignal<Flight>>;
-  @Input() selected!: Signal<DeepSignal<boolean>>;
+  @Input() selected!: boolean;
   @Output() selectedChange = new EventEmitter<boolean>();
 
   ngOnChanges(changes: SimpleChanges) {

@@ -7,15 +7,15 @@ import {
 } from '@angular/core';
 
 export type DeepWritableSignal<Type> = {
-  [Property in keyof Type]: Type[Property] extends object
+  readonly [Property in keyof Type]: Type[Property] extends object
     ? WritableSignal<DeepWritableSignal<Type[Property]>>
-    : WritableSignal<Type[Property]>;
+    : Type[Property];
 };
 
 export type DeepSignal<Type> = {
-  [Property in keyof Type]: Type[Property] extends Object
+  readonly [Property in keyof Type]: Type[Property] extends object
     ? Signal<DeepSignal<Type[Property]>>
-    : Signal<Type[Property]>;
+    : Type[Property];
 };
 
 export type Projector<T, U> = (selector: T) => U;
@@ -23,42 +23,68 @@ export type Updater<T> = (value: T) => T;
 
 export function createStore<T>(init: T) {
   const writeModel = nest(init);
-  const readModel = toReadOnly(writeModel);
+  const readModel = writeModel as unknown as DeepSignal<T>;
 
-  function select<T2 extends keyof T>(segment: T2): void;
+  function select<T2 extends keyof T>(segment: T2): Signal<DeepSignal<T[T2]>>;
   function select<T2 extends keyof T, T3 extends keyof T[T2]>(
     s1: T2,
     s2: T3
-  ): void;
+  ): Signal<DeepSignal<T[T2][T3]>>;
   function select<
     T2 extends keyof T,
     T3 extends keyof T[T2],
     T4 extends keyof T[T2][T3]
-  >(s1: T2, s2: T3, s3: T4): void;
+  >(s1: T2, s2: T3, s3: T4): Signal<DeepSignal<T[T2][T3][T4]>>;
   function select<
     T2 extends keyof T,
     T3 extends keyof T[T2],
     T4 extends keyof T[T2][T3],
     T5 extends keyof T[T2][T3][T4]
-  >(s1: T2, s2: T3, s3: T4, s4: T5): void;
-  function select<U>(projector: Projector<DeepSignal<T>, U>): U;
+  >(s1: T2, s2: T3, s3: T4, s4: T5): Signal<DeepSignal<T[T2][T3][T4]>>;
+  function select<U extends Signal<unknown>>(projector: Projector<DeepSignal<T>, U>): U;
   function select(...args: any[]) {
     if (typeof args[0] === 'function') {
       const projector = args[0];
       return projector(readModel);
     } else {
-      return navigate.apply(null, args as any);
+      return navigate(readModel, args as any)
+    }
+  }
+
+  function selectWritable<T2 extends keyof T>(segment: T2): WritableSignal<DeepWritableSignal<T[T2]>>;
+  function selectWritable<T2 extends keyof T, T3 extends keyof T[T2]>(
+    s1: T2,
+    s2: T3
+  ): WritableSignal<DeepWritableSignal<T[T2][T3]>>;
+  function selectWritable<
+    T2 extends keyof T,
+    T3 extends keyof T[T2],
+    T4 extends keyof T[T2][T3]
+  >(s1: T2, s2: T3, s3: T4): WritableSignal<DeepWritableSignal<T[T2][T3][T4]>>;
+  function selectWritable<
+    T2 extends keyof T,
+    T3 extends keyof T[T2],
+    T4 extends keyof T[T2][T3],
+    T5 extends keyof T[T2][T3][T4]
+  >(s1: T2, s2: T3, s3: T4, s4: T5): WritableSignal<DeepWritableSignal<T[T2][T3][T4]>>;
+  function selectWritable<U extends WritableSignal<unknown>>(projector: Projector<DeepWritableSignal<T>, U>): U;
+  function selectWritable(...args: any[]) {
+    if (typeof args[0] === 'function') {
+      const projector = args[0];
+      return projector(readModel);
+    } else {
+      return navigate(readModel, args as any)
     }
   }
 
   function update<T2 extends keyof T>(
     segment: T2,
-    valueOrUpdater: Updater<T[T2]> | T[T2]
+    valueOrUpdater: Updater<T[T2]> | Partial<T[T2]>
   ): void;
   function update<T2 extends keyof T, T3 extends keyof T[T2]>(
     s1: T2,
     s2: T3,
-    valueOrUpdater: Updater<T[T2][T3]> | T[T2][T3]
+    valueOrUpdater: Updater<T[T2][T3]> | Partial<T[T2][T3]>
   ): void;
   function update<
     T2 extends keyof T,
@@ -68,7 +94,7 @@ export function createStore<T>(init: T) {
     s1: T2,
     s2: T3,
     s3: T4,
-    valueOrUpdater: Updater<T[T2][T3][T4]> | T[T2][T3][T4]
+    valueOrUpdater: Updater<T[T2][T3][T4]> | Partial<T[T2][T3][T4]>
   ): void;
   function update<
     T2 extends keyof T,
@@ -80,7 +106,7 @@ export function createStore<T>(init: T) {
     s2: T3,
     s3: T4,
     s4: T5,
-    valueOrUpdater: Updater<T[T2][T3][T4][T5]> | T[T2][T3][T4][T5]
+    valueOrUpdater: Updater<T[T2][T3][T4][T5]> | Partial<T[T2][T3][T4][T5]>
   ): void;
   function update<U>(
     projector: Projector<
@@ -97,6 +123,13 @@ export function createStore<T>(init: T) {
     >,
     valueOrUpdater: Updater<U[]> | U[]
   ): void;
+  function update<U>(
+    projector: Projector<
+      DeepWritableSignal<T>,
+      WritableSignal<DeepWritableSignal<U>> | WritableSignal<U>
+    >,
+    valueOrUpdater: Updater<U> | Partial<U>
+  ): void;  
   function update(...params: any[]) {
     let valueOrUpdater: any = params.pop();
     let s;
@@ -116,14 +149,25 @@ export function createStore<T>(init: T) {
       value = valueOrUpdater;
     }
 
-    if (typeof value === 'object') {
-      value = nest(value);
+    if (typeof value !== 'object') {
+      console.error('cannot update this value directly', s);
+      return;
     }
 
-    s.set(value);
+    value = nest(value);
+
+    if (Array.isArray(value)) {
+      s.set(value);
+    } else {
+      (s as WritableSignal<object>).update((current) => ({
+        ...current,
+        ...(value as object),
+      }));
+    }
   }
 
   return {
+    selectWritable,
     select,
     update,
   };
@@ -174,46 +218,48 @@ export function navigate(root: any, ...segments: any[]) {
 }
 
 export function toReadOnly<T>(deep: DeepWritableSignal<T>): DeepSignal<T> {
-  // Perhaps for Prod Mode?
-  // return deep as DeepSignal<T>;
+  // Just a cast?
+  return deep as DeepSignal<T>;
 
-  const mirrorMap = new Map<string, Signal<unknown>>();
+  // We could also convert the data structure,
+  // however this could be costly:
+  // const mirrorMap = new Map<string, Signal<unknown>>();
 
-  const result = Array.isArray(deep)
-    ? ([] as Array<DeepSignal<T>>)
-    : ({} as DeepSignal<T>);
+  // const result = Array.isArray(deep)
+  //   ? ([] as Array<DeepSignal<T>>)
+  //   : ({} as DeepSignal<T>);
 
-  for (const key of Object.keys(deep)) {
-    Object.defineProperty(result, key, {
-      enumerable: true,
-      get() {
-        const s = (deep as any)[key] as WritableSignal<any>;
-        const mirror = getMirror(key, s);
-        return mirror;
-      },
-    });
-  }
-  return result as DeepSignal<T>;
+  // for (const key of Object.keys(deep)) {
+  //   Object.defineProperty(result, key, {
+  //     enumerable: true,
+  //     get() {
+  //       const s = (deep as any)[key] as WritableSignal<any>;
+  //       const mirror = getMirror(key, s);
+  //       return mirror;
+  //     },
+  //   });
+  // }
+  // return result as DeepSignal<T>;
 
-  function getMirror(key: string, s: WritableSignal<any>) {
-    if (!mirrorMap.has(key)) {
-      let mirror = createMirror(s);
-      mirrorMap.set(key, mirror);
-    }
-    const mirror = mirrorMap.get(key)!;
-    return mirror;
-  }
+  // function getMirror(key: string, s: WritableSignal<any>) {
+  //   if (!mirrorMap.has(key)) {
+  //     let mirror = createMirror(s);
+  //     mirrorMap.set(key, mirror);
+  //   }
+  //   const mirror = mirrorMap.get(key)!;
+  //   return mirror;
+  // }
 
-  function createMirror(s: WritableSignal<any>) {
-    return computed(() => {
-      const value = s();
-      if (typeof value === 'object') {
-        return toReadOnly(value);
-      } else {
-        return value;
-      }
-    });
-  }
+  // function createMirror(s: WritableSignal<any>) {
+  //   return computed(() => {
+  //     const value = s();
+  //     if (typeof value === 'object') {
+  //       return toReadOnly(value);
+  //     } else {
+  //       return value;
+  //     }
+  //   });
+  // }
 }
 
 export function nest<T>(value: T): DeepWritableSignal<T> {
@@ -232,8 +278,16 @@ export function nest<T>(value: T): DeepWritableSignal<T> {
         },
         set(v: unknown) {
           const s = getSignal(key, value);
-          s?.set(v);
-          (value as any)[key] = v;
+
+          if (typeof s === 'function' && isSignal(s)) {
+            s?.set(v);
+          } else if (typeof value === 'function' && isSignal(value)) {
+            (value as any).mutate((wrapped: any) => {
+              wrapped[key] = v;
+            });
+          } else {
+            console.error('cannot update this value directly', s);
+          }
         },
       });
     }
@@ -245,7 +299,7 @@ export function nest<T>(value: T): DeepWritableSignal<T> {
   function getSignal(
     prop: string | symbol,
     target: T
-  ): WritableSignal<unknown> | undefined {
+  ): WritableSignal<unknown> | string | number | boolean | null | undefined {
     if (!signalMap.has(prop)) {
       const value = (target as any)[prop];
       const isObject = typeof value === 'object';
@@ -253,7 +307,7 @@ export function nest<T>(value: T): DeepWritableSignal<T> {
         ? value
         : isObject
         ? signal(nest(value))
-        : signal(value);
+        : value;
 
       signalMap.set(prop, s as WritableSignal<unknown>);
     }
