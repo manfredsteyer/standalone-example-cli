@@ -10,7 +10,7 @@ import { CityValidator } from '@demo/shared';
 import { FlightCardComponent } from '../flight-card/flight-card.component';
 import { Flight, FlightService } from '@demo/data';
 import { addMinutes } from 'src/app/date-utils';
-import { createStore } from 'src/app/utils';
+import { createStore, flatten } from 'src/app/utils';
 import { firstValueFrom } from 'rxjs';
 
 @Component({
@@ -44,18 +44,24 @@ export class FlightSearchComponent {
     } as Record<number, boolean>,
   });
 
-  //flights = this.store.select((s) => s.flights);
-  flights = this.store.select('flights');
+  // Selecting Data
   criteria = this.store.select((s) => s.criteria);
   basket = this.store.select((s) => s.basket);
 
+  // Alternative Syntax
+  flights = this.store.select('flights');
+
+  // If the owner of the store decides to fetch some state as writable  
+  // Use Case: Two-Way-Data-Binding for local state
   // flightsWritable = this.store.selectWritable(s => s.flights);
-
-  // flightsW = this.store.selectWritable(s => s.flights);
-
+  
   flightRoute = computed(
     () => this.criteria().from + ' to ' + this.criteria().to
   );
+
+  // Perhaps we should add a convenience method for this
+  flightRoute2 = this.store.select(s => computed(() => s.criteria().from + 'to'))
+
 
   async search() {
     const from = this.criteria().from;
@@ -73,19 +79,9 @@ export class FlightSearchComponent {
     // Alternative (the string is type safe, btw):
     this.store.update('flights', flights);
 
-    // In this example, we need an entry in basked for each flight
-    // const basket = flights.reduce((acc, f) => ({ ...acc, [f.id]: false }), {});
-    // this.store.update((s) => s.basket, basket);
-
-    // Alternative (the string is type safe, btw):
-    // this.store.update('basket', basket);
-
-    // TODO: Update: Just signals! 
-
-    // TODO: Make flattening work again
     // Example for flattening (removing all nested signals):
-    // const flat = flatten(this.store.select((s) => s.flights()));
-    // console.log('flat flights', flat);
+    const flat = flatten(this.flights);
+    console.log('flat flights', flat);
   }
 
   delay(): void {
@@ -96,9 +92,7 @@ export class FlightSearchComponent {
 
     // this.flightsWritable.set([]);
 
-    // console.log('flightW', this.flightsW);
-    //this.flightsW.set([]);
-
+    // Alternative (also here, the string is typesafe):
     // const flight = this.flights()[0]();
     // const updated = {...flight, date: addMinutes(flight.date, 15)};
     // this.store.update('flights', 0, updated);

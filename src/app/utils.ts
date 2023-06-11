@@ -316,14 +316,28 @@ export function nest<T>(value: T): DeepWritableSignal<T> {
   }
 }
 
-export function flatten<T>(value: DeepSignal<T>): T {
+export function flatten<T>(value: DeepSignal<T> | DeepWritableSignal<T> | (() => DeepSignal<T>) | (() => DeepWritableSignal<T>)  ): T {
+
+  if (typeof value === 'function') {
+    value = value();
+  }
+
   if (typeof value !== 'object' || !value) {
     return value;
   }
 
   let result = Array.isArray(value) ? ([] as T) : ({} as T);
   for (const key of Object.keys(value)) {
-    (result as any)[key] = flatten((value as any)[key]());
+
+    if (isSignal((value as any)[key])) {
+      (result as any)[key] = flatten((value as any)[key]());
+    }
+    else {
+      (result as any)[key] = (value as any)[key];
+
+    }
   }
   return result;
 }
+
+
