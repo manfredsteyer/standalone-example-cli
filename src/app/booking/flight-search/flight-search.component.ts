@@ -55,13 +55,15 @@ export class FlightSearchComponent {
   // Use Case: Two-Way-Data-Binding for local state
   // flightsWritable = this.store.selectWritable(s => s.flights);
   
-  flightRoute = computed(
-    () => this.criteria().from + ' to ' + this.criteria().to
-  );
+
 
   // Perhaps we should add a convenience method for this
-  flightRoute2 = this.store.select(s => computed(() => s.criteria().from + 'to'))
+  flightRoute = this.store.compute(s => s.criteria().from + ' to ' + s.criteria().to);
 
+  // This works too
+  // flightRoute2 = computed(
+  //   () => this.criteria().from + ' to ' + this.criteria().to
+  // );
 
   async search() {
     const from = this.criteria().from;

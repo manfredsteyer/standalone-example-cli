@@ -166,7 +166,12 @@ export function createStore<T>(init: T) {
     }
   }
 
+  function compute<U>(projector: Projector<DeepSignal<T>, U>) {
+    return select(s => computed(() => projector(s)))
+  }
+
   return {
+    compute,
     selectWritable,
     select,
     update,
