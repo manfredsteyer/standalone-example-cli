@@ -223,7 +223,7 @@ export function navigate(root: any, ...segments: any[]) {
 }
 
 export function toReadOnly<T>(deep: DeepWritableSignal<T>): DeepSignal<T> {
-  // Just a cast?
+  // Let's stick with a cross-cast for the time being
   return deep as DeepSignal<T>;
 
   // We could also convert the data structure,
