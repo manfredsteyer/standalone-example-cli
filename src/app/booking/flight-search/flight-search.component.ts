@@ -9,7 +9,7 @@ import { CityValidator } from '@demo/shared';
 import { FlightCardComponent } from '../flight-card/flight-card.component';
 import { Flight, FlightService } from '@demo/data';
 import { addMinutes } from 'src/app/date-utils';
-import { createStore, flatten } from 'src/app/utils';
+import { createStore, flatten } from 'src/app/store';
 import { firstValueFrom } from 'rxjs';
 
 @Component({
@@ -53,6 +53,10 @@ export class FlightSearchComponent {
   // Computed Property
   flightRoute = this.store.compute(s => s.criteria().from() + ' to ' + s.criteria().to());
 
+  // Writable Signal for local state
+  flightsWritable = this.store.selectWritable(s => s.flights);
+
+
   // Just calling computed also works:
   // flightRoute = computed(
   //   () => this.criteria().from() + ' to ' + this.criteria().to()
@@ -94,6 +98,11 @@ export class FlightSearchComponent {
 
     // Alternative (did I mentation, the parameters are type safe?)
     this.store.update('flights', 0, 'date', (date) => addMinutes(date, 15));
+
+    // Updating a WritableSignal
+    const flights = this.flightsWritable();
+    const first = flights[0]();
+    first.date.update(date => addMinutes(date, 15));
 
     // Alternative select syntax:
     // const date = this.store.select('flights', 0, 'date')

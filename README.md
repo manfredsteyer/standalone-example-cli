@@ -1,5 +1,4 @@
-# Experiment 4: Store with Explicit Signals and ideas from SolidJS
-
+# Experiment 4: Store with Explicit Signals and Ideas from SolidJS
 
 ## Experiments
 
@@ -20,8 +19,12 @@
 
 ✅ The read data is read/only, preventing readers from corrupting the state
 
+✅ However, there is also a method selectWritable allowing the consumer to get a part of the store as a writable Signal. This helps to do 2way-data-binding with local state. Application state should be exposed as read-only Signals.
+
 
 **Creating the Store**
+
+Typically, the store is owned (encapsulated) by a service assuring that the state is written in a well-defined way or by a component.
 
 ```typescript
 store = createStore({
@@ -41,13 +44,18 @@ store = createStore({
 **Selecting Values**
 
 ```typescript
-flights = this.store.select((s) => s.flights);
-criteria = this.store.select((s) => s.criteria());
-basket = this.store.select((s) => s.basket);
+  // Selecting values
+  flights = this.store.select((s) => s.flights);
+  criteria = this.store.select((s) => s.criteria);
 
-flightRoute = computed(
-    () => this.criteria.from() + ' to ' + this.criteria.to()
-);
+  // Alternative, type-safe syntax:
+  basket = this.store.select('basket');
+
+  // Computed Property
+  flightRoute = this.store.compute(s => s.criteria().from() + ' to ' + s.criteria().to());
+
+  // Writable Signal for Local State (2-way data binding)
+  flightsWritable = this.store.selectWritable(s => s.flights);
 ```
 
 **Updating the Store**
@@ -55,35 +63,16 @@ flightRoute = computed(
 ```typescript
 this.store.update((s) => s.flights, flights);
 
-[...]
-
-this.store.update(
-    (s) => s.flights()[0]().date,
-    (date) => addMinutes(date, 15)
-);
-```
-
-**Alternative Syntax for Updating**
-
-This syntax, inspired by SolidJS, is shorter, and the used properties are type safe (!).
-
-```typescript
+// Alternative (the string is type safe, btw):
 this.store.update('flights', flights);
-
-[...]
-
-this.store.update(
-    'flights', 0, 'date', 
-    (date) => addMinutes(date, 15));
 ```
 
-**Alternative Syntax for Selecting**
+## Flattening
 
 ```typescript
-const date = this.store.select('flights', 0, 'date')
-
-// Respective lambda syntax:
-// const date = this.store.select(s => s.flights()[0]().date)
+// Example for flattening (removing all nested signals):
+const flat = flatten(this.flights);
+console.log('flat flights', flat);
 ```
 
 ## How to try it out?

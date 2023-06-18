@@ -1,9 +1,9 @@
 import { CommonModule } from "@angular/common";
-import { Component, EventEmitter, Input, Output, OnChanges, SimpleChanges, ChangeDetectionStrategy, Signal, effect, signal, inject, ElementRef, NgZone, WritableSignal } from "@angular/core";
+import { Component, EventEmitter, Input, Output, OnChanges, SimpleChanges, ChangeDetectionStrategy, Signal, inject, ElementRef, NgZone } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { CityPipe } from "@demo/shared";
-import { Flight, initFlight } from "@demo/data";
-import { DeepSignal, nest, toReadOnly } from "src/app/utils";
+import { Flight } from "@demo/data";
+import { DeepSignal } from "src/app/store";
 
 @Component({
   standalone: true,
