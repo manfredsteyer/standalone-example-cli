@@ -81,10 +81,10 @@ export class FlightSearchComponent {
   }
 
   delay(): void {
-    this.store.update(
-      (s) => s.flights()[0]().date,
-      (date) => addMinutes(date, 15)
-    );
+    // this.store.update(
+    //   (s) => s.flights()[0]().date,
+    //   (date) => addMinutes(date, 15)
+    // );
 
     // Alternative (did I mentation, the parameters are type safe?)
     this.store.update('flights', 0, 'date', (date) => addMinutes(date, 15));

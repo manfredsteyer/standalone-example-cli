@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { Flight } from './flight';
 
 @Injectable({
@@ -16,6 +16,16 @@ export class FlightService {
     to: string,
     urgent: boolean = false
   ): Observable<Flight[]> {
+
+    const date = new Date().toISOString();
+    const delayed = false;
+    const counter = 1;
+    return of([
+      { id: 1, from, to, date, delayed, counter},
+      { id: 2, from, to, date, delayed, counter},
+      { id: 3, from, to, date, delayed, counter},
+    ]);
+    
     let url = [this.baseUrl, 'flight'].join('/');
 
     if (urgent) {

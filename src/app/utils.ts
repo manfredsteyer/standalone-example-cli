@@ -149,20 +149,23 @@ export function createStore<T>(init: T) {
       value = valueOrUpdater;
     }
 
-    if (typeof value !== 'object') {
-      console.error('cannot update this value directly', s);
-      return;
-    }
+    // if (typeof value !== 'object') {
+    //   console.error('cannot update this value directly', s);
+    //   return;
+    // }
 
     value = nest(value);
 
     if (Array.isArray(value)) {
       s.set(value);
-    } else {
+    } else if (typeof value === 'object') {
       (s as WritableSignal<object>).update((current) => ({
         ...current,
         ...(value as object),
       }));
+    }
+    else {
+      s.set(value);
     }
   }
 
