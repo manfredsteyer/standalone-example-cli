@@ -76,7 +76,7 @@ export class FlightSearchComponent {
     this.store.update('basket', basket);
 
     // Example for flattening (removing all nested signals):
-    const flat = flatten(this.store.select((s) => s.flights()));
+    const flat = flatten(this.flights);
     console.log('flat flights', flat);
   }
 

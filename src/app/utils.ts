@@ -312,14 +312,40 @@ export function nest<T>(value: T): DeepWritableSignal<T> {
   }
 }
 
-export function flatten<T>(value: DeepSignal<T>): T {
+// export function flatten<T>(value: DeepSignal<T>): T {
+//   if (typeof value !== 'object' || !value) {
+//     return value;
+//   }
+
+//   let result = Array.isArray(value) ? ([] as T) : ({} as T);
+//   for (const key of Object.keys(value)) {
+//     (result as any)[key] = flatten((value as any)[key]());
+//   }
+//   return result;
+// }
+
+
+export function flatten<T>(value: DeepSignal<T>[] | DeepWritableSignal<T>[] | Signal<Signal<DeepSignal<T>>[]> | Signal<WritableSignal<DeepWritableSignal<T>>[]> ): T[];
+export function flatten<T>(value: DeepSignal<T> | DeepWritableSignal<T> | Signal<DeepSignal<T>> | WritableSignal<DeepWritableSignal<T>> ): T;
+export function flatten<T>(value: unknown): T | T[] {
+  if (typeof value === 'function') {
+    value = value();
+  }
+
   if (typeof value !== 'object' || !value) {
-    return value;
+    return value as T;
   }
 
   let result = Array.isArray(value) ? ([] as T) : ({} as T);
   for (const key of Object.keys(value)) {
-    (result as any)[key] = flatten((value as any)[key]());
+
+    if (isSignal((value as any)[key])) {
+      (result as any)[key] = flatten((value as any)[key]());
+    }
+    else {
+      (result as any)[key] = (value as any)[key];
+
+    }
   }
   return result;
 }

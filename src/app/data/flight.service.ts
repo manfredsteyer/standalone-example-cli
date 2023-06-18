@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { Flight } from './flight';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class FlightService {
   baseUrl = `https://demo.angulararchitects.io/api`;
@@ -29,5 +29,4 @@ export class FlightService {
 
     return flights$;
   }
- 
 }

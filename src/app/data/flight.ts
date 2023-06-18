@@ -6,6 +6,7 @@ export interface Flight {
   date: string; 
   delayed: boolean;
   counter: number;
+ 
 }
 
 export const initFlight: Flight = {

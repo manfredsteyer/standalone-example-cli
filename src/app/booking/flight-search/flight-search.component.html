@@ -4,12 +4,12 @@
 
   <div class="form-group">
     <label>From:</label>
-    <input [ngModel]="criteria.from()" (ngModelChange)="store.update('criteria', 'from', $event)" name="from" class="form-control">
+    <input [ngModel]="criteria().from()" (ngModelChange)="store.update('criteria', 'from', $event)" name="from" class="form-control">
   </div>
 
   <div class="form-group">
     <label>To:</label>
-    <input [ngModel]="criteria.to()" (ngModelChange)="store.update('criteria', 'to', $event)" name="to" class="form-control">
+    <input [ngModel]="criteria().to()" (ngModelChange)="store.update('criteria', 'to', $event)" name="to" class="form-control">
   </div>
 
   <div class="form-group">
