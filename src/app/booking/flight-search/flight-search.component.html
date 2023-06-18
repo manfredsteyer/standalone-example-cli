@@ -35,6 +35,7 @@
 <br>
 
 <h4>Basket</h4>
+
 <ul>
-  <li *ngFor="let key of basketKeys">{{key}}: {{ $any(this.basket())[key]() }} </li>
+  <li *ngFor="let item of (basket() | keyvalue)">{{ item.key }}: {{item.value()}}</li>
 </ul>

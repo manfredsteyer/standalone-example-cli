@@ -1,8 +1,7 @@
-import { AsyncPipe, JsonPipe, NgForOf, NgIf } from '@angular/common';
+import { AsyncPipe, JsonPipe, KeyValuePipe, NgForOf, NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
-  computed,
   inject,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -18,6 +17,7 @@ import { firstValueFrom } from 'rxjs';
   imports: [
     NgIf,
     NgForOf,
+    KeyValuePipe,
     AsyncPipe,
     JsonPipe,
     FormsModule,
@@ -46,11 +46,17 @@ export class FlightSearchComponent {
 
   flights = this.store.select((s) => s.flights);
   criteria = this.store.select((s) => s.criteria);
-  basket = this.store.select((s) => s.basket);
 
-  flightRoute = computed(
-    () => this.criteria().from() + ' to ' + this.criteria().to()
-  );
+  // Alternative, type-safe syntax:
+  basket = this.store.select('basket');
+
+  // Computed Property
+  flightRoute = this.store.compute(s => s.criteria().from() + ' to ' + s.criteria().to());
+
+  // Just calling computed also works:
+  // flightRoute = computed(
+  //   () => this.criteria().from() + ' to ' + this.criteria().to()
+  // );
 
   async search() {
     const from = this.criteria().from();
@@ -81,10 +87,10 @@ export class FlightSearchComponent {
   }
 
   delay(): void {
-    // this.store.update(
-    //   (s) => s.flights()[0]().date,
-    //   (date) => addMinutes(date, 15)
-    // );
+    this.store.update(
+      (s) => s.flights()[0]().date,
+      (date) => addMinutes(date, 15)
+    );
 
     // Alternative (did I mentation, the parameters are type safe?)
     this.store.update('flights', 0, 'date', (date) => addMinutes(date, 15));
@@ -93,7 +99,4 @@ export class FlightSearchComponent {
     // const date = this.store.select('flights', 0, 'date')
   }
 
-  get basketKeys() {
-    return Object.keys(this.basket());
-  }
 }
