@@ -75,6 +75,11 @@ const flat = flatten(this.flights);
 console.log('flat flights', flat);
 ```
 
+## Source
+
+- [Store](src/app/store.ts)
+- [Component using the store](src/app/booking/flight-search/flight-search.component.ts)
+
 ## How to try it out?
 
 The application uses a trick to visualize the change detection. Each updated flight blinks red:
