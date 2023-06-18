@@ -45,17 +45,17 @@ export class FlightSearchComponent {
   });
 
   flights = this.store.select((s) => s.flights);
-  criteria = this.store.select((s) => s.criteria());
+  criteria = this.store.select((s) => s.criteria);
   basket = this.store.select((s) => s.basket);
 
   flightRoute = computed(
-    () => this.criteria.from() + ' to ' + this.criteria.to()
+    () => this.criteria().from() + ' to ' + this.criteria().to()
   );
 
   async search() {
-    const from = this.criteria.from();
-    const to = this.criteria.to();
-    const urgent = this.criteria.urgent();
+    const from = this.criteria().from();
+    const to = this.criteria().to();
+    const urgent = this.criteria().urgent();
 
     if (!from || !to) return;
 
