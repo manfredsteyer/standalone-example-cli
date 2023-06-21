@@ -14,12 +14,9 @@ export class FlightBookingFacade {
     basket: {} as Record<number, boolean>,
   });
 
-  // Option 1: fetch root signals as readonly
   flights = this.state.select(s => s.flights());
   from = this.state.select(s => s.from());
   to = this.state.select(s => s.to())
-
-  // Option 2: use computed for selectors
   basket = this.state.select(s => s.basket());
   selected = this.state.select(s => s.flights().filter(f => s.basket()[f.id]));
 
