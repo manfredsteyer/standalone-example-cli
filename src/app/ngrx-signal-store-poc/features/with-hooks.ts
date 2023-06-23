@@ -1,64 +1,58 @@
 import { Signal } from '@angular/core';
-import { SignalStoreUpdate, StaticState } from '../models';
+import {
+  SignalStoreFeatureInput,
+  SignalStoreSlices,
+} from '../signal-store-feature';
+import { SignalStateUpdate } from '../signal-state-update';
 
 export function withHooks<
-  State extends Record<string, Signal<any>>,
-  Computed extends Record<string, Signal<any>>,
-  Updaters extends Record<string, (...args: any[]) => void>,
-  Effects extends Record<string, (...args: any[]) => any>
+  State extends Record<string, unknown>,
+  Signals extends Record<string, Signal<any>>,
+  Methods extends Record<string, (...args: any[]) => any>
 >(hooks: {
   onInit?: (
-    store: State &
-      Computed &
-      Updaters &
-      Effects &
-      SignalStoreUpdate<StaticState<State>>
+    input: SignalStoreSlices<State> &
+      Signals &
+      Methods &
+      SignalStateUpdate<State>
   ) => void;
   onDestroy?: (
-    store: State &
-      Computed &
-      Updaters &
-      Effects &
-      SignalStoreUpdate<StaticState<State>>
+    input: SignalStoreSlices<State> &
+      Signals &
+      Methods &
+      SignalStateUpdate<State>
   ) => void;
 }): (
-  feature: {
+  featureInput: SignalStoreFeatureInput<{
     state: State;
-    computed: Computed;
-    updaters: Updaters;
-    effects: Effects;
-  } & SignalStoreUpdate<StaticState<State>>
+    signals: Signals;
+    methods: Methods;
+  }>
 ) => {
-  state: {};
-  computed: {};
-  updaters: {};
-  effects: {};
-  hooks: { onInit: () => void; onDestroy: () => void };
+  hooks: { onInit?: () => void; onDestroy?: () => void };
 } {
-  return (feature) => ({
-    state: {},
-    computed: {},
-    updaters: {},
-    effects: {},
+  return (featureInput) => ({
     hooks: {
-      onInit() {
-        hooks.onInit?.({
-          update: feature.update,
-          ...feature.state,
-          ...feature.computed,
-          ...feature.updaters,
-          ...feature.effects,
-        });
-      },
-      onDestroy() {
-        hooks.onDestroy?.({
-          update: feature.update,
-          ...feature.state,
-          ...feature.computed,
-          ...feature.updaters,
-          ...feature.effects,
-        });
-      },
+      onInit: hooks.onInit
+        ? () => {
+            hooks.onInit?.({
+              $update: featureInput.$update,
+              ...featureInput.slices,
+              ...featureInput.signals,
+              ...featureInput.methods,
+            });
+          }
+        : undefined,
+      onDestroy: hooks.onDestroy
+        ? () => {
+            hooks.onDestroy?.({
+              $update: featureInput.$update,
+              ...featureInput.slices,
+              ...featureInput.signals,
+              ...featureInput.methods,
+            });
+          }
+        : undefined,
     },
   });
 }
