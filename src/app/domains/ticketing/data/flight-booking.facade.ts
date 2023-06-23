@@ -1,47 +1,54 @@
-import { Injectable, computed, inject } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { FlightService } from './flight.service';
 import { Flight } from './flight';
 import { addMinutes } from 'src/app/shared/util-common';
 import {
-  signalStore,
-  withState,
-  withComputed,
+  signalState,
+  selectSignal,
 } from '../../../ngrx-signal-store-poc';
 
-const Store = signalStore(
-  { providedIn: 'root' },
-  withState({
-    from: 'Paris',
-    to: 'London',
-    flights: [] as Flight[],
-    basket: {} as Record<number, boolean>,
-  }),
-  withComputed(({ flights, basket }) => ({
-    selected: computed(() => flights().filter((f) => basket()[f.id])),
-  }))
-);
+// const Store = signalStore(
+//   { providedIn: 'root' },
+//   withState({
+//     from: 'Paris',
+//     to: 'London',
+//     flights: [] as Flight[],
+//     basket: {} as Record<number, boolean>,
+//   }),
+//   withComputed(({ flights, basket }) => ({
+//     selected: computed(() => flights().filter((f) => basket()[f.id])),
+//   }))
+// );
 
 @Injectable({ providedIn: 'root' })
 export class FlightBookingFacade {
   private flightService = inject(FlightService);
-  private store = inject(Store);
+  private state = signalState({
+    from: 'Paris',
+    to: 'London',
+    flights: [] as Flight[],
+    basket: {} as Record<number, boolean>,
+  });
 
   // fetch root signals as readonly
-  flights = this.store.flights;
-  from = this.store.from;
-  to = this.store.to;
-  basket = this.store.basket;
+  flights = this.state.flights;
+  from = this.state.from;
+  to = this.state.to;
+  basket = this.state.basket;
 
   // fetch selected signal
-  selected = this.store.selected;
+  selected = selectSignal(
+    this.flights, 
+    this.basket, 
+    (flights, basket) => flights.filter((f) => basket[f.id])
+  )
 
   updateCriteria(from: string, to: string): void {
-    this.store.update({ from });
-    this.store.update({ to });
+    this.state.$update({ from, to });
   }
 
   updateBasket(id: number, selected: boolean): void {
-    this.store.update((state) => ({
+    this.state.$update((state) => ({
       ...state,
       basket: {
         ...state.basket,
@@ -57,7 +64,7 @@ export class FlightBookingFacade {
       this.to()
     );
 
-    this.store.update({flights});
+    this.state.$update({ flights });
   }
 
   delay(): void {
@@ -66,8 +73,8 @@ export class FlightBookingFacade {
 
     const date = addMinutes(flight.date, 15);
     const updFlight = { ...flight, date };
-    const updFlights = [updFlight, ...this.store.flights().slice(1)];
+    const updFlights = [updFlight, ...this.state.flights().slice(1)];
 
-    this.store.update({flights: updFlights});
+    this.state.$update({ flights: updFlights });
   }
 }
