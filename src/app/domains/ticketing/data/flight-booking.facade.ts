@@ -21,7 +21,7 @@ export class FlightBookingFacade {
 
   updateCriteria(from: string, to: string): void {
     this._from.set(from);
-    this._to.set(from);
+    this._to.set(to);
   }
 
   updateBasket(id: number, selected: boolean): void {
