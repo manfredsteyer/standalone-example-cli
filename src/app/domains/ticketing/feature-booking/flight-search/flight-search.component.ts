@@ -39,7 +39,7 @@ export class FlightSearchComponent  {
 
   flights$ = this.store.select(selectFlights);
 
-  basket: { [id: number]: boolean } = {
+  basket: Record<number, boolean> = {
     3: true,
     5: true
   };
@@ -74,4 +74,3 @@ export class FlightSearchComponent  {
   }
 
 }
-
