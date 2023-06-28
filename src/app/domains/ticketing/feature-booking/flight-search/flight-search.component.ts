@@ -31,7 +31,6 @@ import {FlightCardComponent} from "../../ui-common";
 export class FlightSearchComponent  {
 
   private store = inject<Store<BookingSlice>>(Store);
-  private route = inject(ActivatedRoute);
 
   from = 'Hamburg'; // in Germany
   to = 'Graz'; // in Austria
@@ -43,19 +42,6 @@ export class FlightSearchComponent  {
     3: true,
     5: true
   };
-
-  constructor() {
-    this.route.paramMap.subscribe(p => {
-      const from = p.get('from');
-      const to = p.get('to');
-
-      if (from && to) {
-        this.from = from;
-        this.to = to;
-        this.search();
-      }
-    });
-  }
 
   search(): void {
     if (!this.from || !this.to) return;
