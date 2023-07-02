@@ -13,7 +13,7 @@ import {
 } from '@ngrx/signals';
 
 import { withCallState } from 'src/app/shared/util-common';
-import { debounceTime, pipe, switchMap, tap } from 'rxjs';
+import { debounceTime, iif, of, pipe, switchMap, tap } from 'rxjs';
 
 export const FlightBookingStore = signalStore(
   { providedIn: 'root' },
@@ -60,7 +60,9 @@ export const FlightBookingStore = signalStore(
       },
       loadBy: rxEffect<{ from: string; to: string }>(
         pipe(
-          debounceTime(initialized() ? 300 : 0),
+          switchMap((c) =>
+            iif(() => initialized(), of(c).pipe(debounceTime(300)), of(c).pipe(tap(x => { console.log('init')})))
+          ),
           switchMap((c) => flightService.find(c.from, c.to)),
           tap((flights) => $update({ flights, initialized: true }))
         )
