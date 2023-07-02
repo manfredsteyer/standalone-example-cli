@@ -1,140 +1,61 @@
-import { Injectable, WritableSignal, Type } from '@angular/core';
 import {
+  DestroyRef,
+  inject,
+  Injectable,
+  Signal,
+  signal,
+  Type,
+} from '@angular/core';
+import {
+  F1Factory,
+  F2Factory,
+  F3Factory,
+  F4Factory,
+  F5Factory,
+  F6Factory,
   SignalStoreFeature,
   SignalStoreFeatureFactory,
-  SignalStoreUpdate,
-  SignalStoreUpdateFn,
-  StaticState,
-} from './models';
-import { injectDestroy } from './inject-destroy';
+  SignalStoreFeatureInput,
+} from './signal-store-feature';
+import {
+  SignalStateUpdate,
+  signalStateUpdateFactory,
+} from './signal-state-update';
+import { toDeepSignal } from './deep-signal';
+import { selectSignal } from './select-signal';
+import { defaultEqualityFn } from './equality-fn';
 
 type SignalStoreConfig = { providedIn: 'root' };
 
-type FeatureResult<Feature extends SignalStoreFeature> = Feature['state'] &
-  Feature['computed'] &
-  Feature['updaters'] &
-  Feature['effects'];
-
-type F1Factory<F1 extends SignalStoreFeature> = (
-  input: {
-    state: {};
-    computed: {};
-    updaters: {};
-    effects: {};
-  } & SignalStoreUpdate<{}>
-) => F1;
-
-type F2Factory<F1 extends SignalStoreFeature, F2 extends SignalStoreFeature> = (
-  input: F1 & SignalStoreUpdate<StaticState<F1['state']>>
-) => F2;
-
-type F3Factory<
-  F1 extends SignalStoreFeature,
-  F2 extends SignalStoreFeature,
-  F3 extends SignalStoreFeature
-> = (
-  input: {
-    state: F1['state'] & F2['state'];
-    computed: F1['computed'] & F2['computed'];
-    updaters: F1['updaters'] & F2['updaters'];
-    effects: F1['effects'] & F2['effects'];
-  } & SignalStoreUpdate<StaticState<F1['state'] & F2['state']>>
-) => F3;
-
-type F4Factory<
-  F1 extends SignalStoreFeature,
-  F2 extends SignalStoreFeature,
-  F3 extends SignalStoreFeature,
-  F4 extends SignalStoreFeature
-> = (
-  input: {
-    state: F1['state'] & F2['state'] & F3['state'];
-    computed: F1['computed'] & F2['computed'] & F3['computed'];
-    updaters: F1['updaters'] & F2['updaters'] & F3['updaters'];
-    effects: F1['effects'] & F2['effects'] & F3['effects'];
-  } & SignalStoreUpdate<StaticState<F1['state'] & F2['state'] & F3['state']>>
-) => F4;
-
-type F5Factory<
-  F1 extends SignalStoreFeature,
-  F2 extends SignalStoreFeature,
-  F3 extends SignalStoreFeature,
-  F4 extends SignalStoreFeature,
-  F5 extends SignalStoreFeature
-> = (
-  input: {
-    state: F1['state'] & F2['state'] & F3['state'] & F4['state'];
-    computed: F1['computed'] & F2['computed'] & F3['computed'] & F4['computed'];
-    updaters: F1['updaters'] & F2['updaters'] & F3['updaters'] & F4['updaters'];
-    effects: F1['effects'] & F2['effects'] & F3['effects'] & F4['effects'];
-  } & SignalStoreUpdate<
-    StaticState<F1['state'] & F2['state'] & F3['state'] & F4['state']>
-  >
-) => F5;
-
-type F6Factory<
-  F1 extends SignalStoreFeature,
-  F2 extends SignalStoreFeature,
-  F3 extends SignalStoreFeature,
-  F4 extends SignalStoreFeature,
-  F5 extends SignalStoreFeature,
-  F6 extends SignalStoreFeature
-> = (
-  input: {
-    state: F1['state'] & F2['state'] & F3['state'] & F4['state'] & F5['state'];
-    computed: F1['computed'] &
-      F2['computed'] &
-      F3['computed'] &
-      F4['computed'] &
-      F5['computed'];
-    updaters: F1['updaters'] &
-      F2['updaters'] &
-      F3['updaters'] &
-      F4['updaters'] &
-      F5['updaters'];
-    effects: F1['effects'] &
-      F2['effects'] &
-      F3['effects'] &
-      F4['effects'] &
-      F5['effects'];
-  } & SignalStoreUpdate<
-    StaticState<
-      F1['state'] & F2['state'] & F3['state'] & F4['state'] & F5['state']
-    >
-  >
-) => F6;
-
-type F1Result<F1 extends SignalStoreFeature> = FeatureResult<F1> &
-  SignalStoreUpdate<StaticState<F1['state']>>;
+type F1Result<F1 extends SignalStoreFeature> = SignalStoreFeatureResult<F1> &
+  SignalStateUpdate<F1['state']>;
 
 type F2Result<
   F1 extends SignalStoreFeature,
   F2 extends SignalStoreFeature
-> = FeatureResult<F1> &
-  FeatureResult<F2> &
-  SignalStoreUpdate<StaticState<F1['state'] & F2['state']>>;
+> = SignalStoreFeatureResult<F1> &
+  SignalStoreFeatureResult<F2> &
+  SignalStateUpdate<F1['state'] & F2['state']>;
 
 type F3Result<
   F1 extends SignalStoreFeature,
   F2 extends SignalStoreFeature,
   F3 extends SignalStoreFeature
-> = FeatureResult<F1> &
-  FeatureResult<F2> &
-  FeatureResult<F3> &
-  SignalStoreUpdate<StaticState<F1['state'] & F2['state'] & F3['state']>>;
+> = SignalStoreFeatureResult<F1> &
+  SignalStoreFeatureResult<F2> &
+  SignalStoreFeatureResult<F3> &
+  SignalStateUpdate<F1['state'] & F2['state'] & F3['state']>;
 
 type F4Result<
   F1 extends SignalStoreFeature,
   F2 extends SignalStoreFeature,
   F3 extends SignalStoreFeature,
   F4 extends SignalStoreFeature
-> = FeatureResult<F1> &
-  FeatureResult<F2> &
-  FeatureResult<F3> &
-  FeatureResult<F4> &
-  SignalStoreUpdate<
-    StaticState<F1['state'] & F2['state'] & F3['state'] & F4['state']>
-  >;
+> = SignalStoreFeatureResult<F1> &
+  SignalStoreFeatureResult<F2> &
+  SignalStoreFeatureResult<F3> &
+  SignalStoreFeatureResult<F4> &
+  SignalStateUpdate<F1['state'] & F2['state'] & F3['state'] & F4['state']>;
 
 type F5Result<
   F1 extends SignalStoreFeature,
@@ -142,15 +63,13 @@ type F5Result<
   F3 extends SignalStoreFeature,
   F4 extends SignalStoreFeature,
   F5 extends SignalStoreFeature
-> = FeatureResult<F1> &
-  FeatureResult<F2> &
-  FeatureResult<F3> &
-  FeatureResult<F4> &
-  FeatureResult<F5> &
-  SignalStoreUpdate<
-    StaticState<
-      F1['state'] & F2['state'] & F3['state'] & F4['state'] & F5['state']
-    >
+> = SignalStoreFeatureResult<F1> &
+  SignalStoreFeatureResult<F2> &
+  SignalStoreFeatureResult<F3> &
+  SignalStoreFeatureResult<F4> &
+  SignalStoreFeatureResult<F5> &
+  SignalStateUpdate<
+    F1['state'] & F2['state'] & F3['state'] & F4['state'] & F5['state']
   >;
 
 type F6Result<
@@ -160,22 +79,25 @@ type F6Result<
   F4 extends SignalStoreFeature,
   F5 extends SignalStoreFeature,
   F6 extends SignalStoreFeature
-> = FeatureResult<F1> &
-  FeatureResult<F2> &
-  FeatureResult<F3> &
-  FeatureResult<F4> &
-  FeatureResult<F5> &
-  FeatureResult<F6> &
-  SignalStoreUpdate<
-    StaticState<
-      F1['state'] &
-        F2['state'] &
-        F3['state'] &
-        F4['state'] &
-        F5['state'] &
-        F6['state']
-    >
+> = SignalStoreFeatureResult<F1> &
+  SignalStoreFeatureResult<F2> &
+  SignalStoreFeatureResult<F3> &
+  SignalStoreFeatureResult<F4> &
+  SignalStoreFeatureResult<F5> &
+  SignalStoreFeatureResult<F6> &
+  SignalStateUpdate<
+    F1['state'] &
+      F2['state'] &
+      F3['state'] &
+      F4['state'] &
+      F5['state'] &
+      F6['state']
   >;
+
+type SignalStoreFeatureResult<
+  Feature extends SignalStoreFeature,
+  Input extends SignalStoreFeatureInput<Feature> = SignalStoreFeatureInput<Feature>
+> = Input['slices'] & Input['signals'] & Input['methods'];
 
 export function signalStore<F1 extends SignalStoreFeature>(
   f1: F1Factory<F1>
@@ -311,93 +233,76 @@ export function signalStore(
   @Injectable({ providedIn: config.providedIn || null })
   class SignalStore {
     constructor() {
-      return signalStoreFactory(featureFactories);
+      const props = signalStoreFactory(featureFactories);
+      for (const key in props) {
+        (this as any)[key] = props[key];
+      }
     }
   }
 
   return SignalStore;
 }
 
-function signalStoreFactory(featureFactories: SignalStoreFeatureFactory[]) {
-  const rootFeature: SignalStoreFeature = {
-    state: {},
-    computed: {},
-    updaters: {},
-    effects: {},
-    hooks: {
-      onInit() {},
-      onDestroy() {},
-    },
+function signalStoreFactory(
+  featureFactories: SignalStoreFeatureFactory[]
+): Record<string, unknown> {
+  const stateSignal = signal<Record<string, unknown>>(
+    {},
+    { equal: defaultEqualityFn }
+  );
+  const $update = signalStateUpdateFactory(stateSignal);
+  const featureInput: SignalStoreFeatureInput<{
+    state: Record<string, unknown>;
+    signals: Record<string, Signal<any>>;
+    methods: Record<string, (...args: any[]) => any>;
+  }> = {
+    $update,
+    slices: {},
+    signals: {},
+    methods: {},
   };
+  const onInits: Array<() => void> = [];
+  const onDestroys: Array<() => void> = [];
 
-  const getCurrentState = () =>
-    Object.keys(rootFeature['state']).reduce(
-      (acc, key) => ({ ...acc, [key]: rootFeature['state'][key]() }),
-      {} as Record<string, any>
-    );
+  for (const featureFactory of featureFactories.flat()) {
+    const feature = featureFactory(featureInput);
 
-  const update: SignalStoreUpdateFn<any> = (...updaters) => {
-    const updatedState: Record<string, any> = updaters.reduce(
-      (currentState, updater) => ({
-        ...currentState,
-        ...(typeof updater === 'function' ? updater(currentState) : updater),
-      }),
-      getCurrentState()
-    );
+    if (feature.state && Object.keys(feature.state).length > 0) {
+      stateSignal.update((state) => ({ ...state, ...feature.state }));
+    }
 
-    Object.keys(updatedState).forEach((key) => {
-      (rootFeature['state'][key] as WritableSignal<any>).set(updatedState[key]);
-    });
-  };
+    for (const key in feature.state) {
+      featureInput.slices[key] = toDeepSignal(
+        selectSignal(() => stateSignal()[key])
+      );
+    }
 
-  for (const featureFactory of featureFactories) {
-    const feature = featureFactory({
-      update,
-      ...rootFeature,
-    });
+    for (const key in feature.signals) {
+      featureInput.signals[key] = feature.signals[key];
+    }
 
-    rootFeature.state = {
-      ...rootFeature.state,
-      ...feature.state,
-    };
-    rootFeature.computed = {
-      ...rootFeature.computed,
-      ...feature.computed,
-    };
-    rootFeature.updaters = {
-      ...rootFeature.updaters,
-      ...feature.updaters,
-    };
-    rootFeature.effects = {
-      ...rootFeature.effects,
-      ...feature.effects,
-    };
+    for (const key in feature.methods) {
+      featureInput.methods[key] = feature.methods[key];
+    }
 
-    const rootOnInit = rootFeature.hooks.onInit;
-    const rootOnDestroy = rootFeature.hooks.onDestroy;
-
-    rootFeature.hooks = {
-      onInit() {
-        rootOnInit();
-        feature.hooks.onInit();
-      },
-      onDestroy() {
-        rootOnDestroy();
-        feature.hooks.onDestroy();
-      },
-    };
+    if (feature.hooks) {
+      feature.hooks.onInit && onInits.push(feature.hooks.onInit);
+      feature.hooks.onDestroy && onDestroys.push(feature.hooks.onDestroy);
+    }
   }
 
-  const store = {
-    update,
-    ...rootFeature.state,
-    ...rootFeature.computed,
-    ...rootFeature.updaters,
-    ...rootFeature.effects,
+  onInits.forEach((onInit) => onInit());
+
+  if (onDestroys.length > 0) {
+    inject(DestroyRef).onDestroy(() =>
+      onDestroys.forEach((onDestroy) => onDestroy())
+    );
+  }
+
+  return {
+    $update,
+    ...featureInput.slices,
+    ...featureInput.signals,
+    ...featureInput.methods,
   };
-
-  rootFeature.hooks.onInit();
-  injectDestroy().subscribe(() => rootFeature.hooks.onDestroy());
-
-  return store;
 }
