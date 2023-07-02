@@ -1,4 +1,4 @@
-import { noDependencies, sameTag, SheriffConfig } from '@softarc/sheriff-core';
+import { sameTag, SheriffConfig } from '@softarc/sheriff-core';
 
 export const sheriffConfig: SheriffConfig = {
   version: 1,
@@ -27,6 +27,6 @@ export const sheriffConfig: SheriffConfig = {
     'type:feature': ['type:ui', 'type:data', 'type:util'],
     'type:ui': ['type:data', 'type:util'],
     'type:data': ['type:util'],
-    'type:util': noDependencies
+    'type:util': ['type:util']
   },
 };

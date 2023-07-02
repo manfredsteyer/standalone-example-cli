@@ -1,15 +1,14 @@
-import {AsyncPipe, JsonPipe, NgForOf, NgIf} from "@angular/common";
-import {Component, inject, signal} from "@angular/core";
-import {FormsModule} from "@angular/forms";
-import {CityValidator} from "src/app/shared/util-common";
-import {FlightCardComponent} from "../../ui-common";
-import { FlightBookingFacade } from "../../data";
-import { ChangeDetectionStrategy } from "@angular/core";
+import { AsyncPipe, JsonPipe, NgForOf, NgIf } from '@angular/common';
+import { Component, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { CityValidator } from 'src/app/shared/util-common';
+import { FlightCardComponent } from '../../ui-common';
+import { FlightBookingStore, updateBasket } from '../../data';
+import { ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
   standalone: true,
   imports: [
-    // CommonModule,
     NgIf,
     NgForOf,
     AsyncPipe,
@@ -23,16 +22,17 @@ import { ChangeDetectionStrategy } from "@angular/core";
   templateUrl: './flight-search.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FlightSearchComponent  {
-  private facade = inject(FlightBookingFacade);
+export class FlightSearchComponent {
+  private facade = inject(FlightBookingStore);
 
   from = this.facade.from;
   to = this.facade.to;
   basket = this.facade.basket;
   flights = this.facade.flights;
   selected = this.facade.selected;
-  
+
   async search() {
+    this.facade.$update(updateBasket(1, true))
     this.facade.load();
   }
 

@@ -1,40 +1,59 @@
-import { DestroyRef, inject, isSignal, Signal } from '@angular/core';
+import {
+  assertInInjectionContext,
+  inject,
+  Injector,
+  isSignal,
+  Signal,
+} from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
 import {
   isObservable,
   Observable,
   of,
+  OperatorFunction,
   Subject,
-  Subscription,
   takeUntil,
+  Unsubscribable,
 } from 'rxjs';
 import { injectDestroy } from './inject-destroy';
-import { toObservable } from './to-observable';
+
+type RxEffectInput<Input> = Input | Observable<Input> | Signal<Input>;
+type RxEffect<Input> = ((input: RxEffectInput<Input>) => Unsubscribable) &
+  Unsubscribable;
 
 export function rxEffect<Input>(
-  generator: (source$: Observable<Input>) => Observable<unknown>
-): (input: Input | Observable<Input> | Signal<Input>) => Subscription {
+  generator: OperatorFunction<Input, unknown>
+): RxEffect<Input> {
+  assertInInjectionContext(rxEffect);
+
+  const injector = inject(Injector);
   const destroy$ = injectDestroy();
   const source$ = new Subject<Input>();
 
-  generator(source$).pipe(takeUntil(destroy$)).subscribe();
+  const sourceSubscription = generator(source$)
+    .pipe(takeUntil(destroy$))
+    .subscribe();
 
-  return (input) => {
-    let input$ = fromRxInput(input);
+  const rxEffectFn = (input: RxEffectInput<Input>) => {
+    let input$: Observable<Input>;
 
-    return input$
-      .pipe(takeUntil(destroy$))
-      .subscribe((value) => source$.next(value));
+    if (isSignal(input)) {
+      input$ = toObservable(input, { injector });
+    } else if (isObservable(input)) {
+      input$ = input.pipe(takeUntil(destroy$));
+    } else {
+      input$ = of(input);
+    }
+
+    const instanceSubscription = input$.subscribe((value) =>
+      source$.next(value)
+    );
+    sourceSubscription.add(instanceSubscription);
+
+    return instanceSubscription;
   };
-}
+  rxEffectFn.unsubscribe =
+    sourceSubscription.unsubscribe.bind(sourceSubscription);
 
-function fromRxInput<Input>(
-  input: Input | Observable<Input> | Signal<Input>
-): Observable<Input> {
-  if (isObservable(input)) {
-    return input;
-  }
-
-  return typeof input === 'function' && isSignal(input)
-    ? toObservable(input)
-    : of(input);
+  return rxEffectFn;
 }
