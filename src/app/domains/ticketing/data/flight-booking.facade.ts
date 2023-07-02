@@ -7,19 +7,6 @@ import {
   selectSignal,
 } from '../../../ngrx-signal-store-poc';
 
-// const Store = signalStore(
-//   { providedIn: 'root' },
-//   withState({
-//     from: 'Paris',
-//     to: 'London',
-//     flights: [] as Flight[],
-//     basket: {} as Record<number, boolean>,
-//   }),
-//   withComputed(({ flights, basket }) => ({
-//     selected: computed(() => flights().filter((f) => basket()[f.id])),
-//   }))
-// );
-
 @Injectable({ providedIn: 'root' })
 export class FlightBookingFacade {
   private flightService = inject(FlightService);
