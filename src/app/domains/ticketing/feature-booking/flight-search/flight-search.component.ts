@@ -3,7 +3,7 @@ import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CityValidator } from 'src/app/shared/util-common';
 import { FlightCardComponent } from '../../ui-common';
-import { FlightBookingStore } from '../../data';
+import { FlightBookingStore, MyStore } from '../../data';
 import { ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
@@ -24,12 +24,17 @@ import { ChangeDetectionStrategy } from '@angular/core';
 })
 export class FlightSearchComponent {
   private facade = inject(FlightBookingStore);
-
+  private store = inject(MyStore);
+  
   from = this.facade.from;
   to = this.facade.to;
   basket = this.facade.basket;
   flights = this.facade.flights;
   selected = this.facade.selected;
+
+  constructor() {
+    console.log('counter', this.store.counter())
+  }
 
   async search() {
     this.facade.load();

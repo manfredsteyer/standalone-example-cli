@@ -1,7 +1,13 @@
-import { inject } from '@angular/core';
+import {
+  Inject,
+  Injectable,
+  InjectionToken,
+  Type,
+  inject,
+} from '@angular/core';
 import { FlightService } from './flight.service';
 import { Flight } from './flight';
-import { addMinutes } from 'src/app/shared/util-common';
+import { addMinutes, setLoaded, setLoading } from 'src/app/shared/util-common';
 import {
   rxEffect,
   selectSignal,
@@ -15,6 +21,34 @@ import {
 import { withCallState } from 'src/app/shared/util-common';
 import { debounceTime, pipe, switchMap, tap } from 'rxjs';
 
+const initState = { counter: 0 };
+
+@Injectable({ providedIn: 'root' })
+class _MyStore extends signalStore(withState(initState)) {
+  inc() {
+    this.$update((state) => ({ ...state, counter: state.counter + 1 }));
+  }
+}
+
+export const MyStore = createStoreToken(_MyStore);
+
+function createStoreToken<T extends object>(
+  store: Type<T>
+): InjectionToken<Omit<T, '$update'>> {
+  return new InjectionToken<Omit<T, '$update'>>(store.name, {
+    providedIn: 'root',
+    factory: () => inject(store),
+  });
+}
+
+// export const MyStore = new InjectionToken<Omit<_MyStore, '$update'>>(
+//   'MyStore',
+//   {
+//     providedIn: 'root',
+//     factory: () => inject(_MyStore)
+//   }
+// );
+
 export const FlightBookingStore = signalStore(
   { providedIn: 'root' },
   withState({
@@ -24,6 +58,7 @@ export const FlightBookingStore = signalStore(
     flights: [] as Flight[],
     basket: {} as Record<number, boolean>,
   }),
+  withCallState(),
   withSignals(({ flights, basket, from, to }) => ({
     selected: selectSignal(() => flights().filter((f) => basket()[f.id])),
     criteria: selectSignal(() => ({ from: from(), to: to() })),
@@ -55,8 +90,9 @@ export const FlightBookingStore = signalStore(
       },
       load: async () => {
         if (!from() || !to()) return;
+        $update(setLoading());
         const flights = await flightService.findPromise(from(), to());
-        $update({ flights });
+        $update({ flights }, setLoaded());
       },
       loadBy: rxEffect<{ from: string; to: string }>(
         pipe(
@@ -68,12 +104,12 @@ export const FlightBookingStore = signalStore(
     };
   }),
   withHooks({
-    onInit({ load }) {
-      load()
+    onInit({ load, loadBy, criteria }) {
+      loadBy(criteria());
+      load();
     },
     onDestroy({ flights }) {
       console.log('flights are destroyed', flights());
     },
-  }),
-  withCallState()
+  })
 );
