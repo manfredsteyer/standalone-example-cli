@@ -23,28 +23,28 @@ import { ChangeDetectionStrategy } from '@angular/core';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FlightSearchComponent {
-  private facade = inject(FlightBookingStore);
+  private store = inject(FlightBookingStore);
 
-  from = this.facade.from;
-  to = this.facade.to;
-  basket = this.facade.basket;
-  flights = this.facade.flights;
-  selected = this.facade.selected;
+  from = this.store.from;
+  to = this.store.to;
+  basket = this.store.basket;
+  flights = this.store.flights;
+  selected = this.store.selected;
 
   async search() {
-    this.facade.$update(updateBasket(1, true))
-    this.facade.load();
+    this.store.load();
   }
 
   delay(): void {
-    this.facade.delay();
+    this.store.delay();
   }
 
   updateCriteria(from: string, to: string): void {
-    this.facade.updateCriteria(from, to);
+    this.store.updateCriteria(from, to);
   }
 
   updateBasket(id: number, selected: boolean): void {
-    this.facade.updateBasket(id, selected);
+    // this.facade.$update(updateBasket(id, selected))
+    this.store.updateBasket(id, selected);
   }
 }
