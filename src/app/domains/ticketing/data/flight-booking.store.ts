@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
 import { FlightService } from './flight.service';
 import { Flight } from './flight';
-import { addMinutes } from 'src/app/shared/util-common';
+import { addMinutes, setLoaded, setLoading } from 'src/app/shared/util-common';
 import {
   rxEffect,
   selectSignal,
@@ -24,6 +24,7 @@ export const FlightBookingStore = signalStore(
     flights: [] as Flight[],
     basket: {} as Record<number, boolean>,
   }),
+  withCallState(),
   withSignals(({ flights, basket, from, to }) => ({
     selected: selectSignal(() => flights().filter((f) => basket()[f.id])),
     criteria: selectSignal(() => ({ from: from(), to: to() })),
@@ -55,8 +56,9 @@ export const FlightBookingStore = signalStore(
       },
       load: async () => {
         if (!from() || !to()) return;
+        $update(setLoading());
         const flights = await flightService.findPromise(from(), to());
-        $update({ flights });
+        $update({ flights }, setLoaded());
       },
       loadBy: rxEffect<{ from: string; to: string }>(
         pipe(
@@ -75,5 +77,4 @@ export const FlightBookingStore = signalStore(
       console.log('flights are destroyed', flights());
     },
   }),
-  withCallState()
 );
