@@ -5,11 +5,12 @@ import { addMinutes } from 'src/app/shared/util-common';
 import {
   signalState,
   selectSignal,
-} from '../../../ngrx-signal-store-poc';
+} from '@ngrx/signals';
 
 @Injectable({ providedIn: 'root' })
 export class FlightBookingFacade {
   private flightService = inject(FlightService);
+  
   private state = signalState({
     from: 'Paris',
     to: 'London',

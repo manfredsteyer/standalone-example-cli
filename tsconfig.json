@@ -24,6 +24,7 @@
       "dom"
     ],
     "paths": {
+      "@ngrx/signals": ["src/app/ngrx-signal-store-poc/index.ts"]
     }
   },
   "angularCompilerOptions": {
