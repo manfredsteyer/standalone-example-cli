@@ -3,14 +3,12 @@ import {Component, inject} from "@angular/core";
 import {FormsModule} from "@angular/forms";
 import {Store} from "@ngrx/store";
 import {take} from "rxjs";
-import {ActivatedRoute} from "@angular/router";
 import {BookingSlice, delayFlight, loadFlights, selectFlights} from "../../data";
 import {CityValidator} from "src/app/shared/util-common";
 import {FlightCardComponent} from "../../ui-common";
 
-// import { HiddenService } from "../../../checkin/data/hidden.service";
-// import { CheckinService } from "@demo/checkin/data";
-
+import { HiddenService } from "../../../checkin/data/hidden.service";
+import { CheckinService } from "@demo/checkin/data";
 
 @Component({
   standalone: true,
