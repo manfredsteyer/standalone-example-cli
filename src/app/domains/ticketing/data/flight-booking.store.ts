@@ -1,4 +1,4 @@
-import { inject } from '@angular/core';
+import { WritableSignal, inject, signal } from '@angular/core';
 import { FlightService } from './flight.service';
 import { Flight } from './flight';
 import { addMinutes, setLoaded, setLoading } from 'src/app/shared/util-common';
@@ -15,66 +15,45 @@ import {
 import { withCallState } from 'src/app/shared/util-common';
 import { debounceTime, pipe, switchMap, tap } from 'rxjs';
 
+type DeepFlight = {
+  id: WritableSignal<number>;
+  from: WritableSignal<string>;
+  to: WritableSignal<string>;
+
+}
+
+function withDeep(state: {state: Flight}): () => {state: {flight: DeepFlight}} {
+  return () => ({
+    state: { flight: {id: signal(state.state.id),
+    from: signal(state.state.from),
+    to: signal(state.state.to)}}
+  });
+}
+
+const flight: Flight = {
+  id: 1000,
+  from: 'A',
+  to: 'B',
+  date: 'now',
+  delayed: true
+};
+
 export const FlightBookingStore = signalStore(
   { providedIn: 'root' },
-  withState({
-    from: 'Paris',
-    to: 'London',
-    initialized: false,
-    flights: [] as Flight[],
-    basket: {} as Record<number, boolean>,
+  // withState({
+  //   from: 'Paris',
+  //   to: 'London',
+  //   initialized: false,
+  //   flights: [] as Flight[],
+  //   basket: {} as Record<number, boolean>,
+  // }),
+  withDeep({
+    state: flight
   }),
-  withCallState(),
-  withSignals(({ flights, basket, from, to }) => ({
-    selected: selectSignal(() => flights().filter((f) => basket()[f.id])),
-    criteria: selectSignal(() => ({ from: from(), to: to() })),
+  // withCallState(),
+  withSignals(({ flight }) => ({
+    route: selectSignal(() => flight().from() + ' to ' + flight().to())
   })),
-  withMethods(({ $update, basket, flights, from, to, initialized }) => {
-    const flightService = inject(FlightService);
-
-    return {
-      updateCriteria: (from: string, to: string) => {
-        $update({ from, to });
-      },
-      updateBasket: (flightId: number, selected: boolean) => {
-        $update({
-          basket: {
-            ...basket(),
-            [flightId]: selected,
-          },
-        });
-      },
-      delay: () => {
-        const currentFlights = flights();
-        const flight = currentFlights[0];
-
-        const date = addMinutes(flight.date, 15);
-        const updFlight = { ...flight, date };
-        const updFlights = [updFlight, ...currentFlights.slice(1)];
-
-        $update({ flights: updFlights });
-      },
-      load: async () => {
-        if (!from() || !to()) return;
-        $update(setLoading());
-        const flights = await flightService.findPromise(from(), to());
-        $update({ flights }, setLoaded());
-      },
-      loadBy: rxEffect<{ from: string; to: string }>(
-        pipe(
-          debounceTime(initialized() ? 300 : 0),
-          switchMap((c) => flightService.find(c.from, c.to)),
-          tap((flights) => $update({ flights, initialized: true }))
-        )
-      ),
-    };
-  }),
-  withHooks({
-    onInit({ load }) {
-      load()
-    },
-    onDestroy({ flights }) {
-      console.log('flights are destroyed', flights());
-    },
-  }),
+  
+ 
 );
