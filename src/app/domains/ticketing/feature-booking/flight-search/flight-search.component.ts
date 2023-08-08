@@ -44,7 +44,7 @@ export class FlightSearchComponent {
   }
 
   updateBasket(id: number, selected: boolean): void {
-    // this.facade.$update(updateBasket(id, selected))
+    // this.store.$update(updateBasket(id, selected))
     this.store.updateBasket(id, selected);
   }
 }

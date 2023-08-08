@@ -2,7 +2,7 @@
 
 import {
   selectSignal,
-  signalStoreFeatureFactory,
+  signalStoreFeature,
   withSignals,
   withState,
 } from '@ngrx/signals';
@@ -10,9 +10,7 @@ import {
 export type CallState = 'init' | 'loading' | 'loaded' | { error: string };
 
 export function withCallState() {
-  const callStateFeature = signalStoreFeatureFactory();
-
-  return callStateFeature(
+  return signalStoreFeature(
     withState<{ callState: CallState }>({ callState: 'init' }),
     withSignals(({ callState }) => ({
       loading: selectSignal(() => callState() === 'loading'),
