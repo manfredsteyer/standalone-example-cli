@@ -1,5 +1,4 @@
 import {
-  Inject,
   Injectable,
   InjectionToken,
   Type,
@@ -9,7 +8,7 @@ import { FlightService } from './flight.service';
 import { Flight } from './flight';
 import { addMinutes, setLoaded, setLoading } from 'src/app/shared/util-common';
 import {
-  rxEffect,
+  rxMethod,
   selectSignal,
   signalStore,
   withHooks,
@@ -94,7 +93,7 @@ export const FlightBookingStore = signalStore(
         const flights = await flightService.findPromise(from(), to());
         $update({ flights }, setLoaded());
       },
-      loadBy: rxEffect<{ from: string; to: string }>(
+      loadBy: rxMethod<{ from: string; to: string }>(
         pipe(
           debounceTime(initialized() ? 300 : 0),
           switchMap((c) => flightService.find(c.from, c.to)),

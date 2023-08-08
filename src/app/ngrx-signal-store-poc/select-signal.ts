@@ -1,7 +1,6 @@
 import { computed, Signal, ValueEqualityFn } from '@angular/core';
-import { defaultEqualityFn } from './equality-fn';
 
-type SelectSignalConfig<T> = { equal: ValueEqualityFn<T> };
+export type SelectSignalConfig<T> = { equal: ValueEqualityFn<T> };
 
 export function selectSignal<Result>(
   projector: () => Result,
@@ -51,4 +50,8 @@ export function selectSignal<Result>(...args: unknown[]): Signal<Result> {
         };
 
   return computed(computation, config);
+}
+
+export function defaultEqualityFn<T>(previous: T, current: T): boolean {
+  return previous === current;
 }
