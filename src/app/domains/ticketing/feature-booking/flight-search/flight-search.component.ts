@@ -1,5 +1,5 @@
 import {AsyncPipe, JsonPipe, NgForOf, NgIf} from "@angular/common";
-import {Component, inject} from "@angular/core";
+import {ChangeDetectionStrategy, Component, inject} from "@angular/core";
 import {FormsModule} from "@angular/forms";
 import {Store} from "@ngrx/store";
 import {take} from "rxjs";
@@ -26,7 +26,9 @@ import {FlightCardComponent} from "../../ui-common";
     CityValidator,
   ],
   selector: 'app-flight-search',
-  templateUrl: './flight-search.component.html'
+  templateUrl: './flight-search.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+
 })
 export class FlightSearchComponent  {
 
