@@ -21,7 +21,7 @@ import { addMinutes } from 'src/app/date-utils';
   templateUrl: './flight-search.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class FlightSearchComponent implements OnInit {
+export class FlightSearchComponent {
   private flightService = inject(FlightService);
 
   from = signal('Hamburg');
@@ -38,39 +38,6 @@ export class FlightSearchComponent implements OnInit {
   constructor() {
     effect(() => {
       console.log('route:', this.flightRoute());
-    });
-
-    // effect(() => {
-    //   this.search();
-    // });
-
-    effect(async () => {
-      const flights = await this.flightService.findAsPromise(this.from(), this.to());
-      this.flights.set(flights);
-    });
-
-    // effect(() => {
-    //   // Writing into signals is not allowed here:
-    //   this.to.set(this.from());
-    // });
-
-    // This would be allowed:
-    // effect(() => {
-    //   this.to.set(this.from());
-    // }, { allowSignalWrites: true })
-  }
-
-
-  ngOnInit(): void {
-    // Effects are not allowed here:
-    // effect(() => {
-    //   console.log('route:', this.flightRoute());
-    // });
-
-    runInInjectionContext(this.injector, () => {
-      effect(() => {
-        console.log('route:', this.flightRoute());
-      });
     });
   }
 
