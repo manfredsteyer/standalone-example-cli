@@ -12,7 +12,7 @@ export class FlightBookingFacade {
     to: 'Graz',
     flights: [] as Flight[],
     basket: {} as Record<number, boolean>,
-  });
+  }, { equal });
 
   flights = computed(() => this.state().flights, { equal });
   from = computed(() => this.state().from, { equal });
