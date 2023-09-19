@@ -33,8 +33,6 @@ export class FlightSearchComponent {
 
   flightRoute = computed(() => this.from() + ' to ' + this.to());
 
-  injector = inject(Injector);
-
   constructor() {
     effect(() => {
       console.log('route:', this.flightRoute());
