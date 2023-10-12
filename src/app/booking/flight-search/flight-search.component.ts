@@ -61,4 +61,12 @@ export class FlightSearchComponent {
     });
 
   }
+
+  updateBasket(flightId: number, selected: boolean): void {
+    this.basket.update(basket => ({
+      ...basket,
+      [flightId]: selected
+    }));
+  }
+
 }
