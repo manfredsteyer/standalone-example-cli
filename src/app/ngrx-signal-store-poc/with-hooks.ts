@@ -1,18 +1,18 @@
+import { STATE_SIGNAL, SignalStateMeta } from './signal-state';
 import {
   EmptyFeatureResult,
   Prettify,
   SignalStoreFeature,
-  SignalStoreInternals,
   SignalStoreSlices,
   SignalStoreFeatureResult,
-} from '../signal-store-models';
+} from './signal-store-models';
 
 type HooksFactory<Input extends SignalStoreFeatureResult> = (
   store: Prettify<
-    SignalStoreInternals<Prettify<Input['state']>> &
-      SignalStoreSlices<Input['state']> &
+    SignalStoreSlices<Input['state']> &
       Input['signals'] &
-      Input['methods']
+      Input['methods'] &
+      SignalStateMeta<Prettify<Input['state']>>
   >
 ) => void;
 
@@ -27,9 +27,12 @@ export function withHooks<Input extends SignalStoreFeatureResult>(hooks: {
 
       return hook
         ? () => {
-            currentHook?.();
+            if (currentHook) {
+              currentHook();
+            }
+
             hook({
-              ...store.internals,
+              [STATE_SIGNAL]: store[STATE_SIGNAL],
               ...store.slices,
               ...store.signals,
               ...store.methods,

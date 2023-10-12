@@ -1,5 +1,14 @@
-import { DestroyRef, inject, Injectable, signal, Type } from '@angular/core';
-import { defaultEqualityFn } from './select-signal';
+import {
+  DestroyRef,
+  inject,
+  Injectable,
+  Injector,
+  runInInjectionContext,
+  signal,
+  Type,
+} from '@angular/core';
+import { defaultEqual } from './select-signal';
+import { STATE_SIGNAL } from './signal-state';
 import {
   EmptyFeatureResult,
   InnerSignalStore,
@@ -7,10 +16,8 @@ import {
   SignalStore,
   SignalStoreConfig,
   SignalStoreFeature,
-  SignalStoreHooks,
   SignalStoreFeatureResult,
 } from './signal-store-models';
-import { signalStateUpdateFactory } from './signal-state';
 
 export function signalStore<F1 extends SignalStoreFeatureResult>(
   f1: SignalStoreFeature<EmptyFeatureResult, F1>
@@ -273,16 +280,29 @@ export function signalStore(
   @Injectable({ providedIn: config.providedIn || null })
   class SignalStore {
     constructor() {
-      const { signalStore, hooks } = signalStoreFactory(features);
+      const innerStore = features.reduce(
+        (store, feature) => feature(store),
+        getInitialInnerStore()
+      );
+      const { slices, signals, methods, hooks } = innerStore;
+      const props = { ...slices, ...signals, ...methods };
 
-      for (const key in signalStore) {
-        (this as any)[key] = signalStore[key];
+      (this as any)[STATE_SIGNAL] = innerStore[STATE_SIGNAL];
+
+      for (const key in props) {
+        (this as any)[key] = props[key];
       }
 
-      hooks.onInit?.();
+      if (hooks.onInit) {
+        hooks.onInit();
+      }
 
       if (hooks.onDestroy) {
-        inject(DestroyRef).onDestroy(() => hooks.onDestroy!());
+        const injector = inject(Injector);
+
+        inject(DestroyRef).onDestroy(() => {
+          runInInjectionContext(injector, hooks.onDestroy!);
+        });
       }
     }
   }
@@ -290,36 +310,12 @@ export function signalStore(
   return SignalStore;
 }
 
-function signalStoreFactory(features: SignalStoreFeature[]): {
-  signalStore: SignalStore<any>;
-  hooks: SignalStoreHooks;
-} {
-  const stateSignal = signal<Record<string, unknown>>(
-    {},
-    { equal: defaultEqualityFn }
-  );
-
-  const innerStore = features.reduce<InnerSignalStore>(
-    (store, feature) => feature(store),
-    {
-      internals: {
-        $state: stateSignal.asReadonly(),
-        $update: signalStateUpdateFactory(stateSignal),
-      },
-      slices: {},
-      signals: {},
-      methods: {},
-      hooks: {},
-    }
-  );
-
+export function getInitialInnerStore(): InnerSignalStore {
   return {
-    signalStore: {
-      ...innerStore.internals,
-      ...innerStore.slices,
-      ...innerStore.signals,
-      ...innerStore.methods,
-    },
-    hooks: innerStore.hooks,
+    [STATE_SIGNAL]: signal({}, { equal: defaultEqual }),
+    slices: {},
+    signals: {},
+    methods: {},
+    hooks: {},
   };
 }

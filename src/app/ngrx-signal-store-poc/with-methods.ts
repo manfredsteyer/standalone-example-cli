@@ -1,3 +1,5 @@
+import { excludeKeys } from './helpers';
+import { STATE_SIGNAL, SignalStateMeta } from './signal-state';
 import {
   EmptyFeatureResult,
   InnerSignalStore,
@@ -6,10 +8,8 @@ import {
   SignalsDictionary,
   SignalStoreFeature,
   SignalStoreFeatureResult,
-  SignalStoreInternals,
   SignalStoreSlices,
-} from '../signal-store-models';
-import { excludeKeys } from './helpers';
+} from './signal-store-models';
 
 export function withMethods<
   Input extends SignalStoreFeatureResult,
@@ -17,16 +17,16 @@ export function withMethods<
 >(
   methodsFactory: (
     store: Prettify<
-      SignalStoreInternals<Prettify<Input['state']>> &
-        SignalStoreSlices<Input['state']> &
+      SignalStoreSlices<Input['state']> &
         Input['signals'] &
-        Input['methods']
+        Input['methods'] &
+        SignalStateMeta<Prettify<Input['state']>>
     >
   ) => Methods
 ): SignalStoreFeature<Input, EmptyFeatureResult & { methods: Methods }> {
   return (store) => {
     const methods = methodsFactory({
-      ...store.internals,
+      [STATE_SIGNAL]: store[STATE_SIGNAL],
       ...store.slices,
       ...store.signals,
       ...store.methods,

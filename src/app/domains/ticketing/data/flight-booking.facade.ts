@@ -5,6 +5,7 @@ import { addMinutes } from 'src/app/shared/util-common';
 import {
   signalState,
   selectSignal,
+  patchState,
 } from '@ngrx/signals';
 
 @Injectable({ providedIn: 'root' })
@@ -32,11 +33,11 @@ export class FlightBookingFacade {
   )
 
   updateCriteria(from: string, to: string): void {
-    this.state.$update({ from, to });
+    patchState(this.state, { from, to })
   }
 
   updateBasket(id: number, selected: boolean): void {
-    this.state.$update((state) => ({
+    patchState(this.state, state => ({
       ...state,
       basket: {
         ...state.basket,
@@ -52,7 +53,7 @@ export class FlightBookingFacade {
       this.to()
     );
 
-    this.state.$update({ flights });
+    patchState(this.state, { flights });
   }
 
   delay(): void {
@@ -63,6 +64,6 @@ export class FlightBookingFacade {
     const updFlight = { ...flight, date };
     const updFlights = [updFlight, ...this.state.flights().slice(1)];
 
-    this.state.$update({ flights: updFlights });
+    patchState(this.state, { flights: updFlights });
   }
 }

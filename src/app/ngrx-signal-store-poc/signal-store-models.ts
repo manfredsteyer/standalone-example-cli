@@ -1,13 +1,10 @@
 import { Signal } from '@angular/core';
 import { DeepSignal } from './deep-signal';
-import { SignalStateUpdate } from './signal-state';
+import { SignalStateMeta } from './signal-state';
 
 export type Prettify<T> = { [K in keyof T]: T[K] } & {};
 
 export type SignalStoreConfig = { providedIn: 'root' };
-
-export type SignalStoreInternals<State extends Record<string, unknown>> =
-  SignalStateUpdate<State> & { $state: Signal<State> };
 
 export type SignalStoreSlices<State> = {
   [Key in keyof State]: DeepSignal<State[Key]>;
@@ -15,10 +12,10 @@ export type SignalStoreSlices<State> = {
 
 export type SignalStore<FeatureResult extends SignalStoreFeatureResult> =
   Prettify<
-    SignalStoreInternals<Prettify<FeatureResult['state']>> &
-      SignalStoreSlices<FeatureResult['state']> &
+    SignalStoreSlices<FeatureResult['state']> &
       FeatureResult['signals'] &
-      FeatureResult['methods']
+      FeatureResult['methods'] &
+      SignalStateMeta<Prettify<FeatureResult['state']>>
   >;
 
 export type SignalsDictionary = Record<string, Signal<unknown>>;
@@ -35,12 +32,11 @@ export type InnerSignalStore<
   Signals extends SignalsDictionary = SignalsDictionary,
   Methods extends MethodsDictionary = MethodsDictionary
 > = {
-  internals: SignalStoreInternals<State>;
   slices: SignalStoreSlices<State>;
   signals: Signals;
   methods: Methods;
   hooks: SignalStoreHooks;
-};
+} & SignalStateMeta<State>;
 
 export type SignalStoreFeatureResult = {
   state: Record<string, unknown>;
