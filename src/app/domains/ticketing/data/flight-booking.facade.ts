@@ -12,12 +12,12 @@ export class FlightBookingFacade {
     to: 'Graz',
     flights: [] as Flight[],
     basket: {} as Record<number, boolean>,
-  }, { equal });
+  });
 
-  flights = computed(() => this.state().flights, { equal });
-  from = computed(() => this.state().from, { equal });
-  to = computed(() => this.state().to, { equal });
-  basket = computed(() => this.state().basket, { equal });
+  flights = computed(() => this.state().flights);
+  from = computed(() => this.state().from);
+  to = computed(() => this.state().to);
+  basket = computed(() => this.state().basket);
 
   updateCriteria(from: string, to: string): void {
     patchSignal(this.state, { from, to });
