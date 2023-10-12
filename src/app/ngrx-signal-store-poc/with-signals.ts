@@ -1,3 +1,4 @@
+import { excludeKeys } from './helpers';
 import {
   EmptyFeatureResult,
   InnerSignalStore,
@@ -6,8 +7,7 @@ import {
   SignalStoreFeature,
   SignalStoreFeatureResult,
   SignalStoreSlices,
-} from '../signal-store-models';
-import { excludeKeys } from './helpers';
+} from './signal-store-models';
 
 export function withSignals<
   Input extends SignalStoreFeatureResult,

@@ -7,16 +7,22 @@ export type DeepSignal<T> = Signal<T> &
     : unknown);
 
 export function toDeepSignal<T>(signal: Signal<T>): DeepSignal<T> {
+  const value = untracked(() => signal());
+  if (!isRecord(value)) {
+    return signal as DeepSignal<T>;
+  }
+
   return new Proxy(signal, {
     get(target: any, prop) {
+      if (!(prop in value)) {
+        return target[prop];
+      }
+
       if (!target[prop]) {
         target[prop] = selectSignal(() => target()[prop]);
       }
 
-      const value = untracked(() => target());
-      return isRecord(value[prop])
-        ? toDeepSignal(target[prop])
-        : target[prop];
+      return toDeepSignal(target[prop]);
     },
   });
 }

@@ -3,7 +3,7 @@ import { FlightService } from './flight.service';
 import { Flight } from './flight';
 import { addMinutes } from 'src/app/shared/util-common';
 import {
-  rxMethod,
+  patchState,
   selectSignal,
   signalStore,
   withHooks,
@@ -28,15 +28,16 @@ export const FlightBookingStore = signalStore(
     selected: selectSignal(() => flights().filter((f) => basket()[f.id])),
     criteria: selectSignal(() => ({ from: from(), to: to() })),
   })),
-  withMethods(({ $update, basket, flights, from, to, initialized }) => {
+  withMethods((state) => {
+    const { basket, flights, from, to, initialized } = state;
     const flightService = inject(FlightService);
 
     return {
       updateCriteria: (from: string, to: string) => {
-        $update({ from, to });
+        patchState(state, { from, to });
       },
       updateBasket: (flightId: number, selected: boolean) => {
-        $update({
+        patchState(state, {
           basket: {
             ...basket(),
             [flightId]: selected,
@@ -51,20 +52,13 @@ export const FlightBookingStore = signalStore(
         const updFlight = { ...flight, date };
         const updFlights = [updFlight, ...currentFlights.slice(1)];
 
-        $update({ flights: updFlights });
+        patchState(state, { flights: updFlights });
       },
       load: async () => {
         if (!from() || !to()) return;
         const flights = await flightService.findPromise(from(), to());
-        $update({ flights });
-      },
-      loadBy: rxMethod<{ from: string; to: string }>(
-        pipe(
-          debounceTime(initialized() ? 300 : 0),
-          switchMap((c) => flightService.find(c.from, c.to)),
-          tap((flights) => $update({ flights, initialized: true }))
-        )
-      ),
+        patchState(state, { flights });
+      }     
     };
   }),
   withHooks({
@@ -77,7 +71,6 @@ export const FlightBookingStore = signalStore(
   }),
   withCallState()
 );
-
 
 type BasketSlice = { basket: Record<number, boolean> };
 type BasketUpdateter = (state: BasketSlice) => BasketSlice;

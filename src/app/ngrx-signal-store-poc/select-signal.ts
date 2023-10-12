@@ -1,45 +1,58 @@
 import { computed, Signal, ValueEqualityFn } from '@angular/core';
 
-export type SelectSignalConfig<T> = { equal: ValueEqualityFn<T> };
+type SelectSignalConfig<T> = { equal: ValueEqualityFn<T> };
+
+type SignalValue<T> = T extends Signal<infer V> ? V : never;
 
 export function selectSignal<Result>(
   projector: () => Result,
   config?: SelectSignalConfig<Result>
 ): Signal<Result>;
-export function selectSignal<Signals extends Signal<any>[], Result>(
+export function selectSignal<Signals extends Record<string, Signal<unknown>>>(
+  signals: Signals,
+  config?: SelectSignalConfig<{ [K in keyof Signals]: SignalValue<Signals[K]> }>
+): Signal<{ [K in keyof Signals]: SignalValue<Signals[K]> }>;
+export function selectSignal<Signals extends Signal<unknown>[], Result>(
   ...args: [
     ...signals: Signals,
     projector: (
-      ...values: {
-        [K in keyof Signals]: Signals[K] extends Signal<infer Value>
-          ? Value
-          : never;
-      }
+      ...values: { [I in keyof Signals]: SignalValue<Signals[I]> }
     ) => Result
   ]
 ): Signal<Result>;
-export function selectSignal<Signals extends Signal<any>[], Result>(
+export function selectSignal<Signals extends Signal<unknown>[], Result>(
   ...args: [
     ...signals: Signals,
     projector: (
-      ...values: {
-        [K in keyof Signals]: Signals[K] extends Signal<infer Value>
-          ? Value
-          : never;
-      }
+      ...values: { [I in keyof Signals]: SignalValue<Signals[I]> }
     ) => Result,
     config: SelectSignalConfig<Result>
   ]
 ): Signal<Result>;
-export function selectSignal<Result>(...args: unknown[]): Signal<Result> {
-  const selectSignalArgs = [...args];
+export function selectSignal<Result>(
+  ...selectSignalArgs: unknown[]
+): Signal<Result> {
+  const args = [...selectSignalArgs];
 
   const config: SelectSignalConfig<Result> =
-    typeof selectSignalArgs[selectSignalArgs.length - 1] === 'object'
-      ? (selectSignalArgs.pop() as SelectSignalConfig<Result>)
-      : { equal: defaultEqualityFn };
-  const projector = selectSignalArgs.pop() as (...values: unknown[]) => Result;
-  const signals = selectSignalArgs as Signal<unknown>[];
+    typeof args[args.length - 1] === 'object' && args.length > 1
+      ? (args.pop() as SelectSignalConfig<Result>)
+      : { equal: defaultEqual };
+
+  if (typeof args[0] === 'object') {
+    const signalsDictionary = args[0] as Record<string, Signal<unknown>>;
+    const computation = () => {
+      return Object.keys(signalsDictionary).reduce(
+        (acc, key) => ({ ...acc, [key]: signalsDictionary[key]() }),
+        {} as Result
+      );
+    };
+
+    return computed(computation, config);
+  }
+
+  const projector = args.pop() as (...values: unknown[]) => Result;
+  const signals = args as Signal<unknown>[];
 
   const computation =
     signals.length === 0
@@ -52,6 +65,6 @@ export function selectSignal<Result>(...args: unknown[]): Signal<Result> {
   return computed(computation, config);
 }
 
-export function defaultEqualityFn<T>(previous: T, current: T): boolean {
+export function defaultEqual<T>(previous: T, current: T): boolean {
   return previous === current;
 }
