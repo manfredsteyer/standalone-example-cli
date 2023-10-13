@@ -1,10 +1,10 @@
 <mat-toolbar color="primary">
-  <button
+  @if (isHandset$ | async) {<button
     type="button"
     aria-label="Toggle sidenav"
     mat-icon-button
-    *ngIf="isHandset$ | async">
+   >
     <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
-  </button>
+  </button>}
   <span>Flighs42</span>
 </mat-toolbar>

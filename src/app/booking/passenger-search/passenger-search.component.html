@@ -9,11 +9,11 @@
     <th>Status</th>
 
   </tr>
-  <tr *ngFor="let p of passengers">
+  @for (p of passengers; track p) {<tr>
     <td>{{p.id}}</td>
     <td>{{p.firstName}}</td>
     <td>{{p.name}}</td>
     <td>{{p.bonusMiles}}</td>
     <td>{{p.passengerStatus}}</td>
-  </tr>
+  </tr>}
 </table>

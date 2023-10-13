@@ -5,7 +5,7 @@ import { Component } from "@angular/core";
   standalone: true,
   selector: 'app-lazy',
   imports: [CommonModule],
-  template: `<h2 *ngIf="visible">{{ title }}</h2>`
+  template: `@if (visible) {<h2>{{ title }}</h2>}`
 })
 export class LazyComponent {
   title = 'Standalone Demo';

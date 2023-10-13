@@ -7,9 +7,9 @@
     <input [ngModel]="from()" (ngModelChange)="updateCriteria($event)" appCity name="from" class="form-control">
   </div>
 
-  <div class="alert alert-warning" *ngIf="form?.controls?.['from']?.hasError('appCity')">
+  @if (form?.controls?.['from']?.hasError('appCity')) {<div class="alert alert-warning">
     Invalid city!
-  </div>
+  </div>}
 
   <div class="form-group">
     <label>To:</label>
@@ -25,9 +25,9 @@
       Delay 1st Flight
     </button>
 
-    <div *ngIf="flights().length > 0">
+    @if (flights().length > 0) {<div>
       {{flights().length}} flights found!
-    </div>
+    </div>}
 
   </div>
 </form>
@@ -35,9 +35,11 @@
 <pre>{{ loading() }}</pre>
 
 <div class="row">
-  <div *ngFor="let f of flights()" class="col-xs-12 col-sm-6 col-md-4 col-lg-4 col-xl-3">
+  @for (f of flights(); track f) {
+  <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4 col-xl-3">
     <flight-card [item]="f" [selected]="basket()[f.id]" (selectedChange)="updateBasket(f.id, $event)" />
   </div>
+  }
 </div>
 
 <pre>{{ basket() | json }}</pre>
