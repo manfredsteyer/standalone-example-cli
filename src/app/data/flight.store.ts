@@ -10,6 +10,7 @@ import { Flight } from './flight';
 import { FlightService } from './flight.service';
 import { inject } from '@angular/core';
 import { lastValueFrom } from 'rxjs';
+import { callState, setLoaded, setLoading } from '../shared/custom-feature';
 
 export const FlightStore = signalStore(
   { providedIn: 'root' },
@@ -25,15 +26,17 @@ export const FlightStore = signalStore(
       flights.filter((f) => basket[f.id])
     ),
   })),
+  callState(),
   withMethods((state) => {
     const flightService = inject(FlightService);
 
     return {
       async load(): Promise<void> {
+        patchState(state, setLoading());
         const flights = await lastValueFrom(
           flightService.find(state.from(), state.to(), state.urgent())
         );
-        patchState(state, { flights });
+        patchState(state, { flights }, setLoaded());
       },
 
       updateCriteria(criteria: { from?: string; to?: string }): void {

@@ -28,6 +28,7 @@ export class FlightSearchComponent {
   urgent = this.store.urgent;
   selected = this.store.selected;
 
+  loading = this.store.loading;
   flights = this.store.flights;
   basket = this.store.basket;
 
