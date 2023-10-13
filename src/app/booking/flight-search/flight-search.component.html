@@ -23,12 +23,12 @@
     </label>
   </div>
 
-  <div class="form-group" *ngIf="flights$ | async as flights">
+  <div class="form-group">
     <button (click)="search()" [disabled]="!from || !to" class="btn btn-default">
       Search
     </button>
 
-    <button *ngIf="flights.length > 0" class="btn btn-default" (click)="delay()">
+    <button class="btn btn-default" (click)="delay()">
       Delay 1st Flight
     </button>
 
@@ -40,7 +40,7 @@
 </form>
 
 <div class="row">
-  <div *ngFor="let f of flights$ | async" class="col-xs-12 col-sm-6 col-md-4 col-lg-4 col-xl-3">
+  <div *ngFor="let f of flights" class="col-xs-12 col-sm-6 col-md-4 col-lg-4 col-xl-3">
     <flight-card [item]="f" [(selected)]="basket[f.id]" />
 
     <!-- <flight-card [item]="f" [(selected)]="basket[f.id]">

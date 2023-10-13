@@ -35,6 +35,9 @@
       ],
       "@demo/booking": [
         "src/app/booking/index.ts"
+      ],
+      "@nrwl/signals": [
+        "src/app/shared/signal-store/index.ts"
       ]
     }
   },

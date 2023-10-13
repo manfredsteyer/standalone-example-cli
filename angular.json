@@ -63,10 +63,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "standalone-cli:build:production"
+              "buildTarget": "standalone-cli:build:production"
             },
             "development": {
-              "browserTarget": "standalone-cli:build:development"
+              "buildTarget": "standalone-cli:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -74,7 +74,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "standalone-cli:build"
+            "buildTarget": "standalone-cli:build"
           }
         },
         "test": {

@@ -13,10 +13,6 @@ import { LoggerModule } from './shared/logger/logger-module';
 import { LogLevel } from './shared/logger/log-level';
 import { DefaultLogAppender } from './shared/logger/log-appender';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { StoreModule } from '@ngrx/store';
-import { reducer } from './+state';
-import { EffectsModule } from '@ngrx/effects';
-import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSidenavModule } from '@angular/material/sidenav';
@@ -38,9 +34,6 @@ import { SharedModule } from './shared/shared.module';
       appenders: [DefaultLogAppender],
       formatter: (level, cat, msg) => [level, cat, msg].join(';'),
     }),
-    StoreModule.forRoot(reducer),
-    EffectsModule.forRoot(),
-    StoreDevtoolsModule.instrument(),
     MatToolbarModule,
     MatButtonModule,
     MatSidenavModule,

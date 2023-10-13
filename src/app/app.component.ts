@@ -17,8 +17,6 @@ export class AppComponent {
 
   constructor(
     @Inject(BreakpointObserver) private breakpointObserver: BreakpointObserver) {
-      
-  
-  }
+    }
 
 }
