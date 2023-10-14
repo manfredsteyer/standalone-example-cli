@@ -2,10 +2,21 @@ import { Injectable } from '@angular/core';
 
 @Injectable({providedIn: 'root'})
 export class AuthService {
-    constructor() { }
+    
+    userName = 'Max';
     
     isAuthenticated(): boolean {
-        // Just for demo purposes
-        return true;
+        if (this.userName) {
+            return true;
+        }
+        return false;
+    }
+
+    login(userName: string): void {
+        this.userName = userName;
+    }
+
+    logout(): void {
+        this.userName = '';
     }
 }

@@ -1,8 +1,7 @@
-import { inject } from "@angular/core";
-import { Routes } from "@angular/router";
+import { Routes, mapToCanActivate } from "@angular/router";
 import AboutComponent from "./about/about.component";
 import { HomeComponent } from "./home/home.component";
-import { AuthService } from "./shared/auth.service";
+import { AuthGuard } from "./shared/auth.guard";
 
 export const APP_ROUTES: Routes = [
     {
@@ -16,7 +15,7 @@ export const APP_ROUTES: Routes = [
     },
     {
         path: 'flight-booking',
-        canActivate: [() => inject(AuthService).isAuthenticated()],
+        canActivate: mapToCanActivate([AuthGuard]),
         loadChildren: () =>
             import('./booking/flight-booking.module')
                     .then(m => m.FlightBookingModule)

@@ -1,1 +1,4 @@
-<h2 class="title">Welcome!</h2>
+<h2 class="title">Welcome {{auth.userName}}</h2>
+
+<button (click)="auth.login('Max')" class="btn">Login</button>
+<button (click)="auth.logout()" class="btn">Logout</button>

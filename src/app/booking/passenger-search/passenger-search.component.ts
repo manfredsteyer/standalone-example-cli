@@ -5,7 +5,7 @@ import { Passenger} from '../../data/passenger';
 
 @Component({
   selector: 'app-passenger-search',
-  templateUrl: './passenger-search.component.html',
+  templateUrl: './passenger-search.component.html'
 })
 export class PassengerSearchComponent {
   private http = inject(HttpClient);

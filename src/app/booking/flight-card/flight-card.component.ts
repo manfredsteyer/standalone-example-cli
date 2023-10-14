@@ -5,6 +5,7 @@ import { Flight, initFlight } from "@demo/data";
 @Component({
   selector: 'flight-card',
   templateUrl: './flight-card.component.html',
+  styleUrl: './flight-card.component.css'
 })
 export class FlightCardComponent {
   
