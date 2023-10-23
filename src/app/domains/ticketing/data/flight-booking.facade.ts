@@ -1,17 +1,16 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, computed, inject } from '@angular/core';
 import { FlightService } from './flight.service';
 import { Flight } from './flight';
 import { addMinutes } from 'src/app/shared/util-common';
 import {
   signalState,
-  selectSignal,
   patchState,
 } from '@ngrx/signals';
 
 @Injectable({ providedIn: 'root' })
 export class FlightBookingFacade {
   private flightService = inject(FlightService);
-  
+
   private state = signalState({
     from: 'Paris',
     to: 'London',
@@ -26,14 +25,14 @@ export class FlightBookingFacade {
   basket = this.state.basket;
 
   // fetch selected signal
-  selected = selectSignal(
-    this.flights, 
-    this.basket, 
-    (flights, basket) => flights.filter((f) => basket[f.id])
-  )
+  selected = computed(
+    () => this.flights().filter((f) => this.basket()[f.id])
+  );
 
   updateCriteria(from: string, to: string): void {
-    patchState(this.state, { from, to })
+    // patchState(this.state, { from, to })
+    patchState(this.state, (state) => ({ ...state, from, to }))
+
   }
 
   updateBasket(id: number, selected: boolean): void {

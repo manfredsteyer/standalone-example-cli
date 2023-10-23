@@ -16,7 +16,9 @@ export const sheriffConfig: SheriffConfig = {
         'data': ['domain:<domain>', 'type:data'],
         'util-<ui>': ['domain:<domain>', 'type:util'],
       },
-      'ngrx-signal-store-poc': ['type:util', 'shared']
+      'ngrx-signal-store-poc': ['type:util', 'shared'],
+      'ngrx-rxjs-interop-poc': ['type:util', 'shared']
+
     },
   },
   depRules: {

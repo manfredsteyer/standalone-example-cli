@@ -11,10 +11,6 @@ import {
   provideRouter,
   withPreloading,
 } from '@angular/router';
-import { provideEffects } from '@ngrx/effects';
-import { provideStore } from '@ngrx/store';
-import { provideStoreDevtools } from '@ngrx/store-devtools';
-import { reducer } from './app/shell/+state/state';
 import { AppComponent } from './app/app.component';
 import { APP_ROUTES } from './app/app.routes';
 import { authInterceptor } from './app/shared/util-auth';
@@ -34,10 +30,6 @@ bootstrapApplication(AppComponent, {
     ),
 
     provideLogger(loggerConfig),
-
-    provideStore(reducer),
-    provideEffects(),
-    provideStoreDevtools(),
     provideAnimations(),
 
     importProvidersFrom(TicketsModule),
