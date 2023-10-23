@@ -12,6 +12,13 @@ import {
 } from '@ngrx/signals';
 
 import { withCallState } from 'src/app/shared/util-common';
+import { rxMethod } from '@ngrx/rxjs-interop';
+import { debounceTime, filter, switchMap, tap } from 'rxjs';
+
+export type Criteria = {
+  from: string;
+  to: string;
+}
 
 export const FlightBookingStore = signalStore(
   { providedIn: 'root' },
@@ -56,12 +63,20 @@ export const FlightBookingStore = signalStore(
         if (!from() || !to()) return;
         const flights = await flightService.findPromise(from(), to());
         patchState(state, { flights });
-      }     
+      },
+      connectCriteria: rxMethod<Criteria>((c$) => c$.pipe(
+        filter(c => c.from.length >= 3 && c.to.length >= 3),
+        debounceTime(300),
+        switchMap((c) => flightService.find(c.from, c.to)),
+        tap(flights => patchState(state, { flights }))
+      ))
     };
   }),
   withHooks({
-    onInit({ load }) {
-      load()
+    onInit({ connectCriteria, criteria }) {
+
+      connectCriteria(criteria);
+
     },
     onDestroy({ flights }) {
       console.log('flights are destroyed', flights());
