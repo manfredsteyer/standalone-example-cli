@@ -3,7 +3,7 @@ import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CityValidator } from 'src/app/shared/util-common';
 import { FlightCardComponent } from '../../ui-common';
-import { FlightBookingStore, updateBasket } from '../../data';
+import { FlightBookingStore } from '../../data';
 import { ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
@@ -44,7 +44,6 @@ export class FlightSearchComponent {
   }
 
   updateBasket(id: number, selected: boolean): void {
-    // this.store.$update(updateBasket(id, selected))
     this.store.updateBasket(id, selected);
   }
 }

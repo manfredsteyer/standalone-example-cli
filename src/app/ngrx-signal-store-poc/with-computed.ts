@@ -2,14 +2,14 @@ import { excludeKeys } from './helpers';
 import {
   EmptyFeatureResult,
   InnerSignalStore,
-  Prettify,
   SignalsDictionary,
   SignalStoreFeature,
   SignalStoreFeatureResult,
   SignalStoreSlices,
 } from './signal-store-models';
+import { Prettify } from './ts-helpers';
 
-export function withSignals<
+export function withComputed<
   Input extends SignalStoreFeatureResult,
   Signals extends SignalsDictionary
 >(

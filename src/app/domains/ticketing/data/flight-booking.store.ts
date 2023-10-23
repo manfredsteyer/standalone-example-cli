@@ -1,19 +1,17 @@
-import { inject } from '@angular/core';
+import { computed, inject } from '@angular/core';
 import { FlightService } from './flight.service';
 import { Flight } from './flight';
 import { addMinutes } from 'src/app/shared/util-common';
 import {
   patchState,
-  selectSignal,
   signalStore,
   withHooks,
   withMethods,
-  withSignals,
+  withComputed,
   withState,
 } from '@ngrx/signals';
 
 import { withCallState } from 'src/app/shared/util-common';
-import { debounceTime, pipe, switchMap, tap } from 'rxjs';
 
 export const FlightBookingStore = signalStore(
   { providedIn: 'root' },
@@ -24,9 +22,9 @@ export const FlightBookingStore = signalStore(
     flights: [] as Flight[],
     basket: {} as Record<number, boolean>,
   }),
-  withSignals(({ flights, basket, from, to }) => ({
-    selected: selectSignal(() => flights().filter((f) => basket()[f.id])),
-    criteria: selectSignal(() => ({ from: from(), to: to() })),
+  withComputed(({ flights, basket, from, to }) => ({
+    selected: computed(() => flights().filter((f) => basket()[f.id])),
+    criteria: computed(() => ({ from: from(), to: to() })),
   })),
   withMethods((state) => {
     const { basket, flights, from, to, initialized } = state;
@@ -71,16 +69,3 @@ export const FlightBookingStore = signalStore(
   }),
   withCallState()
 );
-
-type BasketSlice = { basket: Record<number, boolean> };
-type BasketUpdateter = (state: BasketSlice) => BasketSlice;
-
-export function updateBasket(flightId: number, selected: boolean): BasketUpdateter {
-  return (state) => ({
-    ...state,
-    basket: {
-      ...state.basket,
-      [flightId]: selected,
-    },
-  });
-}

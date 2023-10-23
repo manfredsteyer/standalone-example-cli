@@ -1,9 +1,9 @@
 // Source: https://github.com/markostanimirovic/ngrx-signal-store-playground/blob/main/src/app/shared/call-state.feature.ts
 
+import { computed } from '@angular/core';
 import {
-  selectSignal,
   signalStoreFeature,
-  withSignals,
+  withComputed,
   withState,
 } from '@ngrx/signals';
 
@@ -12,12 +12,13 @@ export type CallState = 'init' | 'loading' | 'loaded' | { error: string };
 export function withCallState() {
   return signalStoreFeature(
     withState<{ callState: CallState }>({ callState: 'init' }),
-    withSignals(({ callState }) => ({
-      loading: selectSignal(() => callState() === 'loading'),
-      loaded: selectSignal(() => callState() === 'loaded'),
-      error: selectSignal(callState, (callState) =>
-        typeof callState === 'object' ? callState.error : null
-      ),
+    withComputed(({ callState }) => ({
+      loading: computed(() => callState() === 'loading'),
+      loaded: computed(() => callState() === 'loaded'),
+      error: computed(() => {
+        const state = callState();
+        return typeof state === 'object' ? state.error : null
+      }),
     }))
   );
 }

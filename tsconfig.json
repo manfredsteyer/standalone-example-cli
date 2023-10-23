@@ -24,7 +24,8 @@
       "dom"
     ],
     "paths": {
-      "@ngrx/signals": ["src/app/ngrx-signal-store-poc/index.ts"]
+      "@ngrx/signals": ["src/app/ngrx-signal-store-poc/index.ts"],
+      "@ngrx/rxjs-interop": ["src/app/ngrx-rxjs-interop-poc/index.ts"]
     }
   },
   "angularCompilerOptions": {
