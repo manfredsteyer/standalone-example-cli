@@ -1,7 +1,7 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { FlightService } from './flight.service';
 import { Flight } from './flight';
-import { addMinutes, equal, patchSignal } from 'src/app/shared/util-common';
+import { addMinutes } from 'src/app/shared/util-common';
 
 @Injectable({ providedIn: 'root' })
 export class FlightBookingFacade {
@@ -20,16 +20,21 @@ export class FlightBookingFacade {
   readonly basket = computed(() => this.state().basket);
 
   updateCriteria(from: string, to: string): void {
-    patchSignal(this.state, { from, to });
+    this.state.update(state => ({
+      ...state,
+      from,
+      to
+    }));
   }
 
   updateBasket(id: number, selected: boolean): void {
-    patchSignal(this.state, {
+    this.state.update(state => ({
+      ...state,
       basket: {
-        ...this.state().basket,
+        ...state.basket,
         [id]: selected,
       }
-    })
+    }));
   }
 
   async load() {
@@ -38,8 +43,11 @@ export class FlightBookingFacade {
       this.from(),
       this.to()
     );
-    
-    patchSignal(this.state, { flights });
+
+    this.state.update(state => ({
+      ...state,
+      flights
+    }));
   }
 
   delay(): void {
@@ -49,7 +57,10 @@ export class FlightBookingFacade {
     const date = addMinutes(flight.date, 15);
     const updFlight = { ...flight, date };
     const updFlights = [updFlight, ...this.state().flights.slice(1)];
-    
-    patchSignal(this.state, { flights: updFlights  });
+
+    this.state.update(state => ({
+      ...state,
+      flights: updFlights
+    }));
   }
 }
