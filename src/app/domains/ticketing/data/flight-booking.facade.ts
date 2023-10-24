@@ -30,14 +30,11 @@ export class FlightBookingFacade {
   );
 
   updateCriteria(from: string, to: string): void {
-    // patchState(this.state, { from, to })
-    patchState(this.state, (state) => ({ ...state, from, to }))
-
+    patchState(this.state, { from, to })
   }
 
   updateBasket(id: number, selected: boolean): void {
     patchState(this.state, state => ({
-      ...state,
       basket: {
         ...state.basket,
         [id]: selected,
