@@ -14,10 +14,10 @@ export class FlightBookingFacade {
     basket: {} as Record<number, boolean>,
   });
 
-  flights = computed(() => this.state().flights);
-  from = computed(() => this.state().from);
-  to = computed(() => this.state().to);
-  basket = computed(() => this.state().basket);
+  readonly flights = computed(() => this.state().flights);
+  readonly from = computed(() => this.state().from);
+  readonly to = computed(() => this.state().to);
+  readonly basket = computed(() => this.state().basket);
 
   updateCriteria(from: string, to: string): void {
     patchSignal(this.state, { from, to });
