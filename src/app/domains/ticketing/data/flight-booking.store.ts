@@ -12,7 +12,7 @@ import {
 } from '@ngrx/signals';
 
 import { withCallState } from 'src/app/shared/util-common';
-import { rxMethod } from '@ngrx/rxjs-interop';
+import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { debounceTime, filter, switchMap, tap } from 'rxjs';
 
 export type Criteria = {
