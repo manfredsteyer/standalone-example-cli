@@ -1,7 +1,7 @@
 import { computed, inject } from '@angular/core';
 import { FlightService } from './flight.service';
 import { Flight } from './flight';
-import { addMinutes } from 'src/app/shared/util-common';
+import { addMinutes, setLoaded, setLoading } from 'src/app/shared/util-common';
 import {
   patchState,
   signalStore,
@@ -33,6 +33,9 @@ export const FlightBookingStore = signalStore(
     selected: computed(() => flights().filter((f) => basket()[f.id])),
     criteria: computed(() => ({ from: from(), to: to() })),
   })),
+
+  withCallState(),
+
   withMethods((state) => {
     const { basket, flights, from, to, initialized } = state;
     const flightService = inject(FlightService);
@@ -61,8 +64,14 @@ export const FlightBookingStore = signalStore(
       },
       load: async () => {
         if (!from() || !to()) return;
+
+        patchState(state, setLoading());
+
         const flights = await flightService.findPromise(from(), to());
         patchState(state, { flights });
+
+        patchState(state, setLoaded());
+
       },
       connectCriteria: rxMethod<Criteria>((c$) => c$.pipe(
         filter(c => c.from.length >= 3 && c.to.length >= 3),
@@ -82,5 +91,4 @@ export const FlightBookingStore = signalStore(
       console.log('flights are destroyed', flights());
     },
   }),
-  withCallState()
 );
