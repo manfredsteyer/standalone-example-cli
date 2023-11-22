@@ -22,6 +22,10 @@ export const FlightBookingStore = signalStore(
     flights: [] as Flight[],
     basket: {} as Record<number, boolean>,
   }),
+  withComputed((store) => ({
+    selected: computed(() => store.flights().filter((f) => store.basket()[f.id])),
+    criteria: computed(() => ({ from: store.from(), to: store.to() })),
+  })),
   withComputed(({ flights, basket, from, to }) => ({
     selected: computed(() => flights().filter((f) => basket()[f.id])),
     criteria: computed(() => ({ from: from(), to: to() })),
