@@ -14,6 +14,10 @@ export class FlightBookingFacade {
   private state = signalState({
     from: 'Paris',
     to: 'London',
+    preferences: {
+      directConnection: false,
+      maxPrice: 350,
+    },    
     flights: [] as Flight[],
     basket: {} as Record<number, boolean>,
   });
@@ -22,12 +26,15 @@ export class FlightBookingFacade {
   flights = this.state.flights;
   from = this.state.from;
   to = this.state.to;
-  basket = this.state.basket;
+
+  pref = this.state.preferences
+
+  // basket = this.state.basket;
 
   // fetch selected signal
-  selected = computed(
-    () => this.flights().filter((f) => this.basket()[f.id])
-  );
+  // selected = computed(
+  //   () => this.flights().filter((f) => this.basket()[f.id])
+  // );
 
   updateCriteria(from: string, to: string): void {
     patchState(this.state, { from, to })

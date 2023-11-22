@@ -28,9 +28,9 @@ export class FlightSearchComponent  {
 
   from = this.facade.from;
   to = this.facade.to;
-  basket = this.facade.basket;
+  // basket = this.facade.basket;
   flights = this.facade.flights;
-  selected = this.facade.selected;
+  // selected = this.facade.selected;
   
   async search() {
     this.facade.load();
@@ -45,6 +45,6 @@ export class FlightSearchComponent  {
   }
 
   updateBasket(id: number, selected: boolean): void {
-    this.facade.updateBasket(id, selected);
+    // this.facade.updateBasket(id, selected);
   }
 }
