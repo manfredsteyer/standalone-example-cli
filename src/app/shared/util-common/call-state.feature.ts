@@ -1,15 +1,36 @@
 // Source: https://github.com/markostanimirovic/ngrx-signal-store-playground/blob/main/src/app/shared/call-state.feature.ts
 
-import { computed } from '@angular/core';
+import { Signal, computed } from '@angular/core';
 import {
+  SignalStoreFeature,
   signalStoreFeature,
   withComputed,
   withState,
+
 } from '@ngrx/signals';
 
 export type CallState = 'init' | 'loading' | 'loaded' | { error: string };
 
-export function withCallState() {
+
+export function withCallState()
+  : SignalStoreFeature<
+    {
+      state: {},
+      signals: {},
+      methods: {}
+    },
+    {
+      state: {
+        callState: CallState
+      },
+      signals: {
+        loading: Signal<boolean>,
+        loaded: Signal<boolean>,
+        error: Signal<{ error: string } | null>
+      },
+      methods: {}
+    }>;
+export function withCallState(): SignalStoreFeature {
   return signalStoreFeature(
     withState<{ callState: CallState }>({ callState: 'init' }),
     withComputed(({ callState }) => ({

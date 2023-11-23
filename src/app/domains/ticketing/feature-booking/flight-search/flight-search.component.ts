@@ -31,6 +31,8 @@ export class FlightSearchComponent {
   flights = this.store.flights;
   selected = this.store.selected;
 
+  loading = this.store.loading;
+
   async search() {
     this.store.load();
   }
