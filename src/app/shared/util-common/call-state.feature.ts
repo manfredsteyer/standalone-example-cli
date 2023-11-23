@@ -11,7 +11,7 @@ import {
 
 export type CallState = 'init' | 'loading' | 'loaded' | { error: string };
 
-
+// Ovrloading
 export function withCallState()
   : SignalStoreFeature<
     {
@@ -30,6 +30,7 @@ export function withCallState()
       },
       methods: {}
     }>;
+// Implementation
 export function withCallState(): SignalStoreFeature {
   return signalStoreFeature(
     withState<{ callState: CallState }>({ callState: 'init' }),
