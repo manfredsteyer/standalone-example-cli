@@ -25,25 +25,26 @@ import { ChangeDetectionStrategy } from '@angular/core';
 export class FlightSearchComponent {
   private store = inject(FlightBookingStore);
 
-  from = this.store.from;
-  to = this.store.to;
-  basket = this.store.basket;
-  flights = this.store.flightEntities;
-  selected = this.store.selected;
+  from = this.store.filter.from;
+  to = this.store.filter.to;
+  flights = this.store.entities;
+  selected = this.store.currentEntity;
 
   async search() {
     this.store.load();
   }
 
-  delay(): void {
-    this.store.delay();
-  }
-
   updateCriteria(from: string, to: string): void {
-    this.store.updateCriteria(from, to);
+    this.store.updateFilter({ from, to });
   }
 
   updateBasket(id: number, selected: boolean): void {
-    this.store.updateBasket(id, selected);
+    if (selected) {
+      this.store.select(id)
+    }
+    else {
+      this.store.select(null)
+    }
   }
+
 }
