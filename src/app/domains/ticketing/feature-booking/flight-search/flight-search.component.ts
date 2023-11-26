@@ -28,7 +28,8 @@ export class FlightSearchComponent {
   from = this.store.filter.from;
   to = this.store.filter.to;
   flights = this.store.entities;
-  selected = this.store.currentEntity;
+  selected = this.store.selectedEntities;
+  selectedIds = this.store.selectedIds;
 
   async search() {
     this.store.load();
@@ -39,12 +40,7 @@ export class FlightSearchComponent {
   }
 
   updateBasket(id: number, selected: boolean): void {
-    if (selected) {
-      this.store.select(id)
-    }
-    else {
-      this.store.select(null)
-    }
+    this.store.updateSelected(id, selected);
   }
 
 }
