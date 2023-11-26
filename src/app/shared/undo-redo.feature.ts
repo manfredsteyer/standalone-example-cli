@@ -1,7 +1,7 @@
-import { patchState, signalStoreFeature, type, withHooks, withMethods, withState } from "@ngrx/signals";
+import { patchState, signalStoreFeature, type, withComputed, withHooks, withMethods, withState } from "@ngrx/signals";
 import { Entity, Filter } from "./util-common";
 import { EntityId } from "@ngrx/signals/entities";
-import { effect } from "@angular/core";
+import { effect, signal, untracked } from "@angular/core";
 
 export type StackItem = {
     filter: Filter;
@@ -21,8 +21,27 @@ export function withUndoRedo(options = defaultUndoRedoOptions) {
 
     let previous: StackItem | null = null;
     let skipOnce = false;
+
+    //
+    // Design Decision: This feature has its own
+    // internal state.
+    //
+    // Please see an alternative implementation
+    // that adds the feature's state to the 
+    // Signal Store too in the branch
+    // `arc-signal-custom-examples-undoredo-alternative``
+    //
+    
     const undoStack: StackItem[] = [];
     const redoStack: StackItem[] = [];
+
+    const canUndo = signal(false);
+    const canRedo = signal(false);
+
+    const updateInternal = () => {
+        canUndo.set(undoStack.length !== 0);
+        canRedo.set(redoStack.length !== 0);
+    };
 
     return signalStoreFeature(
         {
@@ -32,9 +51,12 @@ export function withUndoRedo(options = defaultUndoRedoOptions) {
                 ids: EntityId[]
             }>(),
         },
+        withComputed(() => ({
+            canUndo: canUndo.asReadonly(),
+            canRedo: canRedo.asReadonly()
+        })),
         withMethods((store) => ({
             undo(): void {
-
                 const item = undoStack.pop();
 
                 if (item && previous) {
@@ -46,6 +68,8 @@ export function withUndoRedo(options = defaultUndoRedoOptions) {
                     patchState(store, item);
                     previous = item;
                 }
+
+                updateInternal();
             },
             redo(): void {
                 const item = redoStack.pop();
@@ -59,6 +83,8 @@ export function withUndoRedo(options = defaultUndoRedoOptions) {
                     patchState(store, item);
                     previous = item;
                 }
+
+                updateInternal();
             }
         })),
         withHooks({
@@ -85,6 +111,9 @@ export function withUndoRedo(options = defaultUndoRedoOptions) {
                     }
 
                     previous = { filter, entityMap, ids };
+
+                    // Don't propogate current reactive context
+                    untracked(() => updateInternal());
                 })
             }
         })

@@ -33,7 +33,11 @@
 
   <div>
     <button (click)="undo()" class="btn btn-default">Undo</button>
+    {{ canUndo() }}
+
     <button (click)="redo()" class="btn btn-default">Redo</button>
+    {{ canRedo() }}
+
   </div>
 </form>
 

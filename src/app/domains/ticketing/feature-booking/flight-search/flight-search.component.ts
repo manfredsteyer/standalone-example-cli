@@ -31,6 +31,9 @@ export class FlightSearchComponent {
   selected = this.store.selectedEntities;
   selectedIds = this.store.selectedIds;
 
+  canUndo = this.store.canUndo;
+  canRedo = this.store.canRedo;
+
   async search() {
     this.store.load();
   }
