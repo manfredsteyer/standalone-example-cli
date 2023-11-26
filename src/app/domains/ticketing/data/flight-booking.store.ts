@@ -9,16 +9,10 @@ import { withEntities } from '@ngrx/signals/entities';
 import { withCallState } from 'src/app/shared/util-common';
 import { withUndoRedo } from 'src/app/shared/undo-redo.feature';
 
-
-const initFilter: FlightFilter = { 
-  from: 'Graz', 
-  to: 'Hamburg' 
-}
-
 export const FlightBookingStore = signalStore(
   { providedIn: 'root' },
-  withCallState(),
   withEntities<Flight>(),
-  withDataService(FlightService, initFilter),
+  withCallState(),
+  withDataService(FlightService, { from: 'Graz', to: 'Hamburg'} ),
   withUndoRedo(),
 );

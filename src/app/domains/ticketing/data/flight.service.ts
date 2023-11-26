@@ -30,10 +30,6 @@ export class FlightService implements DataService<Flight, FlightFilter> {
     to: string,
     urgent = false
   ): Observable<Flight[]> {
-    // For offline access
-    // let url = '/assets/data/data.json';
-
-    // For online access
     let url = [this.baseUrl, 'flight'].join('/');
 
     if (urgent) {
@@ -41,9 +37,7 @@ export class FlightService implements DataService<Flight, FlightFilter> {
     }
 
     const params = new HttpParams().set('from', from).set('to', to);
-
     const headers = new HttpHeaders().set('Accept', 'application/json');
-
     return this.http.get<Flight[]>(url, { params, headers });
   }
 

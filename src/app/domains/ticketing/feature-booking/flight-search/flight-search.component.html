@@ -21,24 +21,26 @@
       Search
     </button>
 
+    &nbsp; &nbsp; &nbsp; &nbsp;
+
+
+    <button [disabled]="!canUndo()" (click)="undo()" class="btn btn-default">Undo</button>
+    
+    &nbsp;
+
+    <button [disabled]="!canRedo()" (click)="redo()" class="btn btn-default">Redo</button>
+
+
     <!-- <button *ngIf="flights().length > 0" class="btn btn-default" (click)="delay()">
       Delay 1st Flight
     </button> -->
 
-    <div *ngIf="flights().length > 0">
+    <!-- <div *ngIf="flights().length > 0">
       {{flights().length}} flights found!
-    </div>
+    </div> -->
 
   </div>
 
-  <div>
-    <button (click)="undo()" class="btn btn-default">Undo</button>
-    {{ canUndo() }}
-
-    <button (click)="redo()" class="btn btn-default">Redo</button>
-    {{ canRedo() }}
-
-  </div>
 </form>
 
 <div class="row">
