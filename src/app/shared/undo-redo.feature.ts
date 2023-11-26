@@ -1,13 +1,7 @@
-import { patchState, signalStoreFeature, type, withHooks, withMethods, withState } from "@ngrx/signals";
+import { PartialStateUpdater, patchState, signalStoreFeature, type, withHooks, withMethods, withState } from "@ngrx/signals";
 import { Entity, Filter } from "./util-common";
 import { EntityId } from "@ngrx/signals/entities";
 import { effect } from "@angular/core";
-
-export type StackItem = {
-    filter: Filter;
-    entityMap: Record<EntityId, Entity>,
-    ids: EntityId[]
-};
 
 export type UndoRedoOptions = {
     maxStackSize: number;
@@ -17,12 +11,63 @@ export const defaultUndoRedoOptions: UndoRedoOptions = {
     maxStackSize: 100
 }
 
+export type StackItem = {
+    filter: Filter;
+    entityMap: Record<EntityId, Entity>,
+    ids: EntityId[]
+};
+
+export type UndoRedoState = {
+    undoStack: StackItem[],
+    redoStack: StackItem[]
+}
+
+function removeUndo(): PartialStateUpdater<UndoRedoState> {
+    return (state: UndoRedoState) => {
+        return { undoStack: [...state.undoStack.slice(0, -1)] }
+    } 
+}
+
+function removeRedo(): PartialStateUpdater<UndoRedoState> {
+    return (state: UndoRedoState) => {
+        return { redoStack: [...state.redoStack.slice(0, -1)] }
+    } 
+}
+
+function limit(stack: StackItem[], maxLength: number): StackItem[] {
+    if (stack.length <= maxLength) {
+        return stack;
+    }
+
+    return stack.slice(stack.length - maxLength)
+}
+
+function pushUndo(item: StackItem, maxLength: number): PartialStateUpdater<UndoRedoState> {
+    return (state: UndoRedoState) => {
+        return { undoStack: [...limit(state.undoStack, maxLength), item] }
+    } 
+}
+
+function pushRedo(item: StackItem, maxLength: number): PartialStateUpdater<UndoRedoState> {
+    return (state: UndoRedoState) => {
+        return { redoStack: [...limit(state.redoStack, maxLength), item] }
+    } 
+}
+
+function clearRedo(): Partial<UndoRedoState> {
+    return {
+        redoStack: []
+    };
+}
+
+function peek(stack: StackItem[]) {
+    return stack.at(-1);
+}
+
 export function withUndoRedo(options = defaultUndoRedoOptions) {
 
     let previous: StackItem | null = null;
     let skipOnce = false;
-    const undoStack: StackItem[] = [];
-    const redoStack: StackItem[] = [];
 
     return signalStoreFeature(
         {
@@ -32,13 +77,18 @@ export function withUndoRedo(options = defaultUndoRedoOptions) {
                 ids: EntityId[]
             }>(),
         },
+        withState<UndoRedoState>({
+            undoStack: [],
+            redoStack: []
+        }),
         withMethods((store) => ({
             undo(): void {
 
-                const item = undoStack.pop();
+                const item = peek(store.undoStack());
+                patchState(store, removeUndo());
 
                 if (item && previous) {
-                    redoStack.push(previous);
+                    patchState(store, pushRedo(previous, options.maxStackSize));
                 }
 
                 if (item) {
@@ -48,10 +98,11 @@ export function withUndoRedo(options = defaultUndoRedoOptions) {
                 }
             },
             redo(): void {
-                const item = redoStack.pop();
+                const item = peek(store.redoStack());
+                patchState(store, removeRedo());
 
                 if (item && previous) {
-                    undoStack.push(previous);
+                    patchState(store, pushUndo(previous, options.maxStackSize));
                 }
 
                 if (item) {
@@ -74,18 +125,14 @@ export function withUndoRedo(options = defaultUndoRedoOptions) {
                     }
 
                     // Clear redoStack after recorded action
-                    redoStack.splice(0);
+                    patchState(store, clearRedo());
 
                     if (previous) {
-                        undoStack.push(previous);
-                    }
-
-                    if (redoStack.length > options.maxStackSize) {
-                        undoStack.unshift();
+                        patchState(store, pushUndo(previous, options.maxStackSize))
                     }
 
                     previous = { filter, entityMap, ids };
-                })
+                }, { allowSignalWrites: true })
             }
         })
 
