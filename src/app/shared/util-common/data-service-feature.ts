@@ -1,7 +1,7 @@
 import { Signal, Type, computed, inject } from "@angular/core";
-import { patchState, signalStoreFeature, type, withComputed, withHooks, withMethods, withState } from "@ngrx/signals";
+import { patchState, signalStoreFeature, type, withComputed, withMethods, withState } from "@ngrx/signals";
 import { CallState, setLoaded, setLoading } from "./call-state.feature";
-import { setAllEntities, EntityId } from "@ngrx/signals/entities";
+import { setAllEntities, EntityId, withEntities } from "@ngrx/signals/entities";
 
 export type Filter = Record<string, string>;
 export type Entity = { id: EntityId };
@@ -11,9 +11,12 @@ export interface DataService<E extends Entity, F extends Filter> {
 }
 
 export function withDataService<E extends Entity, F extends Filter, S extends DataService<E, F>>(dataServiceType: Type<S>, filter: F) {
-
     return signalStoreFeature
         (
+            // First parameter contains 
+            // Our expectations to the store:
+            // If they are not fulfilled, TypeScript
+            // will prevent adding this feature!
             {
                 state: type<{
                     callState: CallState,
@@ -49,11 +52,6 @@ export function withDataService<E extends Entity, F extends Filter, S extends Da
                     patchState(store, setAllEntities(result));
                     patchState(store, setLoaded());
                 }
-            })),
-            withHooks({
-                onInit(store) {
-                    console.log('init', Object.keys(store.filter()));
-                }
-            })
+            }))
         );
 }

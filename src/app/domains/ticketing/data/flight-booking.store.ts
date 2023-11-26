@@ -7,6 +7,7 @@ import {
 
 import { withEntities } from '@ngrx/signals/entities';
 import { withCallState } from 'src/app/shared/util-common';
+import { withUndoRedo } from 'src/app/shared/undo-redo.feature';
 
 
 const initFilter: FlightFilter = { 
@@ -19,4 +20,5 @@ export const FlightBookingStore = signalStore(
   withCallState(),
   withEntities<Flight>(),
   withDataService(FlightService, initFilter),
+  withUndoRedo(),
 );

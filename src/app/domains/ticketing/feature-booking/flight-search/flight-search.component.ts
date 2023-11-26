@@ -35,6 +35,14 @@ export class FlightSearchComponent {
     this.store.load();
   }
 
+  undo(): void {
+    this.store.undo();
+  }
+
+  redo(): void {
+    this.store.redo();
+  }
+
   updateCriteria(from: string, to: string): void {
     this.store.updateFilter({ from, to });
   }
