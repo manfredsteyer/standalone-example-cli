@@ -26,10 +26,6 @@ export const FlightBookingStore = signalStore(
     selected: computed(() => store.flights().filter((f) => store.basket()[f.id])),
     criteria: computed(() => ({ from: store.from(), to: store.to() })),
   })),
-  withComputed(({ flights, basket, from, to }) => ({
-    selected: computed(() => flights().filter((f) => basket()[f.id])),
-    criteria: computed(() => ({ from: from(), to: to() })),
-  })),
   withMethods((state) => {
     const { basket, flights, from, to, initialized } = state;
     const flightService = inject(FlightService);
