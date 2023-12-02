@@ -6,13 +6,6 @@ import {
   withState,
 } from '@ngrx/signals';
 
-export type BoxStatus = 'open' | 'closed';
-const candyBox: BoxStatus = 'closed';
-
-
-export type BoxStatusAfterHolidays = 'closed';
-
-
 export type CallState = 'init' | 'loading' | 'loaded' | { error: string };
 
 export type NamedCallState<Prop extends string> = {
