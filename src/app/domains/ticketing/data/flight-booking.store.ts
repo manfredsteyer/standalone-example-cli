@@ -15,7 +15,10 @@ export const FlightBookingStore = signalStore(
   withCallState({
     collection: 'flight'
   }),
-  withEntities({ entity: type<Flight>(), collection: 'flight'}),
+  withEntities({ 
+    entity: type<Flight>(), 
+    collection: 'flight'
+  }),
   withDataService({
     dataServiceType: FlightService, 
     filter: { from: 'Graz', to: 'Hamburg' },
@@ -25,6 +28,7 @@ export const FlightBookingStore = signalStore(
     collections: ['flight'],
   }),
 );
+
 
 //
 // For the sake of demonstration:
