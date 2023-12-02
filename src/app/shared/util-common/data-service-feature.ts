@@ -1,6 +1,6 @@
 import { Signal, Type, computed, inject } from "@angular/core";
 import { SignalStoreFeature, patchState, signalStoreFeature, type, withComputed, withMethods, withState } from "@ngrx/signals";
-import { CallState, NamedCallStateSignals, getCallStateKeys, setLoaded, setLoading } from "./call-state.feature";
+import { CallState, getCallStateKeys, setLoaded, setLoading } from "./call-state.feature";
 import { setAllEntities, EntityId } from "@ngrx/signals/entities";
 import { EntityState, NamedEntitySignals } from "@ngrx/signals/entities/src/models";
 import { SignalStateMeta } from "@ngrx/signals/src/signal-state";
@@ -16,28 +16,28 @@ export function capitalize(str: string): string {
     return str ? str[0].toUpperCase() + str.substring(1) : str;
 }
 
-export function getDataServiceKeys(options: { prefix?: string }) {
-    const filterKey = options.prefix ? `${options.prefix}Filter` : 'filter';
-    const selectedIdsKey = options.prefix ? `selected${capitalize(options.prefix)}Ids` : 'selectedIds';
-    const selectedEntitiesKey = options.prefix ? `selected${capitalize(options.prefix)}Entities` : 'selectedEntities';
+export function getDataServiceKeys(options: { collection?: string }) {
+    const filterKey = options.collection ? `${options.collection}Filter` : 'filter';
+    const selectedIdsKey = options.collection ? `selected${capitalize(options.collection)}Ids` : 'selectedIds';
+    const selectedEntitiesKey = options.collection ? `selected${capitalize(options.collection)}Entities` : 'selectedEntities';
 
-    const updateFilterKey = options.prefix ? `update${capitalize(options.prefix)}Filter` : 'updateFilter';
-    const updateSelectedKey = options.prefix ? `updateSelected${capitalize(options.prefix)}Entities` : 'updateSelected';
-    const loadKey = options.prefix ? `load${capitalize(options.prefix)}Entities` : 'load';
+    const updateFilterKey = options.collection ? `update${capitalize(options.collection)}Filter` : 'updateFilter';
+    const updateSelectedKey = options.collection ? `updateSelected${capitalize(options.collection)}Entities` : 'updateSelected';
+    const loadKey = options.collection ? `load${capitalize(options.collection)}Entities` : 'load';
 
     // TODO: Take these from @ngrx/signals/entities, when they are exported
-    const entitiesKey = options.prefix ? `${options.prefix}Entities` : 'entities';
-    const entityMapKey = options.prefix ? `${options.prefix}EntityMap` : 'entityMap';
-    const idsKey = options.prefix ? `${options.prefix}Ids` : 'ids';
+    const entitiesKey = options.collection ? `${options.collection}Entities` : 'entities';
+    const entityMapKey = options.collection ? `${options.collection}EntityMap` : 'entityMap';
+    const idsKey = options.collection ? `${options.collection}Ids` : 'ids';
 
     return { filterKey, selectedIdsKey, selectedEntitiesKey, updateFilterKey, updateSelectedKey, loadKey, entitiesKey, entityMapKey, idsKey };
 }
 
-export type NamedDataServiceState<F extends Filter, Prop extends string> =
+export type NamedDataServiceState<F extends Filter, Collection extends string> =
     {
-        [K in Prop as `${K}Filter`]: F;
+        [K in Collection as `${K}Filter`]: F;
     } & {
-        [K in Prop as `selected${Capitalize<K>}Ids`]: Record<EntityId, boolean>;
+        [K in Collection as `selected${Capitalize<K>}Ids`]: Record<EntityId, boolean>;
     }
 
 export type DataServiceState<F extends Filter> = {
@@ -45,9 +45,9 @@ export type DataServiceState<F extends Filter> = {
     selectedIds: Record<EntityId, boolean>;
 }
 
-export type NamedDataServiceSignals<E extends Entity, Prop extends string> =
+export type NamedDataServiceSignals<E extends Entity, Collection extends string> =
     {
-        [K in Prop as `selected${Capitalize<K>}Entities`]: Signal<E[]>;
+        [K in Collection as `selected${Capitalize<K>}Entities`]: Signal<E[]>;
     }
 
 export type DataServiceSignals<E extends Entity> =
@@ -55,15 +55,15 @@ export type DataServiceSignals<E extends Entity> =
         selectedEntities: Signal<E[]>;
     }
 
-export type NamedDataServiceMethods<F extends Filter, Prop extends string> =
+export type NamedDataServiceMethods<F extends Filter, Collection extends string> =
     {
-        [K in Prop as `update${Capitalize<K>}Filter`]: (filter: F) => void;
+        [K in Collection as `update${Capitalize<K>}Filter`]: (filter: F) => void;
     } &
     {
-        [K in Prop as `updateSelected${Capitalize<K>}Entities`]: (id: EntityId, selected: boolean) => void;
+        [K in Collection as `updateSelected${Capitalize<K>}Entities`]: (id: EntityId, selected: boolean) => void;
     } &
     {
-        [K in Prop as `load${Capitalize<K>}Entities`]: () => Promise<void>;
+        [K in Collection as `load${Capitalize<K>}Entities`]: () => Promise<void>;
     }
 
 export type DataServiceMethods<F extends Filter> =
@@ -73,20 +73,20 @@ export type DataServiceMethods<F extends Filter> =
         load: () => Promise<void>;
     }
 
-export function withDataService<E extends Entity, F extends Filter, S extends DataService<E, F>, Prop extends string>(options: { dataServiceType: Type<S>, filter: F, prefix: Prop }): SignalStoreFeature<
+export function withDataService<E extends Entity, F extends Filter, S extends DataService<E, F>, Collection extends string>(options: { dataServiceType: Type<S>, filter: F, collection: Collection }): SignalStoreFeature<
     {
         state: {},
         // These alternatives break type inference: 
-        // state: { callState: CallState } & NamedEntityState<E, Prop>,
-        // state: NamedEntityState<E, Prop>,
+        // state: { callState: CallState } & NamedEntityState<E, Collection>,
+        // state: NamedEntityState<E, Collection>,
 
-        signals: NamedEntitySignals<E, Prop>,
+        signals: NamedEntitySignals<E, Collection>,
         methods: {},
     },
     {
-        state: NamedDataServiceState<F, Prop>
-        signals: NamedDataServiceSignals<E, Prop>
-        methods: NamedDataServiceMethods<F, Prop>
+        state: NamedDataServiceState<F, Collection>
+        signals: NamedDataServiceSignals<E, Collection>
+        methods: NamedDataServiceMethods<F, Collection>
     }
 >;
 export function withDataService<E extends Entity, F extends Filter, S extends DataService<E, F>>(options: { dataServiceType: Type<S>, filter: F }): SignalStoreFeature<
@@ -101,11 +101,11 @@ export function withDataService<E extends Entity, F extends Filter, S extends Da
         methods: DataServiceMethods<F>
     }>;
 
-export function withDataService<E extends Entity, F extends Filter, S extends DataService<E, F>, Prop extends string>(options: { dataServiceType: Type<S>, filter: F, prefix?: Prop }): SignalStoreFeature<any, any>
+export function withDataService<E extends Entity, F extends Filter, S extends DataService<E, F>, Collection extends string>(options: { dataServiceType: Type<S>, filter: F, collection?: Collection }): SignalStoreFeature<any, any>
 {
-    const { dataServiceType, filter, prefix } = options;
+    const { dataServiceType, filter, collection: prefix } = options;
     const { entitiesKey, filterKey, loadKey, selectedEntitiesKey, selectedIdsKey, updateFilterKey, updateSelectedKey } = getDataServiceKeys(options);
-    const { callStateKey } = getCallStateKeys({prop: prefix});
+    const { callStateKey } = getCallStateKeys({collection: prefix});
 
     return signalStoreFeature(
         withState(() => ({
@@ -144,10 +144,10 @@ export function withDataService<E extends Entity, F extends Filter, S extends Da
                         store[callStateKey] &&  patchState(store, setLoaded(prefix));
                     }
                     else {
-                        // store[callStateKey] &&  patchState(store, setLoading());
+                        store[callStateKey] &&  patchState(store, setLoading());
                         const result = await dataService.load(filter());
                         patchState(store, setAllEntities(result));
-                        // store[callStateKey] &&  patchState(store, setLoaded());
+                        store[callStateKey] &&  patchState(store, setLoaded());
                     }
                 }
             };

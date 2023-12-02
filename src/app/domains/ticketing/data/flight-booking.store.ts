@@ -13,20 +13,23 @@ import { withCallState } from 'src/app/shared/util-common';
 export const FlightBookingStore = signalStore(
   { providedIn: 'root' },
   withCallState({
-    prop: 'flight'
+    collection: 'flight'
   }),
   withEntities({ entity: type<Flight>(), collection: 'flight'}),
   withDataService({
     dataServiceType: FlightService, 
     filter: { from: 'Graz', to: 'Hamburg' },
-    prefix: 'flight'
+    collection: 'flight'
   }),
   withUndoRedo({
     collections: ['flight'],
-    maxStackSize: 100,
   }),
 );
 
+//
+// For the sake of demonstration:
+// The same store but without configured properties
+//
 export const SimpleFlightBookingStore = signalStore(
   { providedIn: 'root' },
   withCallState(),
@@ -35,7 +38,5 @@ export const SimpleFlightBookingStore = signalStore(
     dataServiceType: FlightService, 
     filter: { from: 'Graz', to: 'Hamburg' },
   }),
-  withUndoRedo({
-    maxStackSize: 100,
-  }),
+  withUndoRedo(),
 );

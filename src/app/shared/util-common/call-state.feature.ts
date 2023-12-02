@@ -8,8 +8,8 @@ import {
 
 export type CallState = 'init' | 'loading' | 'loaded' | { error: string };
 
-export type NamedCallStateSlice<Prop extends string> = {
-  [K in Prop as `${K}CallState`]: CallState;
+export type NamedCallStateSlice<Collection extends string> = {
+  [K in Collection as `${K}CallState`]: CallState;
 };
 
 export type CallStateSlice = {
@@ -30,29 +30,26 @@ export type CallStateSignals = {
   error: Signal<string | null>
 } 
 
-export function getCallStateKeys(config?: { prop?: string }) {
-  
-  const prop = config?.prop;
-
+export function getCallStateKeys(config?: { collection?: string }) {
+  const prop = config?.collection;
   return {
-    callStateKey: prop ?  `${config.prop}CallState` : 'callState',
-    loadingKey: prop ? `${config.prop}Loading` : 'loading',
-    loadedKey: prop ? `${config.prop}Loaded` : 'loaded',
-    errorKey: prop ? `${config.prop}Error` : 'error',
+    callStateKey: prop ?  `${config.collection}CallState` : 'callState',
+    loadingKey: prop ? `${config.collection}Loading` : 'loading',
+    loadedKey: prop ? `${config.collection}Loaded` : 'loaded',
+    errorKey: prop ? `${config.collection}Error` : 'error',
   };
 }
 
-export function withCallState<Prop extends string>(config: {
-  prop: Prop;
+export function withCallState<Collection extends string>(config: {
+  collection: Collection;
 }): SignalStoreFeature<
   { state: {}, signals: {}, methods: {} },
   {
-    state: NamedCallStateSlice<Prop>,
-    signals: NamedCallStateSignals<Prop>,
+    state: NamedCallStateSlice<Collection>,
+    signals: NamedCallStateSignals<Collection>,
     methods: {}
   }
 >;
-
 export function withCallState(): SignalStoreFeature<
   { state: {}, signals: {}, methods: {} },
   {
@@ -61,9 +58,8 @@ export function withCallState(): SignalStoreFeature<
     methods: {}
   }
 >;
-
-export function withCallState<Prop extends string>(config?: {
-  prop: Prop;
+export function withCallState<Collection extends string>(config?: {
+  collection: Collection;
 }): SignalStoreFeature {
   const { callStateKey, errorKey, loadedKey, loadingKey } =
     getCallStateKeys(config);
@@ -87,20 +83,37 @@ export function withCallState<Prop extends string>(config?: {
 }
 
 export function setLoading<Prop extends string>(
-  prop: Prop
-): NamedCallStateSlice<Prop> {
-  return { [`${prop}CallState`]: 'loading' } as NamedCallStateSlice<Prop>;
+  prop?: Prop
+): NamedCallStateSlice<Prop> | CallStateSlice {
+  if (prop) {
+    return { [`${prop}CallState`]: 'loading' } as NamedCallStateSlice<Prop>;
+  }
+
+  return { callState: 'loading' };
 }
 
 export function setLoaded<Prop extends string>(
-  prop: Prop
-): NamedCallStateSlice<Prop> {
-  return { [`${prop}CallState`]: 'loaded' } as NamedCallStateSlice<Prop>;
+  prop?: Prop
+): NamedCallStateSlice<Prop> | CallStateSlice {
+
+  if (prop) {
+    return { [`${prop}CallState`]: 'loaded' } as NamedCallStateSlice<Prop>;
+  }
+  else {
+    return { callState: 'loaded' };
+
+  }
 }
 
 export function setError<Prop extends string>(
-  prop: Prop,
-  error: string
-): NamedCallStateSlice<Prop> {
-  return { [`${prop}CallState`]: { error } } as NamedCallStateSlice<Prop>;
+  error: string,
+  prop?: Prop,
+  ): NamedCallStateSlice<Prop> | CallStateSlice {
+
+    if (prop) {
+      return { [`${prop}CallState`]: { error } } as NamedCallStateSlice<Prop>;
+    }
+    else {
+      return { callState: { error } };
+    }
 }
