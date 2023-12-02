@@ -3,7 +3,7 @@ import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CityValidator } from 'src/app/shared/util-common';
 import { FlightCardComponent } from '../../ui-common';
-import { FlightBookingStore } from '../../data';
+import { FlightBookingStore, SimpleFlightBookingStore } from '../../data';
 import { ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
@@ -31,19 +31,19 @@ export class FlightSearchComponent {
   selected = this.store.selectedFlightEntities;
   selectedIds = this.store.selectedFlightIds;
 
-  // canUndo = this.store.canUndo;
-  // canRedo = this.store.canRedo;
+  canUndo = this.store.canUndo;
+  canRedo = this.store.canRedo;
 
   async search() {
     this.store.loadFlightEntities();
   }
 
   undo(): void {
-    // this.store.undo();
+    this.store.undo();
   }
 
   redo(): void {
-    // this.store.redo();
+    this.store.redo();
   }
 
   updateCriteria(from: string, to: string): void {
@@ -53,5 +53,37 @@ export class FlightSearchComponent {
   updateBasket(id: number, selected: boolean): void {
     this.store.updateSelectedFlightEntities(id, selected);
   }
+
+
+  // private store = inject(SimpleFlightBookingStore);
+
+  // from = this.store.filter.from;
+  // to = this.store.filter.to;
+  // flights = this.store.entities;
+  // selected = this.store.selectedEntities;
+  // selectedIds = this.store.selectedIds;
+
+  // canUndo = this.store.canUndo;
+  // canRedo = this.store.canRedo;
+
+  // async search() {
+  //   this.store.load();
+  // }
+
+  // undo(): void {
+  //   this.store.undo();
+  // }
+
+  // redo(): void {
+  //   this.store.redo();
+  // }
+
+  // updateCriteria(from: string, to: string): void {
+  //   this.store.updateFilter({ from, to });
+  // }
+
+  // updateBasket(id: number, selected: boolean): void {
+  //   this.store.updateSelected(id, selected);
+  // }
 
 }

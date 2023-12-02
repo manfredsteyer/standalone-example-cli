@@ -2,9 +2,8 @@ import { Signal, Type, computed, inject } from "@angular/core";
 import { SignalStoreFeature, patchState, signalStoreFeature, type, withComputed, withMethods, withState } from "@ngrx/signals";
 import { CallState, setLoaded, setLoading } from "./call-state.feature";
 import { setAllEntities, EntityId } from "@ngrx/signals/entities";
-import { EntitySignals, EntityState, NamedEntitySignals } from "@ngrx/signals/entities/src/models";
+import { EntityState, NamedEntitySignals } from "@ngrx/signals/entities/src/models";
 import { SignalStateMeta } from "@ngrx/signals/src/signal-state";
-import { EmptyFeatureResult } from "@ngrx/signals/src/signal-store-models";
 
 export type Filter = Record<string, unknown>;
 export type Entity = { id: EntityId };
@@ -13,7 +12,7 @@ export interface DataService<E extends Entity, F extends Filter> {
     load(filter: F): Promise<E[]>;
 }
 
-function capitalize(str: string): string {
+export function capitalize(str: string): string {
     return str ? str[0].toUpperCase() + str.substring(1) : str;
 }
 
@@ -102,8 +101,8 @@ export function withDataService<E extends Entity, F extends Filter, S extends Da
         methods: DataServiceMethods<F>
     }>;
 
-export function withDataService<E extends Entity, F extends Filter, S extends DataService<E, F>, Prop extends string>(options: { dataServiceType: Type<S>, filter: F, prefix?: Prop }): SignalStoreFeature<any, any> {
-
+export function withDataService<E extends Entity, F extends Filter, S extends DataService<E, F>, Prop extends string>(options: { dataServiceType: Type<S>, filter: F, prefix?: Prop }): SignalStoreFeature<any, any>
+{
     const { dataServiceType, filter, prefix } = options;
     const { entitiesKey, filterKey, loadKey, selectedEntitiesKey, selectedIdsKey, updateFilterKey, updateSelectedKey } = getDataServiceKeys(options);
 
