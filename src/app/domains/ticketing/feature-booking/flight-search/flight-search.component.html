@@ -43,6 +43,10 @@
 
 </form>
 
+<div>
+  <b *ngIf="loading()">Loading ...</b>
+</div>
+
 <div class="row">
   <div *ngFor="let f of flights()" class="col-xs-12 col-sm-6 col-md-4 col-lg-4 col-xl-3">
     <app-flight-card [item]="f" [selected]="selectedIds()[f.id]" (selectedChange)="updateBasket(f.id, $event)" />

@@ -1,7 +1,6 @@
-// Source: https://github.com/markostanimirovic/ngrx-signal-store-playground/blob/main/src/app/shared/call-state.feature.ts
-
-import { computed } from '@angular/core';
+import { Signal, computed } from '@angular/core';
 import {
+  SignalStoreFeature,
   signalStoreFeature,
   withComputed,
   withState,
@@ -9,28 +8,99 @@ import {
 
 export type CallState = 'init' | 'loading' | 'loaded' | { error: string };
 
-export function withCallState() {
+export type NamedCallStateSlice<Prop extends string> = {
+  [K in Prop as `${K}CallState`]: CallState;
+};
+
+export type CallStateSlice = {
+  callState: CallState
+}
+
+export type NamedCallStateSignals<Prop extends string> = {
+  [K in Prop as `${K}Loading`]: Signal<boolean>;
+} & {
+    [K in Prop as `${K}Loaded`]: Signal<boolean>;
+  } & {
+    [K in Prop as `${K}Error`]: Signal<string | null>;
+  };
+
+export type CallStateSignals = {
+  loading: Signal<boolean>;
+  loaded: Signal<boolean>;
+  error: Signal<string | null>
+} 
+
+export function getCallStateKeys(config?: { prop?: string }) {
+  
+  const prop = config?.prop;
+
+  return {
+    callStateKey: prop ?  `${config.prop}CallState` : 'callState',
+    loadingKey: prop ? `${config.prop}Loading` : 'loading',
+    loadedKey: prop ? `${config.prop}Loaded` : 'loaded',
+    errorKey: prop ? `${config.prop}Error` : 'error',
+  };
+}
+
+export function withCallState<Prop extends string>(config: {
+  prop: Prop;
+}): SignalStoreFeature<
+  { state: {}, signals: {}, methods: {} },
+  {
+    state: NamedCallStateSlice<Prop>,
+    signals: NamedCallStateSignals<Prop>,
+    methods: {}
+  }
+>;
+
+export function withCallState(): SignalStoreFeature<
+  { state: {}, signals: {}, methods: {} },
+  {
+    state: CallStateSlice,
+    signals: CallStateSignals,
+    methods: {}
+  }
+>;
+
+export function withCallState<Prop extends string>(config?: {
+  prop: Prop;
+}): SignalStoreFeature {
+  const { callStateKey, errorKey, loadedKey, loadingKey } =
+    getCallStateKeys(config);
+
   return signalStoreFeature(
-    withState<{ callState: CallState }>({ callState: 'init' }),
-    withComputed(({ callState }) => ({
-      loading: computed(() => callState() === 'loading'),
-      loaded: computed(() => callState() === 'loaded'),
-      error: computed(() => {
-        const state = callState();
-        return typeof state === 'object' ? state.error : null
-      }),
-    }))
+    withState({ [callStateKey]: 'init' }),
+    withComputed((state: Record<string, Signal<unknown>>) => {
+
+      const callState = state[callStateKey] as Signal<CallState>;
+
+      return {
+        [loadingKey]: computed(() => callState() === 'loading'),
+        [loadedKey]: computed(() => callState() === 'loaded'),
+        [errorKey]: computed(() => {
+          const v = callState();
+          return typeof v === 'object' ? v.error : null;
+        })
+      }
+    })
   );
 }
 
-export function setLoading(): { callState: CallState } {
-  return { callState: 'loading' };
+export function setLoading<Prop extends string>(
+  prop: Prop
+): NamedCallStateSlice<Prop> {
+  return { [`${prop}CallState`]: 'loading' } as NamedCallStateSlice<Prop>;
 }
 
-export function setLoaded(): { callState: CallState } {
-  return { callState: 'loaded' };
+export function setLoaded<Prop extends string>(
+  prop: Prop
+): NamedCallStateSlice<Prop> {
+  return { [`${prop}CallState`]: 'loaded' } as NamedCallStateSlice<Prop>;
 }
 
-export function setError(error: string): { callState: CallState } {
-  return { callState: { error } };
+export function setError<Prop extends string>(
+  prop: Prop,
+  error: string
+): NamedCallStateSlice<Prop> {
+  return { [`${prop}CallState`]: { error } } as NamedCallStateSlice<Prop>;
 }

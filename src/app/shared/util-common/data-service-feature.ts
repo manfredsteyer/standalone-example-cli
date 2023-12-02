@@ -1,6 +1,6 @@
 import { Signal, Type, computed, inject } from "@angular/core";
 import { SignalStoreFeature, patchState, signalStoreFeature, type, withComputed, withMethods, withState } from "@ngrx/signals";
-import { CallState, setLoaded, setLoading } from "./call-state.feature";
+import { CallState, NamedCallStateSignals, getCallStateKeys, setLoaded, setLoading } from "./call-state.feature";
 import { setAllEntities, EntityId } from "@ngrx/signals/entities";
 import { EntityState, NamedEntitySignals } from "@ngrx/signals/entities/src/models";
 import { SignalStateMeta } from "@ngrx/signals/src/signal-state";
@@ -75,7 +75,7 @@ export type DataServiceMethods<F extends Filter> =
 
 export function withDataService<E extends Entity, F extends Filter, S extends DataService<E, F>, Prop extends string>(options: { dataServiceType: Type<S>, filter: F, prefix: Prop }): SignalStoreFeature<
     {
-        state: { callState: CallState },
+        state: {},
         // These alternatives break type inference: 
         // state: { callState: CallState } & NamedEntityState<E, Prop>,
         // state: NamedEntityState<E, Prop>,
@@ -105,6 +105,7 @@ export function withDataService<E extends Entity, F extends Filter, S extends Da
 {
     const { dataServiceType, filter, prefix } = options;
     const { entitiesKey, filterKey, loadKey, selectedEntitiesKey, selectedIdsKey, updateFilterKey, updateSelectedKey } = getDataServiceKeys(options);
+    const { callStateKey } = getCallStateKeys({prop: prefix});
 
     return signalStoreFeature(
         withState(() => ({
@@ -136,15 +137,18 @@ export function withDataService<E extends Entity, F extends Filter, S extends Da
                 },
                 [loadKey]: async (): Promise<void> => {
                     const filter = store[filterKey] as Signal<F>;
-                    patchState(store, setLoading());
-                    const result = await dataService.load(filter());
                     if (prefix) {
+                        store[callStateKey] && patchState(store, setLoading(prefix));
+                        const result = await dataService.load(filter());
                         patchState(store, setAllEntities(result, { collection: prefix }));
+                        store[callStateKey] &&  patchState(store, setLoaded(prefix));
                     }
                     else {
+                        // store[callStateKey] &&  patchState(store, setLoading());
+                        const result = await dataService.load(filter());
                         patchState(store, setAllEntities(result));
+                        // store[callStateKey] &&  patchState(store, setLoaded());
                     }
-                    patchState(store, setLoaded());
                 }
             };
         })

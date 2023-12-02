@@ -103,7 +103,6 @@ export function withUndoRedo<Collection extends string>(options: {
         canRedo.set(redoStack.length !== 0);
     };
 
-
     const keys = getUndoRedoKeys(normalized?.collections);
 
     return signalStoreFeature(
