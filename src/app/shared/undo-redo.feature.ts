@@ -5,8 +5,9 @@ import { effect, signal, untracked } from "@angular/core";
 
 export type StackItem = {
     filter: Filter;
-    entityMap: Record<EntityId, Entity>,
-    ids: EntityId[]
+    entityMap: Record<EntityId, Entity>;
+    ids: EntityId[];
+    selectedIds: Record<EntityId, boolean>;
 };
 
 export type UndoRedoOptions = {
@@ -48,7 +49,8 @@ export function withUndoRedo(options = defaultUndoRedoOptions) {
             state: type<{
                 filter: Filter,
                 entityMap: Record<EntityId, Entity>,
-                ids: EntityId[]
+                ids: EntityId[],
+                selectedIds: Record<EntityId, boolean>
             }>(),
         },
         withComputed(() => ({
@@ -93,6 +95,7 @@ export function withUndoRedo(options = defaultUndoRedoOptions) {
                     const filter = store.filter();
                     const entityMap = store.entityMap();
                     const ids = store.ids();
+                    const selectedIds = store.selectedIds();
 
                     if (skipOnce) {
                         skipOnce = false;
@@ -110,7 +113,7 @@ export function withUndoRedo(options = defaultUndoRedoOptions) {
                         undoStack.unshift();
                     }
 
-                    previous = { filter, entityMap, ids };
+                    previous = { filter, entityMap, ids, selectedIds };
 
                     // Don't propogate current reactive context
                     untracked(() => updateInternal());
