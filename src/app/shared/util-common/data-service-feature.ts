@@ -3,7 +3,7 @@ import { SignalStoreFeature, patchState, signalStoreFeature, type, withComputed,
 import { CallState, getCallStateKeys, setLoaded, setLoading } from "./call-state.feature";
 import { setAllEntities, EntityId } from "@ngrx/signals/entities";
 import { EntityState, NamedEntitySignals } from "@ngrx/signals/entities/src/models";
-import { SignalStateMeta } from "@ngrx/signals/src/signal-state";
+import { StateSignal } from "@ngrx/signals/src/state-signal";
 
 export type Filter = Record<string, unknown>;
 export type Entity = { id: EntityId };
@@ -120,7 +120,7 @@ export function withDataService<E extends Entity, F extends Filter, S extends Da
                 [selectedEntitiesKey]: computed(() => entities().filter(e => selectedIds()[e.id]))
             }
         }),
-        withMethods((store: Record<string, unknown> & SignalStateMeta<object>) => {
+        withMethods((store: Record<string, unknown> & StateSignal<object>) => {
 
             const dataService = inject(dataServiceType)
             return {
