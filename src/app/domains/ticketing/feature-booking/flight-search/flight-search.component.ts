@@ -5,6 +5,7 @@ import { Flight, FlightService } from "../../data";
 import { CityValidator, FormUpdateDirective, addMinutes } from "src/app/shared/util-common";
 import { FlightCardComponent } from "../../ui-common";
 import { Criteria } from "../criteria";
+import { BookingStore } from "../booking.store";
 
 @Component({
   standalone: true,
@@ -24,43 +25,32 @@ import { Criteria } from "../criteria";
 })
 export class FlightSearchComponent {
 
-  private flightService = inject(FlightService);
+  private store = inject(BookingStore);
 
-  from = signal('Hamburg');
-  to = signal('London');
-  flights = signal<Flight[]>([]);
+  from = this.store.from;
+  to = this.store.to;
+  flights = this.store.flights;
+  basket = this.store.basket;
 
-  basket = signal<Record<number, boolean>>({
-    7: true,
-    8: false
-  });
+  loading = this.store.loading;
 
   updateCriteria(c: Criteria): void {
-    this.from.set(c.from);
-    this.to.set(c.to);
+    
+    this.store.updateCriteria(c);
+
   }
 
   updateBasket(flightId: number, selected: boolean): void {
-    this.basket.update(basket => ({
-      ...basket,
-      [flightId]: selected
-    }));
+    this.updateBasket(flightId, selected);
   }
 
   async search(): Promise<void> {
     if (!this.from() || !this.to()) return;
-    const flights = await this.flightService.findPromise(this.from(), this.to());
-    this.flights.set(flights);
+    this.store.load();
   }
 
   delay(): void {
-    this.flights.update(flights => ([
-      { 
-        ...flights[0], 
-        date: addMinutes(flights[0].date, 15) 
-      },
-      ...flights.slice(1)
-    ]));
+    this.store.delay();
   }
 
 }
