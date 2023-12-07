@@ -31,6 +31,8 @@ export class FlightSearchComponent {
   to = this.store.to;
   flights = this.store.flights;
 
+  loading = this.store.loading;
+
   basket = this.store.basket;
 
   updateCriteria(c: Criteria): void {

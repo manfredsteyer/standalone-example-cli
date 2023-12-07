@@ -4,7 +4,8 @@ import { computed, inject } from "@angular/core";
 import { Criteria } from "./criteria";
 import { addMinutes } from "src/app/shared/util-common";
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { debounceTime, filter, switchMap, tap } from "rxjs";
+import { debounceTime, delay, filter, switchMap, tap } from "rxjs";
+import { setLoaded, setLoading, withCallState } from "./call-state";
 
 export const BookingStore = signalStore(
     { providedIn: 'root' },
@@ -18,6 +19,7 @@ export const BookingStore = signalStore(
         selected: computed(() => store.flights().filter(f => store.basket()[f.id])),
         criteria: computed(() => ({ from: store.from(), to: store.to() }))
     })),
+    withCallState(),
     withMethods((
         store,
         flightService = inject(FlightService)
@@ -51,8 +53,11 @@ export const BookingStore = signalStore(
         connectCriteria: rxMethod<Criteria>(c$ => c$.pipe(
             filter(c => c.from.length >= 3 && c.to.length >= 3),
             debounceTime(300),
+            tap(() => patchState(store, setLoading())),
             switchMap(c => flightService.find(c.from, c.to)),
-            tap(flights => patchState(store, { flights }))
+            delay(7000),
+            tap(flights => patchState(store, { flights })),
+            tap(() => patchState(store, setLoaded())),
         ))
     })),
     withHooks({
