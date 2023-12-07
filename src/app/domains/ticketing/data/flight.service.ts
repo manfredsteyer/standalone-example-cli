@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, lastValueFrom } from 'rxjs';
 import { Flight } from './flight';
 
 @Injectable({
@@ -12,7 +12,7 @@ export class FlightService {
 
   reqDelay = 1000;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   load(from: string, to: string, urgent: boolean): void {
     this.find(from, to, urgent).subscribe({
@@ -21,6 +21,13 @@ export class FlightService {
       },
       error: (err) => console.error('Error loading flights', err),
     });
+  }
+
+  findPromise(
+    from: string,
+    to: string,
+  ): Promise<Flight[]> {
+    return lastValueFrom(this.find(from, to));
   }
 
   find(
