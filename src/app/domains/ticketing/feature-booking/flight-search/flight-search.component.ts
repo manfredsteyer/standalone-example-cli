@@ -29,7 +29,7 @@ export class FlightSearchComponent {
 
   from = this.store.from;
   to = this.store.to;
-  flights = this.store.flights;
+  flights = this.store.entities;
 
   basket = this.store.basket;
 
