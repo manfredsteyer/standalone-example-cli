@@ -3,6 +3,8 @@ import { Flight, FlightService } from "../data";
 import { computed, inject } from "@angular/core";
 import { Criteria } from "./criteria";
 import { addMinutes } from "src/app/shared/util-common";
+import { rxMethod } from '@ngrx/signals/rxjs-interop';
+import { debounceTime, filter, switchMap, tap } from "rxjs";
 
 export const BookingStore = signalStore(
     { providedIn: 'root' },
@@ -14,7 +16,7 @@ export const BookingStore = signalStore(
     }),
     withComputed((store) => ({
         selected: computed(() => store.flights().filter(f => store.basket()[f.id])),
-        criteria: computed(() => ({ from: store.from, to: store.to }))
+        criteria: computed(() => ({ from: store.from(), to: store.to() }))
     })),
     withMethods((
         store,
@@ -45,11 +47,18 @@ export const BookingStore = signalStore(
                     ...flights.slice(1)
                 ]
             }));
-        }
+        },
+        connectCriteria: rxMethod<Criteria>(c$ => c$.pipe(
+            filter(c => c.from.length >= 3 && c.to.length >= 3),
+            debounceTime(300),
+            switchMap(c => flightService.find(c.from, c.to)),
+            tap(flights => patchState(store, { flights }))
+        ))
     })),
     withHooks({
         onInit(store) {
-            store.load();
+            // store.load();
+            store.connectCriteria(store.criteria);
         },
         onDestroy(store) {
             console.log('Hasta la vista, Store!', store)
