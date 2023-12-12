@@ -27,7 +27,7 @@
             "styles": [
               "node_modules/@angular-architects/paper-design/assets/css/bootstrap.css",
               "node_modules/@angular-architects/paper-design/assets/scss/paper-dashboard.scss",
-              "node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
+              "node_modules/@angular/material/prebuilt-themes/deeppurple-amber.css",
               "src/styles.css"
             ],
             "scripts": []
@@ -63,10 +63,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "standalone-cli:build:production"
+              "buildTarget": "standalone-cli:build:production"
             },
             "development": {
-              "browserTarget": "standalone-cli:build:development"
+              "buildTarget": "standalone-cli:build:development"
             }
           },
           "defaultConfiguration": "development"
