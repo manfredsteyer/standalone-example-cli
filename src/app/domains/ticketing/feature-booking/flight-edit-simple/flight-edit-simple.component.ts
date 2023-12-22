@@ -1,49 +1,49 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit, ViewChild, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { Flight, FlightBookingStore } from '../../data';
+import { Flight, FlightBookingStore, SimpleFlightBookingStore } from '../../data';
 import { FormsModule, NgForm } from '@angular/forms';
 
 @Component({
   standalone: true,
   imports: [CommonModule, RouterModule, FormsModule],
-  selector: 'app-flight-edit',
-  templateUrl: './flight-edit.component.html',
+  selector: 'app-flight-edit-simple',
+  templateUrl: './flight-edit-simple.component.html',
 })
-export class FlightEditComponent implements OnInit {
+export class FlightEditSimpleComponent implements OnInit {
 
   @ViewChild(NgForm)
   private form!: NgForm;
 
-  private store = inject(FlightBookingStore);
+  private store = inject(SimpleFlightBookingStore);
 
-  current = this.store.currentFlight;
-  loading = this.store.flightLoading;
-  error = this.store.flightError;
+  current = this.store.current;
+  loading = this.store.loading;
+  error = this.store.error;
 
   @Input({ required: true })
   id = '';
 
   ngOnInit(): void {
-    this.store.loadFlightById(this.id);
+    this.store.loadById(this.id);
   }
 
   async save() {
     const flight = this.form.value as Flight;
     if (flight.id) {
-      await this.store.updateFlight(flight);
+      await this.store.update(flight);
     }
     else {
-      await this.store.createFlight(flight);
+      await this.store.create(flight);
     }
   }
 
   async createNew() {
-    await this.store.setCurrentFlight({} as Flight);
+    await this.store.setCurrent({} as Flight);
   }
 
   async deleteFlight() {
-    await this.store.deleteFlight(this.form.value)
+    await this.store.delete(this.form.value)
   }
 
 }

@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, firstValueFrom } from 'rxjs';
 import { Flight } from './flight';
 import { DataService } from 'src/app/shared/util-common';
+import { EntityId } from '@ngrx/signals/entities';
 
 export type FlightFilter = {
   from: string;
@@ -16,6 +17,24 @@ export class FlightService implements DataService<Flight, FlightFilter> {
   baseUrl = `https://demo.angulararchitects.io/api`;
 
   constructor(private http: HttpClient) {}
+ 
+  loadById(id: EntityId): Promise<Flight> {
+    return firstValueFrom(this.findById('' + id));
+  }
+
+  create(entity: Flight): Promise<Flight> {
+    entity.id = 0;
+    return firstValueFrom(this.save(entity));
+  }
+
+  update(entity: Flight): Promise<Flight> {
+    return firstValueFrom(this.save(entity));
+  }
+
+  delete(entity: Flight): Promise<void> {
+    return firstValueFrom(this.remove(entity));
+  }
+
 
   load(filter: FlightFilter): Promise<Flight[]> {
     return this.findPromise(filter.from, filter.to);
@@ -41,15 +60,20 @@ export class FlightService implements DataService<Flight, FlightFilter> {
     return this.http.get<Flight[]>(url, { params, headers });
   }
 
-  public findById(id: string): Observable<Flight> {
+  private findById(id: string): Observable<Flight> {
     const reqObj = { params: new HttpParams().set('id', id) };
     const url = [this.baseUrl, 'flight'].join('/');
     return this.http.get<Flight>(url, reqObj);
   }
 
-  save(flight: Flight): Observable<Flight> {
+  private save(flight: Flight): Observable<Flight> {
     const url = [this.baseUrl, 'flight'].join('/');
     return this.http.post<Flight>(url, flight);
+  }
+
+  private remove(flight: Flight): Observable<void> {
+    const url = [this.baseUrl, 'flight', flight.id].join('/');
+    return this.http.delete<void>(url);
   }
 
 }

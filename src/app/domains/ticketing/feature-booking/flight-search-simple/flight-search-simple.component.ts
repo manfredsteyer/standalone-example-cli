@@ -5,6 +5,7 @@ import { CityValidator } from 'src/app/shared/util-common';
 import { FlightCardComponent } from '../../ui-common';
 import { SimpleFlightBookingStore } from '../../data';
 import { ChangeDetectionStrategy } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 @Component({
   standalone: true,
@@ -17,6 +18,8 @@ import { ChangeDetectionStrategy } from '@angular/core';
     FormsModule,
     FlightCardComponent,
     CityValidator,
+
+    RouterLink
   ],
   selector: 'app-flight-search',
   templateUrl: './flight-search-simple.component.html',

@@ -18,7 +18,6 @@ export class FlightCardComponent {
   @Input() item: Flight = initFlight;
   @Input() selected: boolean | undefined;
   @Output() selectedChange = new EventEmitter<boolean>();
-  @Input() showEditButton = true;
 
   select() {
     this.selected = true;

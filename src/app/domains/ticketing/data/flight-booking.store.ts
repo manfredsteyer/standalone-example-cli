@@ -29,7 +29,6 @@ export const FlightBookingStore = signalStore(
   }),
 );
 
-
 //
 // For the sake of demonstration:
 // The same store but without configured properties

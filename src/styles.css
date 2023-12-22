@@ -6,3 +6,16 @@ body {
 .active-card {
     background-color: antiquewhite;
 }
+
+input, button {
+    margin: 2px;
+}
+
+.error {
+    font-size: 1.2em;
+    color: darkred;
+}
+
+.status {
+    font-size: 1.2em;
+}

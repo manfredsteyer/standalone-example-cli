@@ -22,7 +22,7 @@ export type NamedCallStateSignals<Prop extends string> = {
     [K in Prop as `${K}Loaded`]: Signal<boolean>;
   } & {
     [K in Prop as `${K}Error`]: Signal<string | null>;
-  };
+  } 
 
 export type CallStateSignals = {
   loading: Signal<boolean>;
@@ -106,14 +106,27 @@ export function setLoaded<Prop extends string>(
 }
 
 export function setError<Prop extends string>(
-  error: string,
+  error: unknown,
   prop?: Prop,
   ): NamedCallStateSlice<Prop> | CallStateSlice {
 
-    if (prop) {
-      return { [`${prop}CallState`]: { error } } as NamedCallStateSlice<Prop>;
+    let errorMessage = '';
+
+    if (!error) {
+      errorMessage = '';
+    }
+    else if (typeof error === 'object' && 'message' in error) {
+      errorMessage = String(error.message);
     }
     else {
-      return { callState: { error } };
+      errorMessage = String(error);
+    }
+    
+
+    if (prop) {
+      return { [`${prop}CallState`]: { error: errorMessage } } as NamedCallStateSlice<Prop>;
+    }
+    else {
+      return { callState: { error: errorMessage } };
     }
 }
