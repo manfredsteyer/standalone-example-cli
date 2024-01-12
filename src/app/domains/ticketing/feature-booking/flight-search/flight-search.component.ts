@@ -1,10 +1,10 @@
 import { AsyncPipe, JsonPipe, NgForOf, NgIf } from "@angular/common";
-import { Component, inject, signal } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { Flight, FlightService } from "../../data";
 import { CityValidator, FormUpdateDirective, addMinutes } from "src/app/shared/util-common";
 import { FlightCardComponent } from "../../ui-common";
 import { Criteria } from "../criteria";
+import { BookingStore } from "../booking.store";
 
 @Component({
   standalone: true,
@@ -24,43 +24,29 @@ import { Criteria } from "../criteria";
 })
 export class FlightSearchComponent {
 
-  private flightService = inject(FlightService);
+  private store = inject(BookingStore);
 
-  from = signal('Hamburg');
-  to = signal('London');
-  flights = signal<Flight[]>([]);
+  from = this.store.from;
+  to = this.store.to;
+  flights = this.store.flights;
 
-  basket = signal<Record<number, boolean>>({
-    7: true,
-    8: false
-  });
+  basket = this.store.basket;
 
   updateCriteria(c: Criteria): void {
-    this.from.set(c.from);
-    this.to.set(c.to);
+    this.store.updateCriteria(c);
   }
 
   updateBasket(flightId: number, selected: boolean): void {
-    this.basket.update(basket => ({
-      ...basket,
-      [flightId]: selected
-    }));
+    this.store.updateBasket(flightId, selected);
   }
 
   async search(): Promise<void> {
     if (!this.from() || !this.to()) return;
-    const flights = await this.flightService.findPromise(this.from(), this.to());
-    this.flights.set(flights);
+    this.store.load();
   }
 
   delay(): void {
-    this.flights.update(flights => ([
-      { 
-        ...flights[0], 
-        date: addMinutes(flights[0].date, 15) 
-      },
-      ...flights.slice(1)
-    ]));
+    this.store.delay();
   }
 
 }
