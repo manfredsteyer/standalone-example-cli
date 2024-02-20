@@ -4,7 +4,7 @@
 
   <div class="form-group">
     <label>From:</label>
-    <input #toField [ngModel]="from()" (ngModelChange)="updateCriteria($event, toField.value)" name="from" class="form-control">
+    <input #fromField [ngModel]="from()" (ngModelChange)="updateCriteria($event, toField.value)" name="from" class="form-control">
   </div>
 
   <div class="alert alert-warning" *ngIf="form?.controls?.['from']?.hasError('appCity')">
@@ -13,7 +13,7 @@
 
   <div class="form-group">
     <label>To:</label>
-    <input #fromField [ngModel]="to()" (ngModelChange)="updateCriteria(fromField.value, $event)" name="to" class="form-control">
+    <input #toField [ngModel]="to()" (ngModelChange)="updateCriteria(fromField.value, $event)" name="to" class="form-control">
   </div>
 
   <div class="form-group">

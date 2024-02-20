@@ -27,14 +27,14 @@ export class FlightBookingFacade {
   from = this.state.from;
   to = this.state.to;
 
-  pref = this.state.preferences
+  pref = this.state.preferences;
 
-  // basket = this.state.basket;
+  basket = this.state.basket;
 
   // fetch selected signal
-  // selected = computed(
-  //   () => this.flights().filter((f) => this.basket()[f.id])
-  // );
+  selected = computed(
+    () => this.flights().filter((f) => this.basket()[f.id])
+  );
 
   updateCriteria(from: string, to: string): void {
     patchState(this.state, { from, to })

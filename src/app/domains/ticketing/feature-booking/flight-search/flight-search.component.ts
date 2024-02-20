@@ -1,8 +1,8 @@
-import {AsyncPipe, JsonPipe, NgForOf, NgIf} from "@angular/common";
-import {Component, inject, signal} from "@angular/core";
-import {FormsModule} from "@angular/forms";
-import {CityValidator} from "src/app/shared/util-common";
-import {FlightCardComponent} from "../../ui-common";
+import { AsyncPipe, JsonPipe, NgForOf, NgIf } from "@angular/common";
+import { Component, inject } from "@angular/core";
+import { FormsModule } from "@angular/forms";
+import { CityValidator } from "src/app/shared/util-common";
+import { FlightCardComponent } from "../../ui-common";
 import { FlightBookingFacade } from "../../data";
 import { ChangeDetectionStrategy } from "@angular/core";
 
@@ -23,15 +23,15 @@ import { ChangeDetectionStrategy } from "@angular/core";
   templateUrl: './flight-search.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FlightSearchComponent  {
+export class FlightSearchComponent {
   private facade = inject(FlightBookingFacade);
 
   from = this.facade.from;
   to = this.facade.to;
-  // basket = this.facade.basket;
+  basket = this.facade.basket;
   flights = this.facade.flights;
-  // selected = this.facade.selected;
-  
+  selected = this.facade.selected;
+
   async search() {
     this.facade.load();
   }
@@ -45,6 +45,6 @@ export class FlightSearchComponent  {
   }
 
   updateBasket(id: number, selected: boolean): void {
-    // this.facade.updateBasket(id, selected);
+    this.facade.updateBasket(id, selected);
   }
 }
