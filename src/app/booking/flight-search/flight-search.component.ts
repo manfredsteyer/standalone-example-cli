@@ -1,9 +1,22 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { Flight, FlightService } from '@demo/data';
+import { FlightCardComponent } from '../flight-card/flight-card.component';
+import { NgIf, NgFor, JsonPipe } from '@angular/common';
+import { CityValidator } from '../../shared/city.validator';
+import { FormsModule } from '@angular/forms';
 
 @Component({
-  selector: 'flight-search',
-  templateUrl: './flight-search.component.html',
+    selector: 'flight-search',
+    templateUrl: './flight-search.component.html',
+    standalone: true,
+    imports: [
+        FormsModule,
+        CityValidator,
+        NgIf,
+        NgFor,
+        FlightCardComponent,
+        JsonPipe,
+    ],
 })
 export class FlightSearchComponent implements OnInit {
   private flightService = inject(FlightService);

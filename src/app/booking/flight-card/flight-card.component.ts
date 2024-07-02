@@ -1,11 +1,15 @@
-import { CommonModule } from "@angular/common";
+import { CommonModule, NgClass, NgIf, DatePipe } from "@angular/common";
 import { Component, ElementRef, EventEmitter, Input, NgZone, Output, inject } from "@angular/core";
 import { Flight, initFlight } from "@demo/data";
+import { CityPipe } from "../../shared/city.pipe";
+import { RouterLink } from "@angular/router";
 
 @Component({
-  selector: 'flight-card',
-  templateUrl: './flight-card.component.html',
-  styleUrl: './flight-card.component.css'
+    selector: 'flight-card',
+    templateUrl: './flight-card.component.html',
+    styleUrl: './flight-card.component.css',
+    standalone: true,
+    imports: [NgClass, NgIf, RouterLink, DatePipe, CityPipe]
 })
 export class FlightCardComponent {
   

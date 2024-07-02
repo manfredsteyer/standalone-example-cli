@@ -3,8 +3,9 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 
 @Component({
-  selector: 'app-flight-edit',
-  templateUrl: './flight-edit.component.html',
+    selector: 'app-flight-edit',
+    templateUrl: './flight-edit.component.html',
+    standalone: true,
 })
 export class FlightEditComponent implements OnInit {
   

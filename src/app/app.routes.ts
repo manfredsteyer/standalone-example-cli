@@ -16,12 +16,10 @@ export const APP_ROUTES: Routes = [
     {
         path: 'flight-booking',
         canActivate: mapToCanActivate([AuthGuard]),
-        loadChildren: () =>
-            import('./booking/flight-booking.module')
-                    .then(m => m.FlightBookingModule)
+        loadChildren: () => import('./booking/flight-booking.routes')
     },
     {
         path: 'about',
-        component: AboutComponent
+        loadComponent: () => import('./about/about.component')
     },
 ];
