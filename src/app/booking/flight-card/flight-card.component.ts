@@ -1,5 +1,5 @@
 import { CommonModule, NgClass, NgIf, DatePipe } from "@angular/common";
-import { Component, ElementRef, EventEmitter, Input, NgZone, Output, inject } from "@angular/core";
+import { ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, NgZone, Output, inject } from "@angular/core";
 import { Flight, initFlight } from "@demo/data";
 import { CityPipe } from "../../shared/city.pipe";
 import { RouterLink } from "@angular/router";
@@ -9,10 +9,12 @@ import { RouterLink } from "@angular/router";
     templateUrl: './flight-card.component.html',
     styleUrl: './flight-card.component.css',
     standalone: true,
-    imports: [NgClass, NgIf, RouterLink, DatePipe, CityPipe]
+    imports: [NgClass, NgIf, RouterLink, DatePipe, CityPipe],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FlightCardComponent {
   
+  // TODO: Convert to Signals
   @Input() item: Flight = initFlight;
   @Input() selected: boolean | undefined;
   @Output() selectedChange = new EventEmitter<boolean>();
