@@ -1,4 +1,4 @@
-import { CommonModule, NgClass, NgIf, DatePipe } from "@angular/common";
+import { CommonModule, NgClass, DatePipe } from "@angular/common";
 import { ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, NgZone, Output, inject } from "@angular/core";
 import { Flight, initFlight } from "@demo/data";
 import { CityPipe } from "../../shared/city.pipe";
@@ -9,7 +9,7 @@ import { RouterLink } from "@angular/router";
     templateUrl: './flight-card.component.html',
     styleUrl: './flight-card.component.css',
     standalone: true,
-    imports: [NgClass, NgIf, RouterLink, DatePipe, CityPipe],
+    imports: [NgClass, RouterLink, DatePipe, CityPipe],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FlightCardComponent {

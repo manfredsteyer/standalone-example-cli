@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { Flight, FlightService } from '@demo/data';
 import { FlightCardComponent } from '../flight-card/flight-card.component';
-import { NgIf, NgFor, JsonPipe } from '@angular/common';
+import { JsonPipe } from '@angular/common';
 import { CityValidator } from '../../shared/city.validator';
 import { FormsModule } from '@angular/forms';
 
@@ -12,11 +12,9 @@ import { FormsModule } from '@angular/forms';
   imports: [
     FormsModule,
     CityValidator,
-    NgIf,
-    NgFor,
     FlightCardComponent,
-    JsonPipe,
-  ],
+    JsonPipe
+],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FlightSearchComponent implements OnInit {

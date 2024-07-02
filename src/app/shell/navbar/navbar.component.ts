@@ -1,5 +1,5 @@
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { CommonModule, NgIf, AsyncPipe } from '@angular/common';
+import { CommonModule, AsyncPipe } from '@angular/common';
 import { Component, Inject } from '@angular/core';
 import { MatIconModule, MatIcon } from '@angular/material/icon';
 import { MatToolbarModule, MatToolbar } from '@angular/material/toolbar';
@@ -11,12 +11,11 @@ import { MatIconButton } from '@angular/material/button';
     templateUrl: './navbar.component.html',
     standalone: true,
     imports: [
-        MatToolbar,
-        NgIf,
-        MatIconButton,
-        MatIcon,
-        AsyncPipe,
-    ],
+    MatToolbar,
+    MatIconButton,
+    MatIcon,
+    AsyncPipe
+],
 })
 export class NavbarComponent {
     isHandset$ = this.breakpointObserver.observe(Breakpoints.Handset)
