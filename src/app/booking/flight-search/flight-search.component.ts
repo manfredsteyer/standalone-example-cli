@@ -4,6 +4,7 @@ import { FlightCardComponent } from '../flight-card/flight-card.component';
 import { NgIf, NgFor, JsonPipe } from '@angular/common';
 import { CityValidator } from '../../shared/city.validator';
 import { FormsModule } from '@angular/forms';
+import { FlightStore } from './flight.store';
 
 @Component({
   selector: 'flight-search',
@@ -20,43 +21,26 @@ import { FormsModule } from '@angular/forms';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FlightSearchComponent implements OnInit {
-  private flightService = inject(FlightService);
+  private store = inject(FlightStore);
 
-  from = signal('Hamburg'); // in Germany
-  to = signal('Graz'); // in Austria
-  flights = signal<Flight[]>([]);
-  basket = signal<Record<number, boolean>>({});
+  from = this.store.from;
+  to = this.store.to;
+  flights = this.store.flights;
+  basket = this.store.basket;
 
-  selected = computed(() => this.flights().filter(f => this.basket()[f.id]));
+  selected = this.store.selected;
 
   ngOnInit(): void { }
 
   search(): void {
-    if (!this.from() || !this.to()) return;
-
-    this.flightService
-      .find(this.from(), this.to())
-      .subscribe((flights) => {
-        this.flights.set(flights);
-      });
+    this.store.search();
   }
 
   updateBasket(flightId: number, selected: boolean): void {
-    this.basket.update(basket => ({
-      ...basket,
-      [flightId]: selected
-    }));
+    this.store.updateBasket(flightId, selected);
   }
 
   delay(): void {
-    const flights = this.flights();
-    const flight = flights[0];
-    const date = new Date(flight.date);
-
-    const newDate = new Date(date.getTime() + 1000 * 60 * 15);
-    const newFlight = { ...flight, date: newDate.toISOString() };
-    const newFlights = [newFlight, ...flights.slice(1)];
-
-    this.flights.set(newFlights);
+    this.store.delay();
   }
 }
