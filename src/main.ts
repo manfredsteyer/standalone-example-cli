@@ -15,10 +15,11 @@ import { APP_ROUTES } from './app/app.routes';
 import { withPreloading, provideRouter, PreloadAllModules } from '@angular/router';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { LegacyInterceptor } from './app/shared/legacy.interceptor';
-import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptors, withInterceptorsFromDi } from '@angular/common/http';
 import { provideLogger } from './app/shared/logger/providers';
 import { loggerConfig } from './app/logger.config';
 import { withColor } from './app/shared/logger/features';
+import { authInterceptor } from './app/shared/auth.interceptor';
 
 bootstrapApplication(AppComponent, {
     providers: [
@@ -35,16 +36,13 @@ bootstrapApplication(AppComponent, {
             loggerConfig,
             withColor()
         ),
-        {
-            provide: HTTP_INTERCEPTORS,
-            useClass: LegacyInterceptor,
-            multi: true,
-        },
-        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClient(
+            withInterceptors([authInterceptor])
+        ),
         provideAnimations(),
         provideRouter(
             APP_ROUTES,
-            withPreloading(PreloadAllModules)
+            withPreloading(PreloadAllModules),
         )
     ]
 });
