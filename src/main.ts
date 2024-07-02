@@ -16,14 +16,25 @@ import { withPreloading, provideRouter, PreloadAllModules } from '@angular/route
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { LegacyInterceptor } from './app/shared/legacy.interceptor';
 import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideLogger } from './app/shared/logger/providers';
+import { loggerConfig } from './app/logger.config';
+import { withColor } from './app/shared/logger/features';
 
 bootstrapApplication(AppComponent, {
     providers: [
-        importProvidersFrom(BrowserModule, LayoutModule, LoggerModule.forRoot({
-            level: LogLevel.DEBUG,
-            appenders: [DefaultLogAppender],
-            formatter: (level, cat, msg) => [level, cat, msg].join(';'),
-        }), MatToolbarModule, MatButtonModule, MatSidenavModule, MatIconModule, MatListModule),
+        importProvidersFrom(
+            BrowserModule,
+            LayoutModule,
+            MatToolbarModule,
+            MatButtonModule,
+            MatSidenavModule,
+            MatIconModule,
+            MatListModule
+        ),
+        provideLogger(
+            loggerConfig,
+            withColor()
+        ),
         {
             provide: HTTP_INTERCEPTORS,
             useClass: LegacyInterceptor,
@@ -31,6 +42,9 @@ bootstrapApplication(AppComponent, {
         },
         provideHttpClient(withInterceptorsFromDi()),
         provideAnimations(),
-        provideRouter(APP_ROUTES, withPreloading(PreloadAllModules))
+        provideRouter(
+            APP_ROUTES,
+            withPreloading(PreloadAllModules)
+        )
     ]
 });
