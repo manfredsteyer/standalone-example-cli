@@ -37,7 +37,7 @@ bootstrapApplication(AppComponent, {
 
     provideStore(reducer),
     provideEffects(),
-    provideStoreDevtools(),
+    provideStoreDevtools({connectInZone: true}),
     provideAnimations(),
 
     importProvidersFrom(TicketsModule),
