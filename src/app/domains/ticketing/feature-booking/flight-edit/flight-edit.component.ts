@@ -22,5 +22,6 @@ export class FlightEditComponent implements OnInit {
       this.showDetails = p['showDetails'];
     });
   }
-
 }
+
+// TEST
