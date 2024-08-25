@@ -3,7 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CheckinService } from '../data';
 
-// import { } from '../../ticketing/data';
+import { FlightService } from '../../ticketing/data';
+import { LoggerService} from '../../../shared/util-logger';
 
 @Component({
   selector: 'app-feature-manage',
@@ -14,6 +15,9 @@ import { CheckinService } from '../data';
 })
 export class FeatureManageComponent {
   service = inject(CheckinService);
+  flightService = inject(FlightService);
+  logger = inject(LoggerService);
+  
   ticketNumber = '';
 
   checkin() {
