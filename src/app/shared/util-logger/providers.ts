@@ -9,7 +9,7 @@ import {
 import { LoggerFeature, LoggerFeatureKind } from './features';
 import { LogAppender, LOG_APPENDERS } from './log-appender';
 import { LOG_FORMATTER } from './log-formatter';
-import { LoggerService } from './logger';
+import { LoggerService } from './logger.service';
 import { defaultConfig, LoggerConfig } from './logger-config';
 
 export function provideLogger(

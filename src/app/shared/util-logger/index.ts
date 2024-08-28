@@ -6,5 +6,5 @@ export * from './log-formatter';
 export * from './log-level';
 export * from './logger-config';
 export * from './logger-module';
-export * from './logger';
+export * from './logger.service';
 export * from './providers';
