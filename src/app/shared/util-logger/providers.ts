@@ -9,7 +9,7 @@ import {
 import { LoggerFeature, LoggerFeatureKind } from './features';
 import { LogAppender, LOG_APPENDERS } from './log-appender';
 import { LOG_FORMATTER } from './log-formatter';
-import { LoggerService } from './logger.service';
+import { LogService } from './log.service';
 import { defaultConfig, LoggerConfig } from './logger-config';
 
 export function provideLogger(
@@ -26,7 +26,7 @@ export function provideLogger(
   }
 
   return makeEnvironmentProviders([
-    LoggerService,
+    LogService,
     {
       provide: LoggerConfig,
       useValue: merged,
@@ -59,7 +59,7 @@ export function provideCategory(
       multi: true,
       useValue: () => {
         const appender = inject(appenderToken);
-        const logger = inject(LoggerService);
+        const logger = inject(LogService);
 
         logger.categories[category] = appender;
       },

@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CheckinService } from '../data';
 
-import { LoggerService} from '../../../shared/util-logger';
+import { LogService} from '../../../shared/util-logger';
 
 @Component({
   selector: 'app-feature-manage',
@@ -14,7 +14,7 @@ import { LoggerService} from '../../../shared/util-logger';
 })
 export class FeatureManageComponent {
   service = inject(CheckinService);
-  logger = inject(LoggerService);
+  logger = inject(LogService);
 
   ticketNumber = '';
 

@@ -1,6 +1,6 @@
 import { Component, inject } from "@angular/core";
 import { RouterLink, RouterOutlet } from "@angular/router";
-import { LoggerService } from "../../../shared/util-logger";
+import { LogService } from "../../../shared/util-logger";
 
 @Component({
   standalone: true,
@@ -12,7 +12,7 @@ import { LoggerService } from "../../../shared/util-logger";
   templateUrl: './flight-booking.component.html'
 })
 export class FlightBookingComponent {
-  logger = inject(LoggerService);
+  logger = inject(LogService);
 
   constructor() {
     this.logger.info('booking', 'Hello from Booking');

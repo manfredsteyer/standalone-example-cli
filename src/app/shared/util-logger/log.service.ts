@@ -5,12 +5,12 @@ import { LogLevel } from './log-level';
 import { LoggerConfig } from './logger-config';
 
 @Injectable()
-export class LoggerService {
+export class LogService {
   private appenders = inject(LOG_APPENDERS);
   private formatter = inject(LOG_FORMATTER);
   private config = inject(LoggerConfig);
 
-  private parentLogger = inject(LoggerService, {
+  private parentLogger = inject(LogService, {
     optional: true,
     skipSelf: true,
   });
