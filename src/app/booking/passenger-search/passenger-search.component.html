@@ -1,4 +1,4 @@
-<ng-container *ngIf="passengers.length > 0">
+@if (passengers.length > 0) {
   <h2 class="title">Passengers</h2>
   <!-- <pre>{{passengers | json}}</pre> -->
   <table class="table">
@@ -8,14 +8,15 @@
       <th>Name</th>
       <th>Bonus Miles</th>
       <th>Status</th>
-
     </tr>
-    <tr *ngFor="let p of passengers">
-      <td>{{p.id}}</td>
-      <td>{{p.firstName}}</td>
-      <td>{{p.name}}</td>
-      <td>{{p.bonusMiles}}</td>
-      <td>{{p.passengerStatus}}</td>
-    </tr>
+    @for (p of passengers; track p) {
+      <tr>
+        <td>{{p.id}}</td>
+        <td>{{p.firstName}}</td>
+        <td>{{p.name}}</td>
+        <td>{{p.bonusMiles}}</td>
+        <td>{{p.passengerStatus}}</td>
+      </tr>
+    }
   </table>
-</ng-container>
+}

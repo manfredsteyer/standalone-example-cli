@@ -1,4 +1,4 @@
-import { JsonPipe, NgFor, NgIf } from "@angular/common";
+import { JsonPipe } from "@angular/common";
 import { HttpClient } from "@angular/common/http";
 import { Component, inject } from "@angular/core";
 import { Passenger} from '../../data/passenger';
@@ -7,7 +7,7 @@ import { Passenger} from '../../data/passenger';
     selector: 'app-passenger-search',
     templateUrl: './passenger-search.component.html',
     standalone: true,
-    imports: [NgIf, NgFor]
+    imports: []
 })
 export class PassengerSearchComponent {
   private http = inject(HttpClient);

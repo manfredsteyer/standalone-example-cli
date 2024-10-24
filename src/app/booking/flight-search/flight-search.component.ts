@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, effect, inject, OnInit, s
 import { Flight, FlightService } from '@demo/data';
 import { FormsModule } from '@angular/forms';
 import { CityValidator } from '../../shared/city.validator';
-import { NgIf, NgFor, JsonPipe } from '@angular/common';
+import { JsonPipe } from '@angular/common';
 import { FlightCardComponent } from '../flight-card/flight-card.component';
 import { MatDialog } from '@angular/material/dialog';
 import { InfoComponent } from 'src/app/info/info.component';
@@ -21,11 +21,9 @@ import { rxResource } from 'src/app/shared/resource/rx-resource';
   imports: [
     FormsModule,
     CityValidator,
-    NgIf,
-    NgFor,
     FlightCardComponent,
-    JsonPipe,
-  ],
+    JsonPipe
+],
 })
 export class FlightSearchComponent implements OnInit {
   private flightService = inject(FlightService);
