@@ -9,7 +9,8 @@ import { Validator, AbstractControl, NG_VALIDATORS, ValidationErrors } from '@an
             useExisting: CityValidator,
             multi: true
         }
-    ]
+    ],
+    standalone: true
 })
 export class CityValidator implements Validator {
 

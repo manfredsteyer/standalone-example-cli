@@ -1,5 +1,5 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Flight } from './flight';
 import { toPromise } from '../shared/to-promise';
@@ -8,12 +8,12 @@ import { toPromise } from '../shared/to-promise';
   providedIn: 'root',
 })
 export class FlightService {
+  private http = inject(HttpClient);
+
   flights: Flight[] = [];
   baseUrl = `https://demo.angulararchitects.io/api`;
 
   reqDelay = 1000;
-
-  constructor(private http: HttpClient) {}
 
   load(from: string, to: string, urgent: boolean): void {
     this.find(from, to, urgent).subscribe({
@@ -27,7 +27,7 @@ export class FlightService {
   findPromise(
     from: string,
     to: string,
-    abortSignal: AbortSignal
+    abortSignal?: AbortSignal
   ): Promise<Flight[]> {
     return toPromise(this.find(from, to), abortSignal);
   }

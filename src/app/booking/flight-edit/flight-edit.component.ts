@@ -1,23 +1,18 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, Input, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
-  selector: 'app-flight-edit',
-  templateUrl: './flight-edit.component.html',
+    selector: 'app-flight-edit',
+    templateUrl: './flight-edit.component.html',
+    standalone: true,
 })
 export class FlightEditComponent implements OnInit {
   
-  id: string | undefined;
-  showDetails: string | undefined;
+  @Input() id: string | undefined;
+  @Input() showDetails: string | undefined;
   showWarning = false;
 
-  constructor(@Inject(ActivatedRoute) private route: ActivatedRoute) {}
-
   ngOnInit() {
-    this.route.params.subscribe((p) => {
-      this.id = p['id'];
-      this.showDetails = p['showDetails'];
-    });
   }
 
 }

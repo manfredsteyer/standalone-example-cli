@@ -8,6 +8,10 @@ export const FLIGHT_BOOKING_ROUTES: Routes = [
   {
     path: '',
     component: FlightBookingComponent,
+    providers: [
+      // provideState()
+      // provideEffects()
+    ],
     children: [
       {
         path: 'flight-search',

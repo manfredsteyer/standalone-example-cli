@@ -1,30 +1,38 @@
-import { CommonModule } from "@angular/common";
-import { Component, ElementRef, EventEmitter, Input, NgZone, Output, inject } from "@angular/core";
+import { CommonModule, NgClass, NgIf, DatePipe } from "@angular/common";
+import { ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, NgZone, Output, inject, input, model, output } from "@angular/core";
 import { Flight, initFlight } from "@demo/data";
+import { RouterLink } from "@angular/router";
+import { CityPipe } from "../../shared/city.pipe";
 
 @Component({
-  selector: 'flight-card',
-  templateUrl: './flight-card.component.html',
-  styleUrl: './flight-card.component.css'
+    selector: 'flight-card',
+    templateUrl: './flight-card.component.html',
+    styleUrl: './flight-card.component.css',
+    standalone: true,
+    imports: [NgClass, NgIf, RouterLink, DatePipe, CityPipe],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FlightCardComponent {
   
-  @Input() item: Flight = initFlight;
-  @Input() selected: boolean | undefined;
-  @Output() selectedChange = new EventEmitter<boolean>();
-  @Input() showEditButton = true;
+  // Signal Queries
+  // viewChild, viewChildren, contentChild, contentChildren
+
+  item = input(initFlight);
+  selected = model.required<boolean>();
+  showEditButton = input(false);
+  // selectedChange = output<boolean>();
 
   private element = inject(ElementRef);
   private zone = inject(NgZone);
   
   select() {
-    this.selected = true;
-    this.selectedChange.next(true);
+    this.selected.set(true);
+    //this.selectedChange.emit(true);
   }
 
   deselect() {
-    this.selected = false;
-    this.selectedChange.next(false);
+    this.selected.set(false);
+    // this.selectedChange.emit(false);
   }
 
   blink() {
