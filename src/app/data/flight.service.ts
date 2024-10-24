@@ -2,9 +2,10 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Flight } from './flight';
+import { toPromise } from '../shared/to-promise';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class FlightService {
   flights: Flight[] = [];
@@ -21,6 +22,14 @@ export class FlightService {
       },
       error: (err) => console.error('Error loading flights', err),
     });
+  }
+
+  findPromise(
+    from: string,
+    to: string,
+    abortSignal: AbortSignal
+  ): Promise<Flight[]> {
+    return toPromise(this.find(from, to), abortSignal);
   }
 
   find(
