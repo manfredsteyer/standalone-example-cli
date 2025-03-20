@@ -26,8 +26,6 @@
               "src/assets"
             ],
             "styles": [
-              "node_modules/@angular-architects/paper-design/assets/css/bootstrap.css",
-              "node_modules/@angular-architects/paper-design/assets/scss/paper-dashboard.scss",
               "node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
               "src/styles.css"
             ],

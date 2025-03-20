@@ -2,8 +2,9 @@ import { Component, inject, OnInit } from '@angular/core';
 import { Flight, FlightService } from '@demo/data';
 
 @Component({
-  selector: 'flight-search',
-  templateUrl: './flight-search.component.html',
+    selector: 'flight-search',
+    templateUrl: './flight-search.component.html',
+    standalone: false
 })
 export class FlightSearchComponent implements OnInit {
   private flightService = inject(FlightService);
@@ -29,10 +30,15 @@ export class FlightSearchComponent implements OnInit {
   }
 
   delay(): void {
-    const flight = this.flights[0];
-    const date = new Date(flight.date);
-
-    date.setTime(date.getTime() + 1000 * 60 * 15);
-    flight.date = date.toISOString();
+    this.flights = toDelayed(this.flights);
   }
+}
+
+function toDelayed(flights: Flight[]) {
+  const flight = flights[0];
+  const date = new Date(flight.date);
+
+  date.setTime(date.getTime() + 1000 * 60 * 15);
+  flight.date = date.toISOString();
+  return flights;
 }
