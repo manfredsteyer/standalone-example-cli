@@ -8,6 +8,7 @@ import { map, shareReplay } from 'rxjs';
 @Component({
     selector: 'app-navbar-cmp',
     templateUrl: './navbar.component.html',
+    standalone: false
 })
 export class NavbarComponent {
     isHandset$ = this.breakpointObserver.observe(Breakpoints.Handset)

@@ -3,13 +3,12 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from "@angular/router";
 import { LoggerService } from "../shared/logger/logger";
 
 @Component({
-  standalone: true,
-  selector: 'flight-booking',
-  imports: [
-    RouterOutlet,
-    RouterLink,
-  ],
-  templateUrl: './flight-booking.component.html'
+    selector: 'flight-booking',
+    imports: [
+        RouterOutlet,
+        RouterLink,
+    ],
+    templateUrl: './flight-booking.component.html'
 })
 export class FlightBookingComponent {
   logger = inject(LoggerService);

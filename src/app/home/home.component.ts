@@ -3,8 +3,9 @@ import { LoggerService } from "../shared/logger/logger";
 import { AuthService } from "../shared/auth.service";
 
 @Component({
-  selector: 'app-home',
-  templateUrl: './home.component.html'
+    selector: 'app-home',
+    templateUrl: './home.component.html',
+    standalone: false
 })
 export class HomeComponent {
   logger = inject(LoggerService);

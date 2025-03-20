@@ -3,9 +3,10 @@ import { Component, ElementRef, EventEmitter, Input, NgZone, Output, inject } fr
 import { Flight, initFlight } from "@demo/data";
 
 @Component({
-  selector: 'flight-card',
-  templateUrl: './flight-card.component.html',
-  styleUrl: './flight-card.component.css'
+    selector: 'flight-card',
+    templateUrl: './flight-card.component.html',
+    styleUrl: './flight-card.component.css',
+    standalone: false
 })
 export class FlightCardComponent {
   

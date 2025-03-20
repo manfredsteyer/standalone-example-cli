@@ -5,7 +5,8 @@ import { map, shareReplay } from 'rxjs';
 @Component({
     selector: 'app-sidebar-cmp',
     templateUrl: './sidebar.component.html',
-    styleUrls: ['./sidebar.component.css']
+    styleUrls: ['./sidebar.component.css'],
+    standalone: false
 })
 export class SidebarComponent {
     isHandset$ = this.breakpointObserver.observe(Breakpoints.Handset)
