@@ -5,11 +5,10 @@ import { CityPipe } from "src/app/shared/util-common";
 import { Flight, initFlight } from "../../data";
 
 @Component({
-  standalone: true,
-  selector: 'app-flight-card',
-  imports: [CommonModule, RouterModule, CityPipe],
-  templateUrl: './flight-card.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-flight-card',
+    imports: [CommonModule, RouterModule, CityPipe],
+    templateUrl: './flight-card.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FlightCardComponent {
   private element = inject(ElementRef);
