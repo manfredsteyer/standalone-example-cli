@@ -40,6 +40,7 @@
     "@angular-eslint/template-parser": "18.3.0",
     "@angular/cli": "~18.1.4",
     "@angular/compiler-cli": "^18.1.4",
+    "@softarc/detective": "^1.3.0",
     "@softarc/eslint-plugin-sheriff": "^0.16.1",
     "@softarc/sheriff-core": "^0.16.1",
     "@types/jasmine": "~4.3.1",
