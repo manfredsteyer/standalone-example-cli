@@ -1,4 +1,424 @@
-/* You can add global styles to this file, and also import other style files */
+.table {
+  width: 100%;
+  margin-bottom: 1rem;
+  color: #212529;
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  text-align: left;
+  padding: 0.75rem;
+  vertical-align: top;
+  border-top: 1px solid #dee2e6;
+}
+
+.table thead th {
+  vertical-align: bottom;
+  border-bottom: 2px solid #dee2e6;
+}
+
+.table tbody + tbody {
+  border-top: 2px solid #dee2e6;
+}
+
+.table-sm th,
+.table-sm td {
+  padding: 0.3rem;
+}
+
+.table-bordered {
+  border: 1px solid #dee2e6;
+}
+
+.table-bordered th,
+.table-bordered td {
+  border: 1px solid #dee2e6;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.table-hover tbody tr:hover {
+  background-color: rgba(0, 0, 0, 0.075);
+}
+
 body {
-    background-color:#fafafa;
+  background-color: #fafafa;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 0;
+}
+
+h2.title {
+  margin-bottom: 2rem;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin: -15px;
+}
+
+.col-xs-12,
+.col-sm-6,
+.col-md-4,
+.col-lg-3 {
+  padding: 15px;
+  box-sizing: border-box;
+}
+
+.col-xs-12 {
+  flex: 0 0 100%;
+  max-width: 100%;
+}
+
+@media (min-width: 576px) {
+  .col-sm-6 {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+}
+
+@media (min-width: 768px) {
+  .col-md-4 {
+    flex: 0 0 33.333%;
+    max-width: 33.333%;
+  }
+}
+
+@media (min-width: 992px) {
+  .col-lg-3 {
+    flex: 0 0 25%;
+    max-width: 25%;
+  }
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+
+  .sidebar.show {
+    transform: translateX(0);
+  }
+}
+
+.nav-open .sidebar {
+  transform: translateX(0);
+}
+
+.nav-open {
+  overflow: hidden;
+}
+
+.nav-open .overlay {
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 9;
+  transition: opacity 0.3s ease;
+}
+
+.hamburger-menu {
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 30px;
+  height: 25px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.hamburger-menu span {
+  display: block;
+  width: 100%;
+  height: 4px;
+  background-color: white;
+  border-radius: 2px;
+  margin-bottom: 6px;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+@media (max-width: 768px) {
+  .hamburger-menu {
+    display: inline;
+    float: right;
+  }
+}
+
+.card {
+  background-color: white;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  margin-bottom: 0rem;
+}
+
+.card-header {
+  padding: 1rem;
+  padding-bottom: 0;
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+.card-body {
+  padding: 1rem;
+  padding-bottom: 0;
+}
+
+.cdk-dialog-container .card-body {
+  margin-bottom: 2rem;
+}
+
+form {
+  margin-bottom: 40px;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-control {
+  width: 100%;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.btn {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #fff;
+  background-color: #007bff;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  text-align: center;
+  cursor: pointer;
+  margin-right: 5px;
+}
+
+.btn-default {
+  background-color: #6c757d;
+}
+
+.btn-danger {
+  background-color: crimson;
+}
+
+.btn:hover {
+  background-color: #0056b3;
+}
+
+.btn-danger:hover {
+  background-color: #b01030;
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+  background-color: #f4f5f7;
+}
+
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.5rem;
+  height: 60px;
+  color: white;
+  background-color: #3f51b5;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+
+.navbar .navbar-brand {
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+.navbar .navbar-nav {
+  display: flex;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.navbar .nav-item {
+  margin-left: 1rem;
+}
+
+.navbar .nav-link {
+  text-decoration: none;
+  color: white;
+  font-size: 1rem;
+  transition: color 0.3s;
+}
+
+.navbar .nav-link:hover {
+  color: #ffca28;
+}
+
+.sidebar {
+  width: 250px;
+  background-color: #ffffff;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 0;
+  overflow-y: auto;
+  position: fixed;
+  top: 60px;
+  bottom: 0;
+  left: 0;
+  transition: transform 0.3s ease;
+}
+
+.sidebar .logo {
+  text-align: center;
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  color: #3f51b5;
+}
+
+.sidebar .nav {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar .nav li {
+  margin-bottom: 0.5rem;
+}
+
+.sidebar .nav a {
+  text-decoration: none;
+  display: block;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  color: #333333;
+  border-radius: 4px;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.sidebar .nav a:hover {
+  background-color: #e8eaf6;
+  color: #3f51b5;
+}
+
+.sidebar .nav a.active {
+  background-color: #3f51b5;
+  color: #ffffff;
+}
+
+.main-panel {
+  margin-left: 250px;
+  margin-top: 60px;
+  padding: 2rem;
+  flex: 1;
+  overflow-y: auto;
+  transition: margin-left 0.3s ease;
+}
+
+@media (max-width: 768px) {
+  .main-panel {
+    margin-left: 0;
+  }
+}
+
+.app-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: bold;
+  font-size: 1.2em;
+}
+
+.card:has(.nav) {
+  margin-bottom: 20px;
+}
+
+.nav-secondary {
+  display: flex;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: 1rem;
+  margin-bottom: 10px;
+}
+
+.nav-secondary li {
+  display: inline-block;
+}
+
+.nav-secondary a {
+  text-decoration: none;
+  color: #3f51b5;
+}
+
+/* --- */
+
+input.ng-dirty.ng-invalid {
+  border-left: darkred 5px solid;
+}
+
+input.ng-dirty.ng-valid {
+  border-left: darkgreen 5px solid;
+}
+
+.selected, .active-card {
+  background-color: moccasin;
+}
+
+a {
+  cursor: pointer;
+}
+
+.status {
+  text-decoration: underline;
+  color: navy;
+}
+
+.status:hover {
+  text-decoration: underline;
+  color: darkgoldenrod;
+}
+
+.p40 {
+  padding: 20px;
+}
+
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
 }
