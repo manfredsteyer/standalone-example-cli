@@ -1,11 +1,4 @@
-import {
-  EnvironmentProviders,
-  ENVIRONMENT_INITIALIZER,
-  inject,
-  InjectionToken,
-  makeEnvironmentProviders,
-  Type,
-} from '@angular/core';
+import { EnvironmentProviders, inject, InjectionToken, makeEnvironmentProviders, Type, provideEnvironmentInitializer } from '@angular/core';
 import { LoggerFeature, LoggerFeatureKind } from './features';
 import { LogAppender, LOG_APPENDERS } from './log-appender';
 import { LOG_FORMATTER } from './log-formatter';
@@ -54,15 +47,11 @@ export function provideCategory(
       provide: appenderToken,
       useClass: appender,
     },
-    {
-      provide: ENVIRONMENT_INITIALIZER,
-      multi: true,
-      useValue: () => {
+    provideEnvironmentInitializer(() => {
         const appender = inject(appenderToken);
         const logger = inject(LoggerService);
 
         logger.categories[category] = appender;
-      },
-    },
+      }),
   ]);
 }
