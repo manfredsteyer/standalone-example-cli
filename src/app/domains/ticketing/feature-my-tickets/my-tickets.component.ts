@@ -3,14 +3,15 @@ import { Flight } from '../data';
 import { TicketService } from './ticket.service';
 
 @Component({
-  selector: 'app-my-tickets',
-  template: `
+    selector: 'app-my-tickets',
+    template: `
     <h2 class="title">{{title}}</h2>
 
     <ng-container *ngFor="let ticket of tickets">
         <app-flight-card [item]="ticket" [showEditButton]="false"></app-flight-card>
     </ng-container>
-  `
+  `,
+    standalone: false
 })
 export class MyTicketsComponent implements OnInit {
 
