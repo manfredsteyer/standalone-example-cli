@@ -6,7 +6,6 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { map, shareReplay } from 'rxjs';
 
 @Component({
-    standalone: true,
     selector: 'app-navbar-cmp',
     templateUrl: './navbar.component.html',
     imports: [

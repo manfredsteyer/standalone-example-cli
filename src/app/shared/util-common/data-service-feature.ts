@@ -22,7 +22,7 @@ export function withDataService<E extends Entity, F extends Filter, S extends Da
                 entityMap: Record<EntityId, E>,
                 ids: EntityId[]
             }>(),
-            signals: type<{
+            props: type<{
                 entities: Signal<Entity[]>
             }>(),
             methods: type<{}>()
