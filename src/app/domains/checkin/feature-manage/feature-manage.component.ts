@@ -6,11 +6,10 @@ import { CheckinService } from '../data';
 // import { } from '../../ticketing/data';
 
 @Component({
-  selector: 'app-feature-manage',
-  standalone: true,
-  imports: [CommonModule, FormsModule],
-  templateUrl: './feature-manage.component.html',
-  styleUrls: ['./feature-manage.component.css'],
+    selector: 'app-feature-manage',
+    imports: [CommonModule, FormsModule],
+    templateUrl: './feature-manage.component.html',
+    styleUrls: ['./feature-manage.component.css']
 })
 export class FeatureManageComponent {
   service = inject(CheckinService);

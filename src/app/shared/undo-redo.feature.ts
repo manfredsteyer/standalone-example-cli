@@ -14,7 +14,8 @@ export const defaultUndoRedoOptions: UndoRedoOptions = {
 export type StackItem = {
     filter: Filter;
     entityMap: Record<EntityId, Entity>,
-    ids: EntityId[]
+    ids: EntityId[];
+    selectedIds: Record<EntityId, boolean>;
 };
 
 export type UndoRedoState = {
@@ -64,7 +65,7 @@ function peek(stack: StackItem[]) {
     return stack.at(-1);
 }
 
-export function withUndoRedo(options = defaultUndoRedoOptions) {
+export function withUndoRedo<_>(options = defaultUndoRedoOptions) {
 
     let previous: StackItem | null = null;
     let skipOnce = false;
@@ -74,7 +75,8 @@ export function withUndoRedo(options = defaultUndoRedoOptions) {
             state: type<{
                 filter: Filter,
                 entityMap: Record<EntityId, Entity>,
-                ids: EntityId[]
+                ids: EntityId[],
+                selectedIds: Record<EntityId, boolean>;
             }>(),
         },
         withState<UndoRedoState>({
@@ -118,6 +120,7 @@ export function withUndoRedo(options = defaultUndoRedoOptions) {
                     const filter = store.filter();
                     const entityMap = store.entityMap();
                     const ids = store.ids();
+                    const selectedIds = store.selectedIds();
 
                     if (skipOnce) {
                         skipOnce = false;
@@ -131,7 +134,7 @@ export function withUndoRedo(options = defaultUndoRedoOptions) {
                         patchState(store, pushUndo(previous, options.maxStackSize))
                     }
 
-                    previous = { filter, entityMap, ids };
+                    previous = { filter, entityMap, ids, selectedIds };
                 }, { allowSignalWrites: true })
             }
         })
