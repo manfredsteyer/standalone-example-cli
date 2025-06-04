@@ -74,7 +74,7 @@ export const FlightBookingStore = signalStore(
 
         const flights = await flightService.findPromise(from(), to());
         
-        patchState(state, setAllEntities(flights, { collection: 'flight', idKey: 'id' }));
+        patchState(state, setAllEntities(flights, { collection: 'flight', selectId: (f) => f.id }));
 
         patchState(state, setLoaded());
       },
