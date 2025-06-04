@@ -26,6 +26,7 @@ export class FlightSearchComponent {
   basket = this.store.basket;
   flights = this.store.flightEntities;
   selected = this.store.selected;
+  loading = this.store.loading;
 
   async search() {
     this.store.load();
